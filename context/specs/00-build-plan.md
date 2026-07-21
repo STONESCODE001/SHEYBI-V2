@@ -1,287 +1,663 @@
 # Build Plan
 
-This document defines the implementation order for Sheybi.
+## Purpose
 
-Each unit follows these rules:
+This document defines the implementation roadmap for the Sheybi platform.
 
-- Produces one visible, testable result.
-- Stays within one primary system boundary.
-- Introduces dependencies only when they are required.
-- Leaves the application in a working state before the next unit begins.
-- May depend only on previously completed units.
-- Units that always get done together are merged into one.
-- Units with no standalone visible result are merged with adjacent units.
+It is the single source of truth for build order.
+
+Every implementation task must begin by determining which build unit is currently active.
+
+Every build unit produces one complete, testable milestone.
+
+No work may begin outside the current build unit.
+
+Implementation always moves forward.
+
+Completed units must never be partially rebuilt by later units.
 
 ---
 
-# Unit 1 — Application Shell & Authentication
+# Design Principles
+
+The implementation roadmap follows these rules.
+
+- Build reusable foundations before dependent features.
+- Build one system boundary at a time.
+- Produce one visible result per build unit.
+- Introduce dependencies only when they unlock new functionality.
+- Build UI shells before connecting real data.
+- Build backend capabilities before wiring frontend interactions.
+- Authentication always precedes protected functionality.
+- Never implement future units early.
+- Every completed unit must be independently testable.
+- Every build unit references its own specification document.
+- No build unit owns requirements belonging to another specification.
+
+---
+
+# Frontend Build
+
+The frontend build creates the complete visual application before backend functionality is connected.
+
+---
+
+# Unit 01 — UI Primitives
+
+## Purpose
+
+Create the reusable visual foundation of the application.
 
 ## Builds
 
-- Next.js App Router project (TypeScript, Tailwind CSS, shadcn/ui)
-- Sheybi design tokens (colors, typography, spacing, elevation)
-- Global layout (topbar, mobile bottom nav, responsive breakpoints)
-- Public landing page
-- Clerk authentication (sign up, sign in, sign out)
-- Protected route middleware
-- InstantDB configuration
-- Users, User Profiles, and Wallets tables (created on first sign-in)
-- User profile page (view & edit display name, avatar, bio)
+- shadcn/ui installation
+- Theme provider
+- Light mode
+- Dark mode
+- Typography system
+- Icon system
+- Button variants
+- Form primitives
+- Feedback primitives
+- Utility helpers
+- Global design tokens integration
 
 ## Visible Result
 
-A visitor can open the landing page, create an account, sign in, see a styled application shell with navigation, view and edit their profile, and sign out. A wallet row exists in the database for every authenticated user.
+The project contains a complete reusable UI foundation.
 
 ## Dependencies
 
 None.
 
+## Specification Files
+
+- frontend/01-ui-primitives.md
+
+## Completion Criteria
+
+- Every primitive renders correctly.
+- Theme switching works.
+- No visual inconsistencies exist.
+- All primitives are reusable.
+
 ---
 
-# Unit 2 — Admin Dashboard & Market Creation
+# Unit 02 — Child Components
+
+## Purpose
+
+Create every reusable low-level UI component.
 
 ## Builds
 
-- Admin role check (Clerk metadata or Admin Users table)
-- Admin layout and navigation (separate from user app)
-- Categories table and CRUD
-- Markets table, Market Options table, Trading Volume table
-- Market creation form (title, description, category, options, times, liquidity)
-- Market editing (Draft state only)
-- Market state transitions: Draft → Scheduled → Open
-- Admin market list with status filters
-- Audit Logs table and automatic logging for every admin action
+- Buttons
+- Inputs
+- Labels
+- Badges
+- Chips
+- Avatars
+- Countdown
+- Probability indicator
+- Status indicator
+- Icons
+- Search input
+- Empty state
+- Skeleton state
+- Dividers
+- Tooltips
 
 ## Visible Result
 
-An administrator can sign in, access the admin dashboard, create categories, create prediction markets with options and liquidity, edit draft markets, publish them through Draft → Scheduled → Open, and see a filterable market list. Every action is recorded in the audit log.
+Every reusable child component exists and renders using placeholder content.
 
 ## Dependencies
 
-- Unit 1
+Unit 01
+
+## Specification Files
+
+- frontend/02-child-components.md
+
+## Completion Criteria
+
+- Every child component renders.
+- Responsive behaviour works.
+- Components can be reused independently.
 
 ---
 
-# Unit 3 — Market Discovery
+# Unit 03 — Parent Components
+
+## Purpose
+
+Create reusable application components built from child components.
 
 ## Builds
 
-- Home feed page (featured markets, trending markets, categories)
-- Market list page with filters (category, status, closing soon, volume)
-- Market search
-- Market detail page / modal (description, rules, resolution source, options with probabilities, trading volume, closing time)
-- Market Activity table and activity feed on market detail
-- Shareable market cards (Open Graph metadata, share URL)
+- Hero Banner
+- Market Card
+- Market Feed
+- Wallet Card
+- Portfolio Card
+- Statistic Card
+- Activity Feed
+- Search Result Card
+- Notification Item
+- Section Header
+- Category Tabs
+- Trade Panel
+- Profile Summary
+- Admin Summary Cards
 
 ## Visible Result
 
-Any visitor (guest or authenticated) can browse the home feed, filter and search markets, open a market detail view displaying live probabilities, volume, activity feed, and share a market link.
+The application contains reusable feature components using placeholder data.
 
 ## Dependencies
 
-- Unit 2
+Unit 02
+
+## Specification Files
+
+- frontend/03-parent-components.md
+
+## Completion Criteria
+
+- Every parent component renders.
+- Placeholder data displays correctly.
+- Component composition matches the wireframe.
 
 ---
 
-# Unit 4 — Wallet & Payments
+# Unit 04 — Layouts
+
+## Purpose
+
+Create every reusable application layout.
 
 ## Builds
 
-- Wallet dashboard page (available balance, locked balance, portfolio value)
-- Wallet Transactions table
-- Deposits table
-- Paystack integration (virtual account funding)
-- Deposit flow (initiate → Paystack → webhook confirmation → balance update)
-- Ledger table (immutable financial records)
-- Ledger entry creation on every successful deposit
-- Withdrawal Requests table
-- Withdrawal request flow (enter amount, bank details, fee preview, submit)
-- Transaction history page
-- Deposit history section
-- Pending withdrawal display
+- Public Layout
+- Authenticated Layout
+- Admin Layout
+- Mobile Layout
+- Tablet Layout
+- Desktop Layout
+- Error Layout
+- Loading Layout
+- Maintenance Layout
 
 ## Visible Result
 
-An authenticated user can view their wallet balances, fund their wallet through Paystack, see the deposit reflected in real time, view transaction history, and submit a withdrawal request that appears as pending.
+Every application layout exists and responds correctly across screen sizes.
 
 ## Dependencies
 
-- Unit 1
+Unit 03
+
+## Specification Files
+
+- frontend/04-layouts.md
+
+## Completion Criteria
+
+- Layout switching works.
+- Responsive layouts work.
+- Shared regions remain consistent.
 
 ---
 
-# Unit 5 — Trading
+# Unit 05 — Pages
+
+## Purpose
+
+Create every routed page using placeholder data.
 
 ## Builds
 
-- Prediction Engine module:
-  - Dynamic pricing (LMSR or equivalent)
-  - Probability calculation
-  - Trading validation (market state, balance, suspension, amount)
-  - Fee calculation (2.5% buy, 2.5% sell)
-  - Position valuation
-- Positions table, Position History table
-- Server Actions for buy and sell
-- Buy flow on market detail page (select option → enter amount → preview shares, fee, estimated payout → confirm)
-- Sell flow (select position → enter share quantity → preview proceeds, fee → confirm)
-- Wallet balance deduction on buy, credit on sell
-- Ledger entries for every trade
-- Market probability and price updates after every trade (real-time via InstantDB)
-- Live profit/loss display on open positions
+- Landing
+- Dashboard
+- Markets
+- Portfolio
+- Wallet
+- Profile
+- Settings
+- Notifications
+- Search
+- Administration
+- Error
+- Loading
 
 ## Visible Result
 
-An authenticated user with wallet funds can buy shares on any open market, see updated probabilities and prices in real time, sell shares before the market closes, and see their wallet balance change. Every trade creates a ledger record.
+Users can navigate through every page without backend functionality.
 
 ## Dependencies
 
-- Unit 3
-- Unit 4
+Unit 04
+
+## Specification Files
+
+- frontend/05-pages.md
+
+## Completion Criteria
+
+- Every page exists.
+- Navigation works.
+- Placeholder content displays correctly.
 
 ---
 
-# Unit 6 — Portfolio
+# Unit 06 — Dialogs
+
+## Purpose
+
+Create every reusable dialog, drawer and sheet.
 
 ## Builds
 
-- Portfolio page
-- Open positions tab (current value, unrealized P/L, market link)
-- Closed positions tab (final value, realized P/L)
-- Position detail view (entry price, shares, trade history)
-- Profit/Loss history summary
-- Market history (markets user participated in)
-- Performance metrics (total invested, total returned, net P/L)
+- Wallet Dialog
+- Deposit Dialog
+- Withdraw Dialog
+- Search Dialog
+- Profile Dialog
+- Settings Dialog
+- Notification Dialog
+- Trade Confirmation Dialog
+- Market Suggestion Dialog
+- Image Viewer
+- Share Dialog
 
 ## Visible Result
 
-An authenticated user can view all their open and closed positions, see live profit/loss for open positions, review trade history per position, and track overall performance.
+Every dialog opens, closes and integrates with the application shell.
 
 ## Dependencies
 
-- Unit 5
+Unit 05
+
+## Specification Files
+
+- frontend/06-dialogs.md
+
+## Completion Criteria
+
+- Every dialog functions.
+- Responsive presentation works.
+- Navigation remains consistent.
 
 ---
 
-# Unit 7 — Market Resolution & Settlement
+# Backend Build
+
+The backend build introduces application behaviour without modifying the visual structure.
+
+---
+
+# Unit 07 — Authentication
+
+## Purpose
+
+Implement identity and access control.
 
 ## Builds
 
-- Admin resolution interface (select winning option, confirm market title)
-- Prediction Engine settlement logic:
-  - Winning position identification
-  - Payout calculation
-  - Wallet balance credit for winners
-  - Position state transitions (Open → Won / Lost)
-- Market state transitions: Open → Closed → Resolved
-- Market cancellation with full refund flow
-- Market extension (Closed → Open with new closing time)
-- Ledger entries for every settlement payout and refund
-- Notifications table
-- Settlement notifications (position won, position lost, market resolved, market cancelled)
-- Notification center in the user app (list, unread badge, mark as read)
+- Clerk integration
+- Sign Up
+- Login
+- Logout
+- Email Verification
+- Password Reset
+- Session persistence
+- Protected routes
+- Route guards
+- User creation
+- User profile synchronization
+- Role assignment
 
 ## Visible Result
 
-An administrator can close, extend, cancel, or resolve a market. When resolved, winning users automatically receive payouts in their wallet. Losing positions are marked lost. Cancelled markets refund all positions. Every user receives a notification. Users see settlement results in their portfolio and wallet.
+Users can authenticate and access protected sections.
 
 ## Dependencies
 
-- Unit 5
+Unit 06
+
+## Specification Files
+
+- backend/07-authentication.md
 
 ---
 
-# Unit 8 — Community Features
+# Unit 08 — Markets
+
+## Purpose
+
+Implement market management and retrieval.
 
 ## Builds
 
-- Market Suggestions table
-- Market suggestion form (title, description, category)
-- User's submitted suggestions list with status
-- Admin suggestion review queue (approve, reject with reason)
-- Share market (generate share URL, copy link)
-- Share position / prediction (sharable card with outcome and stake)
-- Featured markets curation (admin marks markets as featured)
-- Trending markets algorithm (based on volume, trade count, recency)
+- Market model
+- Category model
+- Market creation
+- Market editing
+- Market publishing
+- Market archiving
+- Featured markets
+- Trending markets
+- Search backend
+- Market filtering
+- Market statistics
+- Market realtime synchronization
 
 ## Visible Result
 
-Users can suggest new markets and track their suggestion status. Administrators can approve or reject suggestions. Users can share markets and their positions via link. The home feed displays algorithmically trending and admin-curated featured markets.
+Administrators manage markets while users browse live market data.
 
 ## Dependencies
 
-- Unit 3
-- Unit 6
+Unit 07
+
+## Specification Files
+
+- backend/08-markets.md
 
 ---
 
-# Unit 9 — Admin Operations
+# Unit 09 — Wallet
+
+## Purpose
+
+Implement the financial platform.
 
 ## Builds
 
-- Withdrawal approval / rejection workflow
-- Withdrawal processing (Paystack transfer after approval)
-- Withdrawal ledger entries and notifications
-- User management page (list, search, view profile, view wallet)
-- User suspension / unsuspension
-- Financial activity review (platform-wide ledger viewer, deposit summary, withdrawal summary)
-- Audit log viewer (filterable by admin, action type, entity, date range)
-- KYC Records table
-- KYC submission flow (user side)
-- KYC review (admin side, required before withdrawal payout)
-- System Settings table and settings page
+- Wallet creation
+- Available balance
+- Locked balance
+- Portfolio value
+- Virtual account generation
+- Paystack deposits
+- Deposit verification
+- Withdrawal requests
+- Transaction history
+- Ledger
+- Wallet server actions
 
 ## Visible Result
 
-Administrators can approve or reject withdrawals (triggering Paystack transfers), suspend users, review platform-wide financial activity, browse audit logs, review KYC submissions, and manage system settings. Users can submit KYC documents and receive withdrawal payouts after admin approval.
+Users can fund wallets and manage balances.
 
 ## Dependencies
 
-- Unit 4
-- Unit 7
+Unit 08
+
+## Specification Files
+
+- backend/09-wallet.md
 
 ---
 
-# Unit Dependency Graph
+# Unit 10 — Trading
 
-```
-Unit 1 ──┬──────────────── Unit 2 ── Unit 3 ──┐
-         │                                     │
-         └── Unit 4 ──────────────────────┬── Unit 5 ──┬── Unit 6 ── Unit 8
-                                          │            │
-                                          │            └── Unit 7 ── Unit 8
-                                          │                    │
-                                          └────────────────────┴── Unit 9
-```
+## Purpose
+
+Implement prediction trading.
+
+## Builds
+
+- Prediction Engine
+- Dynamic pricing
+- Probability calculation
+- Buy validation
+- Sell validation
+- Trading fees
+- Position creation
+- Position updates
+- Trade preview
+- Wallet deductions
+- Wallet credits
+- Ledger entries
+- Trade history
+- Live market updates
+- Live probability updates
+
+## Visible Result
+
+Users buy and sell prediction positions with live updates.
+
+## Dependencies
+
+Unit 09
+
+## Specification Files
+
+- backend/10-trading.md
 
 ---
 
-# Build Summary
+# Unit 11 — Portfolio
 
-| Unit | Name | Primary Boundary | Key Dependency |
-|------|------|-----------------|----------------|
-| 1 | Application Shell & Authentication | Presentation + Identity | None |
-| 2 | Admin Dashboard & Market Creation | Administration | Unit 1 |
-| 3 | Market Discovery | Presentation | Unit 2 |
-| 4 | Wallet & Payments | Financial | Unit 1 |
-| 5 | Trading | Prediction Engine + Financial | Units 3, 4 |
-| 6 | Portfolio | Presentation | Unit 5 |
-| 7 | Market Resolution & Settlement | Prediction Engine + Administration | Unit 5 |
-| 8 | Community Features | Presentation + Administration | Units 3, 6 |
-| 9 | Admin Operations | Administration + Financial | Units 4, 7 |
+## Purpose
+
+Implement portfolio management.
+
+## Builds
+
+- Open positions
+- Closed positions
+- Position history
+- Market history
+- Profit/Loss
+- Portfolio summaries
+- Performance analytics
+- Position valuation
+
+## Visible Result
+
+Users monitor portfolio performance.
+
+## Dependencies
+
+Unit 10
+
+## Specification Files
+
+- backend/11-portfolio.md
 
 ---
 
-# Unit Completion Requirements
+# Unit 12 — Community
 
-A unit is complete only when:
+## Purpose
 
-- All planned functionality has been implemented.
-- All affected pages render correctly.
-- Server Actions execute successfully.
-- Realtime synchronization functions correctly.
-- Authentication and authorization requirements are enforced.
-- Documentation has been updated.
-- The application builds successfully.
-- No unfinished work remains inside the completed system boundary.
+Implement community features.
 
-No subsequent unit may begin until the current unit satisfies every completion requirement.
+## Builds
+
+- Market suggestions
+- Suggestion moderation
+- Share market
+- Share prediction
+- Featured content
+- Trending calculations
+- Community activity feed
+
+## Visible Result
+
+Users interact beyond trading.
+
+## Dependencies
+
+Unit 11
+
+## Specification Files
+
+- backend/12-community.md
+
+---
+
+# Unit 13 — Administration
+
+## Purpose
+
+Implement platform operations.
+
+## Builds
+
+- Market resolution
+- Settlement approval
+- Withdrawal approval
+- Withdrawal rejection
+- User suspension
+- User restoration
+- Financial review
+- Audit logs
+- Platform analytics
+- Administrative notifications
+
+## Visible Result
+
+Administrators operate the platform end-to-end.
+
+## Dependencies
+
+Unit 12
+
+## Specification Files
+
+- backend/13-administration.md
+
+---
+
+# Unit 14 — Background Jobs
+
+## Purpose
+
+Implement asynchronous platform processes.
+
+## Builds
+
+- Scheduled jobs
+- Market auto-close
+- Settlement jobs
+- Notification jobs
+- Payment reconciliation
+- Retry queues
+- Cleanup jobs
+
+## Visible Result
+
+Long-running processes execute automatically.
+
+## Dependencies
+
+Unit 13
+
+## Specification Files
+
+- backend/14-background-jobs.md
+
+---
+
+# Unit 15 — Production
+
+## Purpose
+
+Prepare the platform for deployment.
+
+## Builds
+
+- Error handling
+- Monitoring
+- Logging
+- Performance optimization
+- Deployment configuration
+- Production validation
+- Security hardening
+- Final testing
+
+## Visible Result
+
+The platform is production-ready.
+
+## Dependencies
+
+Unit 14
+
+## Specification Files
+
+- backend/15-production.md
+
+---
+
+# Phase Dependencies
+
+Every build unit depends only on completed units.
+
+Dependencies always move forward.
+
+Circular dependencies are prohibited.
+
+Frontend units complete before backend platform behaviour is introduced.
+
+Backend units build incrementally on previous platform capabilities.
+
+---
+
+# Cross-Document Responsibilities
+
+This document defines build order only.
+
+Implementation requirements belong to individual specification files.
+
+Visual structure belongs to `wireframe.md`.
+
+Component requirements belong to `specs/frontend`.
+
+Feature behaviour belongs to `specs/backend`.
+
+Architecture belongs to `architecture.md`.
+
+User interactions belong to `user-flow.md`.
+
+Business rules belong to `prediction-engine.md`.
+
+API behaviour belongs to `api-contracts.md`.
+
+---
+
+# Acceptance Criteria
+
+- Every build unit has one responsibility.
+- Every build unit produces one visible milestone.
+- Dependencies are explicit.
+- Specification files are referenced.
+- No implementation details are included.
+- No business rules are duplicated.
+- Frontend and backend implementation remain separated.
+
+---
+
+# Scope
+
+This document defines only the implementation roadmap.
+
+It defines:
+
+- Build order
+- Build units
+- Dependencies
+- Visible milestones
+
+It does not define:
+
+- UI implementation
+- Business rules
+- Database design
+- API behaviour
+- Source code
+- Styling
+
+Those subjects belong to their respective specification documents.

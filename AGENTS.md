@@ -4,9 +4,6 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-
-# AGENTS.md
-
 # Application Building Context
 
 Before implementing code, modifying architecture, changing documentation, or making technical decisions, read the following files in the specified order.
@@ -112,6 +109,46 @@ Before implementing code, modifying architecture, changing documentation, or mak
     * Architecture decisions
     * Session notes
 
+    
+11. `context/wireframe.md`
+
+    * Layout & Structure
+    * Navigation Structure
+    * Routed Pages
+    * Shared UI Regions
+    * Section Inventory
+    * Parent Components
+    * Child Components
+    * Component Hierarchy
+    * Dialog Inventory
+    * Responsive Behaviour
+    * Component Relationships
+    * Component Checklist
+
+12. `context/user-flow.md`
+
+    * User Journeys
+    * Entry Points
+    * Task Sequences
+    * Decision Points
+    * Exit Points
+    * Critical Paths
+    * Alternative Paths
+    * Completion Criteria
+    * Failure Handling
+
+13. `context/build-plan.md`
+
+    * Implementation Roadmap
+    * Feature Dependencies
+    * Architectural Dependencies
+    * Risk Assessment
+    * Mitigation Strategies
+    * Task Organization
+    * Dependency Ordering
+    * Verification Phases
+    * Backlog Management
+
 ---
 
 # Required Workflow
@@ -129,6 +166,10 @@ Every implementation session must follow this sequence.
    * `design-system.md`
    * `code-standards.md`
    * `api-contracts.md`
+   * `ui-context.md`
+   * `wireframe.md`
+   * `user-flow.md`
+   
 5. Implement only the requested scope.
 6. Validate that all architectural boundaries remain intact.
 7. Update documentation if implementation changes any documented behaviour.
@@ -162,6 +203,9 @@ The following ownership rules apply.
 * Application contracts → `api-contracts.md`
 * Development workflow → `ai-workflow-rules.md`
 * Project status → `progress-tracker.md`
+* Layout & Structure → `wireframe.md`
+* User Journeys → `user-flow.md`
+* UI Guidelines → `ui-context.md`
 
 A responsibility documented in one file must never be duplicated in another file.
 

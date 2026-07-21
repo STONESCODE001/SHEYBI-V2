@@ -1,0 +1,1 @@
+don't ask the AI to build "the app"; ask it to build one well-specified unit. Each document has one responsibility, and each implementation task has a very small context window. That will make your coding agent much more reliable.

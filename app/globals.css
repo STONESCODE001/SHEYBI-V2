@@ -1,26 +1,236 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@source "../components";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --font-heading: var(--font-sans);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/*
+ * Design tokens from ui-context.md
+ *
+ * Light theme (:root) uses the shadcn neutral defaults.
+ * Dark theme (.dark) maps to the Sheybi dark palette specified in ui-context.md.
+ *
+ * Sheybi-specific semantic tokens (surfaces, markets, financials, status)
+ * are defined in both themes so components can reference them via
+ * CSS custom properties without raw hex values.
+ */
+
+:root {
+    /* shadcn core tokens — light mode */
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+
+    /* Sheybi semantic surface tokens — light mode equivalents */
+    --bg-base: #F7F8FC;
+    --bg-elevated: #FFFFFF;
+    --bg-surface: #FFFFFF;
+    --bg-surface-secondary: #F2F4FA;
+    --bg-hover: #E8EAF0;
+    --bg-active: #D9DDE8;
+
+    /* Sheybi text tokens — light mode */
+    --text-primary: #111827;
+    --text-secondary: #4B5563;
+    --text-muted: #6B7280;
+    --text-disabled: #9CA3AF;
+    --text-inverse: #FFFFFF;
+
+    /* Sheybi accent tokens */
+    --accent-primary: #7C3AED;
+    --accent-primary-hover: #8B5CF6;
+    --accent-primary-active: #6D28D9;
+    --accent-secondary: #06B6D4;
+    --accent-secondary-hover: #0891B2;
+
+    /* Sheybi market tokens */
+    --market-yes: #10B981;
+    --market-yes-hover: #059669;
+    --market-no: #EF4444;
+    --market-no-hover: #DC2626;
+
+    /* Sheybi financial tokens */
+    --profit: #22C55E;
+    --loss: #EF4444;
+    --wallet: #F59E0B;
+    --deposit: #22C55E;
+    --withdrawal: #F97316;
+
+    /* Sheybi status tokens */
+    --state-success: #22C55E;
+    --state-warning: #F59E0B;
+    --state-error: #EF4444;
+    --state-info: #3B82F6;
+
+    /* Sheybi border tokens — light mode */
+    --border-default: #D9DDE8;
+    --border-hover: #C4C9D4;
+    --border-active: #7C3AED;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.dark {
+    /* shadcn core tokens — dark mode mapped to ui-context.md */
+    --background: #09090B;
+    --foreground: #FFFFFF;
+    --card: #151821;
+    --card-foreground: #FFFFFF;
+    --popover: #151821;
+    --popover-foreground: #FFFFFF;
+    --primary: #7C3AED;
+    --primary-foreground: #FFFFFF;
+    --secondary: #1C212B;
+    --secondary-foreground: #D1D5DB;
+    --muted: #1C212B;
+    --muted-foreground: #9CA3AF;
+    --accent: #252B36;
+    --accent-foreground: #FFFFFF;
+    --destructive: #EF4444;
+    --border: #2B3240;
+    --input: #2B3240;
+    --ring: #7C3AED;
+    --chart-1: #7C3AED;
+    --chart-2: #06B6D4;
+    --chart-3: #10B981;
+    --chart-4: #F59E0B;
+    --chart-5: #EF4444;
+    --radius: 0.625rem;
+    --sidebar: #0F1115;
+    --sidebar-foreground: #FFFFFF;
+    --sidebar-primary: #7C3AED;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #1C212B;
+    --sidebar-accent-foreground: #D1D5DB;
+    --sidebar-border: #2B3240;
+    --sidebar-ring: #7C3AED;
+
+    /* Sheybi semantic surface tokens — dark mode (from ui-context.md) */
+    --bg-base: #09090B;
+    --bg-elevated: #0F1115;
+    --bg-surface: #151821;
+    --bg-surface-secondary: #1C212B;
+    --bg-hover: #252B36;
+    --bg-active: #303846;
+
+    /* Sheybi text tokens — dark mode (from ui-context.md) */
+    --text-primary: #FFFFFF;
+    --text-secondary: #D1D5DB;
+    --text-muted: #9CA3AF;
+    --text-disabled: #6B7280;
+    --text-inverse: #09090B;
+
+    /* Sheybi accent tokens (same in both themes) */
+    --accent-primary: #7C3AED;
+    --accent-primary-hover: #8B5CF6;
+    --accent-primary-active: #6D28D9;
+    --accent-secondary: #06B6D4;
+    --accent-secondary-hover: #0891B2;
+
+    /* Sheybi market tokens */
+    --market-yes: #10B981;
+    --market-yes-hover: #059669;
+    --market-no: #EF4444;
+    --market-no-hover: #DC2626;
+
+    /* Sheybi financial tokens */
+    --profit: #22C55E;
+    --loss: #EF4444;
+    --wallet: #F59E0B;
+    --deposit: #22C55E;
+    --withdrawal: #F97316;
+
+    /* Sheybi status tokens */
+    --state-success: #22C55E;
+    --state-warning: #F59E0B;
+    --state-error: #EF4444;
+    --state-info: #3B82F6;
+
+    /* Sheybi border tokens — dark mode (from ui-context.md) */
+    --border-default: #2B3240;
+    --border-hover: #3A4455;
+    --border-active: #7C3AED;
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+    html {
+        @apply font-sans;
+    }
 }

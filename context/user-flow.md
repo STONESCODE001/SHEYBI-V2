@@ -1121,15 +1121,3 @@ It does not redefine:
 - Components
 
 Every concept has exactly one source of truth.
-
----
-
-# Writing Style
-
-- Write user behaviour, not implementation.
-- Use deterministic language such as **must**, **will**, **cannot**, and **always**.
-- Avoid vague wording.
-- Do not include source code.
-- Do not include database schemas.
-- Do not include API routes.
-- Treat this document as the single source of truth for every user journey within Sheybi.

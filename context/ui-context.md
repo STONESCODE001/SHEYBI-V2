@@ -34,8 +34,7 @@ Every visual decision must reinforce confidence in the platform.
 
 # Theme
 
-- Dark mode only
-- No light mode support in MVP
+- Dark mode and light mode allowed
 - Minimal gradients
 - High contrast
 - Large spacing
