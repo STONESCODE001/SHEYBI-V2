@@ -11,7 +11,7 @@ Update this document immediately after every completed implementation unit. This
 Core project documentation is complete. Implementation has begun with the Design System Foundation.
 
 ---
-
+   
 # Current Goal
 
 Implement the Design System Foundation as defined in `context/feature-specs/01-design-system.md`.
@@ -96,10 +96,11 @@ Current project status:
 
 # Change Log
 
-Update this section after every meaningful implementation unit.
+Update this section after every meaningful implementation unit. make sure you do this
 
 * **2026-07-20**
   * **Feature Completed:** Design System Foundation (`01-design-system.md`).
   * **Files Modified:** `app/globals.css`, `app/layout.tsx`, `package.json`, `components.json`, `lib/utils.ts`, `components/ui/*`.
   * **Decisions:** Used Next.js app router, Tailwind CSS v4, and shadcn/ui base-nova style.
   * **Follow-up:** Start working on the Authentication System feature spec.
+
