@@ -699,6 +699,7 @@ Those subjects belong exclusively to their respective documents.
 - Do not include Tailwind classes.
 - Treat this document as the visual blueprint for the entire Sheybi application.
 
+
 ui-context.md
 │
 ├── Design language

@@ -14,7 +14,7 @@ Core project documentation is complete. Implementation has begun with the Design
    
 # Current Goal
 
-Implement the Design System Foundation as defined in `context/feature-specs/01-design-system.md`.
+Implement Parent Components as defined in `context/specs/frontend/03-parent-components.md`.
 
 ---
 
@@ -31,28 +31,34 @@ Implement the Design System Foundation as defined in `context/feature-specs/01-d
 * API contract structure documented.
 * AI workflow rules documented.
 * Design System Foundation (`context/feature-specs/01-design-system.md`)
+* UI Primitives (`context/specs/frontend/01-ui-primitives.md`)
+* Child Components (`context/specs/frontend/02-child-components.md`)
+* Parent Components (`context/feature-specs/03-parent-components.md`)
+* Layouts (`context/feature-specs/04-layouts.md`)
 
 ---
 
 # In Progress
 
-* UI primitives spec (`specs/frontend/01-ui-primitives.md`).
-
 ---
 
 # Next Up
 
-After documentation is complete, implementation will begin in the following order:
+Implementation will continue in the following order:
 
-1. Authentication system
-2. Application shell and layout
-3. Market browsing
-4. Wallet system
-5. Prediction Engine integration
-6. Trading workflow
-7. Portfolio
-8. Administration dashboard
-9. Production deployment
+1. Parent Components (`03-parent-components.md`)
+2. Layouts (`04-layouts.md`)
+3. Pages (`05-pages.md`)
+4. Dialogs (`06-dialogs.md`)
+5. Authentication system
+6. Markets
+7. Wallet system
+8. Trading
+9. Portfolio
+10. Community
+11. Administration
+12. Background Jobs
+13. Production deployment
 
 Each feature will receive its own specification document before implementation begins.
 
@@ -88,6 +94,10 @@ Current project status:
 
 * Documentation phase is complete.
 * Design System Foundation implementation is complete (Tailwind v4, Shadcn UI setup).
+* UI Primitives implementation is complete.
+* Child Components implementation is complete (11 components in `components/child/`).
+* Parent Components implementation is complete (13 components in `components/parent/`).
+* Layouts implementation is complete (8 layouts in `components/layouts/`).
 * No database has been implemented.
 * No backend services have been implemented.
 * No external integrations have been implemented.
@@ -96,7 +106,7 @@ Current project status:
 
 # Change Log
 
-Update this section after every meaningful implementation unit. make sure you do this
+Make sure you update this section after every meaningful implementation unit.
 
 * **2026-07-20**
   * **Feature Completed:** Design System Foundation (`01-design-system.md`).
@@ -104,3 +114,26 @@ Update this section after every meaningful implementation unit. make sure you do
   * **Decisions:** Used Next.js app router, Tailwind CSS v4, and shadcn/ui base-nova style.
   * **Follow-up:** Start working on the Authentication System feature spec.
 
+* **2026-07-21**
+  * **Feature Completed:** Child Components (`02-child-components.md`).
+  * **Files Created:** `components/child/countdown-timer.tsx`, `notification-dot.tsx`, `market-outcome-chip.tsx`, `percentage-indicator.tsx`, `statistic-display.tsx`, `empty-illustration.tsx`, `error-indicator.tsx`, `success-indicator.tsx`, `navigation-icon.tsx`, `card-image.tsx`, `action-icon.tsx`, `index.ts`.
+  * **Decisions:** Combined Share/Bookmark/Favorite into generic `ActionIcon`; paired `StatisticValue`/`StatisticLabel` in single file; used key-based remounting for `CardImage` to avoid effect-based setState.
+  * **Follow-up:** Begin Parent Components specification (`03-parent-components.md`).
+
+* **2026-07-21**
+  * **Feature Completed:** Parent Components (`03-parent-components.md`).
+  * **Files Created:** 13 parent components in `components/parent/` including `hero-banner.tsx`, `market-card.tsx`, `market-feed.tsx`, `wallet-card.tsx`, `portfolio-card.tsx`, `statistic-card.tsx`, `activity-card.tsx`, `category-tabs.tsx`, `section-header.tsx`, `trade-panel.tsx`, `search-result-card.tsx`, `notification-item.tsx`, `profile-summary-card.tsx`, and `index.ts`.
+  * **Decisions:** Implemented responsive cards and interactive components matching the design tokens without adding new dependencies.
+  * **Follow-up:** Begin Layouts specification (`04-layouts.md`).
+
+* **2026-07-21**
+  * **Bug Fixes & Refinements:** Component Accessibility, Layout & Spec Adjustments.
+  * **Files Modified (Intentionally scoped to UI components & specs):** `components/child/action-icon.tsx`, `components/child/card-image.tsx`, `components/child/countdown-timer.tsx`, `components/child/empty-illustration.tsx`, `components/child/index.ts`, `components/parent/category-tabs.tsx`, `components/parent/notification-item.tsx`, `components/parent/profile-summary-card.tsx`, `components/parent/search-result-card.tsx`, `components/parent/trade-panel.tsx`, `context/feature-specs/03-parent-components.md`, `context/specs/frontend/03-parent-components.md`.
+  * **Decisions:** Resolved accessibility semantics, aria attributes, tabIndex focus rules, size variant cleanups, and specification location metadata.
+  * **Follow-up:** Proceed with Layouts implementation.
+
+* **2026-07-21**
+  * **Feature Completed:** Layouts (`04-layouts.md`).
+  * **Files Created:** 8 layout components in `components/layouts/` including `public-layout.tsx`, `authenticated-layout.tsx`, `admin-layout.tsx`, `centered-layout.tsx`, `blank-layout.tsx`, `error-layout.tsx`, `loading-layout.tsx`, `maintenance-layout.tsx`, and `index.ts`.
+  * **Decisions:** Followed strict compositional architecture by keeping feature-specific UI out of layouts, ensuring they only act as structural foundations and accept regions as props. Verified responsive design rules per documentation.
+  * **Follow-up:** Begin Pages specification (`05-pages.md`).

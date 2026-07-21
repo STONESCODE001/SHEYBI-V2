@@ -1,0 +1,139 @@
+import * as React from "react"
+import { cn } from "@/lib/utils"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { CardImage } from "@/components/child/card-image"
+
+interface HeroBannerAction {
+  /** Button label text. */
+  readonly label: string
+  /** Click handler. */
+  readonly onClick?: () => void
+  /** Whether this is the primary (filled) action. */
+  readonly primary?: boolean
+}
+
+interface HeroBannerProps extends React.ComponentProps<"section"> {
+  /** Banner headline text. */
+  readonly headline: string
+  /** Supporting description text. */
+  readonly description?: string
+  /** Promotional image URL. */
+  readonly imageUrl?: string
+  /** Image alt text. */
+  readonly imageAlt?: string
+  /** Up to two action buttons. */
+  readonly actions?: readonly HeroBannerAction[]
+  /** Whether the banner is in a loading state. */
+  readonly loading?: boolean
+  /** Heading level for semantic hierarchy. */
+  readonly headingLevel?: "h1" | "h2"
+}
+
+function HeroBannerSkeleton({
+  className,
+}: {
+  className?: string
+}): React.ReactElement {
+  return (
+    <Card
+      className={cn(
+        "w-full rounded-2xl border-[var(--border-default)] bg-[var(--bg-surface)] p-5",
+        className
+      )}
+    >
+      <div className="flex flex-col gap-4 md:flex-row md:items-center">
+        <div className="flex flex-1 flex-col gap-3">
+          <Skeleton className="h-8 w-3/4 rounded-lg" />
+          <Skeleton className="h-5 w-full rounded-lg" />
+          <Skeleton className="h-5 w-2/3 rounded-lg" />
+          <div className="mt-2 flex gap-3">
+            <Skeleton className="h-10 w-28 rounded-xl" />
+            <Skeleton className="h-10 w-28 rounded-xl" />
+          </div>
+        </div>
+        <div className="w-full md:w-2/5">
+          <Skeleton className="aspect-video w-full rounded-xl" />
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+function HeroBanner({
+  headline,
+  description,
+  imageUrl,
+  imageAlt = "Promotional image",
+  actions = [],
+  loading = false,
+  headingLevel: HeadingTag = "h2",
+  className,
+  ...props
+}: HeroBannerProps): React.ReactElement | null {
+  if (loading) {
+    return <HeroBannerSkeleton className={className} />
+  }
+
+  if (!headline) {
+    return null
+  }
+
+  return (
+    <section
+      data-slot="hero-banner"
+      role="banner"
+      className={cn("w-full", className)}
+      {...props}
+    >
+      <Card
+        className={cn(
+          "w-full rounded-2xl border-[var(--border-default)] bg-[var(--bg-surface)] p-5",
+          "shadow-[0_1px_3px_0_rgba(0,0,0,0.1),0_1px_2px_0_rgba(0,0,0,0.06)]"
+        )}
+      >
+        <div className="flex flex-col gap-6 md:flex-row md:items-center">
+          {/* Text region */}
+          <div className="flex flex-1 flex-col gap-3">
+            <HeadingTag className="text-2xl font-bold leading-8 text-[var(--text-primary)]">
+              {headline}
+            </HeadingTag>
+
+            {description && (
+              <p className="text-base leading-6 text-[var(--text-secondary)]">
+                {description}
+              </p>
+            )}
+
+            {actions.length > 0 && (
+              <div className="mt-2 flex gap-3">
+                {actions.slice(0, 2).map((action) => (
+                  <Button
+                    key={action.label}
+                    variant={action.primary ? "default" : "outline"}
+                    size="lg"
+                    className="min-h-11 min-w-[44px] rounded-xl"
+                    onClick={action.onClick}
+                  >
+                    {action.label}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Image region */}
+          {imageUrl && (
+            <div className="w-full md:w-2/5 lg:w-1/3">
+              <CardImage src={imageUrl} alt={imageAlt} />
+            </div>
+          )}
+        </div>
+      </Card>
+    </section>
+  )
+}
+
+export { HeroBanner, HeroBannerSkeleton }
+export type { HeroBannerProps, HeroBannerAction }

@@ -208,3 +208,6 @@ This specification must remain the single source of truth only for `<specificati
 - Avoid business logic unless this specification owns it.
 - Do not include source code.
 - Treat this document as the complete specification for this artifact.
+
+
+edit and update the `<specification-name>.md`  file with the content of your generated output in .md file format
