@@ -234,3 +234,27 @@
         @apply font-sans;
     }
 }
+
+/* Application Shell — Live Market Ticker */
+@keyframes shell-ticker {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.shell-ticker-content {
+    animation: shell-ticker 30s linear infinite;
+}
+
+.shell-ticker-track:hover .shell-ticker-content {
+    animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .shell-ticker-content {
+        animation: none;
+    }
+}
