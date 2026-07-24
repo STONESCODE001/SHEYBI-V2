@@ -36,3 +36,12 @@ export type { NotificationItemProps, NotificationType } from "./notification-ite
 
 export { ProfileSummaryCard, ProfileSummaryCardSkeleton } from "./profile-summary-card"
 export type { ProfileSummaryCardProps } from "./profile-summary-card"
+
+export { SettingCard } from "./setting-card"
+export type { SettingCardProps } from "./setting-card"
+
+export { AdminTable } from "./admin-table"
+export type { AdminTableProps } from "./admin-table"
+
+export { PlaceholderFeedbackCard } from "./placeholder-feedback-card"
+export type { PlaceholderFeedbackCardProps } from "./placeholder-feedback-card"

@@ -121,11 +121,11 @@ function MarketCard({
       onKeyDown={
         onClick && !disabled
           ? (e: React.KeyboardEvent) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault()
-                onClick()
-              }
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              onClick()
             }
+          }
           : undefined
       }
       className={cn(
@@ -145,14 +145,14 @@ function MarketCard({
       )}
       {...props}
     >
-      {/* Thumbnail */}
+      {/* Thumbnail 
       <div className="overflow-hidden rounded-t-2xl">
         <CardImage
           src={imageUrl}
           alt={`${title} thumbnail`}
           className="rounded-none"
         />
-      </div>
+      </div>*/}
 
       {/* Header — category, status, countdown */}
       <div className="flex items-center gap-2 px-4 pt-3">

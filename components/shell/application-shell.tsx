@@ -13,6 +13,7 @@ import { LiveMarketTicker } from "./live-market-ticker"
 import { DialogLayer } from "./dialog-layer"
 import { ToastLayer } from "./toast-layer"
 import { LoadingLayer } from "./loading-layer"
+import { DialogViewport } from "@/components/dialog"
 import type { ApplicationShellProps } from "./types"
 import {
   DEFAULT_CATEGORIES,
@@ -124,7 +125,7 @@ function ApplicationShell({
         categories={categories}
       />
 
-      <DialogLayer>{dialog}</DialogLayer>
+      <DialogLayer>{dialog || <DialogViewport />}</DialogLayer>
       <ToastLayer>{toast}</ToastLayer>
       <LoadingLayer visible={isLoading} />
     </div>

@@ -39,22 +39,22 @@ function HeroBannerSkeleton({
   return (
     <Card
       className={cn(
-        "w-full rounded-2xl border-[var(--border-default)] bg-[var(--bg-surface)] p-5",
+        "relative overflow-hidden w-full rounded-3xl border-0 bg-[var(--accent-primary)] p-8 md:p-12",
         className
       )}
     >
-      <div className="flex flex-col gap-4 md:flex-row md:items-center">
+      <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center">
         <div className="flex flex-1 flex-col gap-3">
-          <Skeleton className="h-8 w-3/4 rounded-lg" />
-          <Skeleton className="h-5 w-full rounded-lg" />
-          <Skeleton className="h-5 w-2/3 rounded-lg" />
-          <div className="mt-2 flex gap-3">
-            <Skeleton className="h-10 w-28 rounded-xl" />
-            <Skeleton className="h-10 w-28 rounded-xl" />
+          <Skeleton className="h-10 w-3/4 rounded-lg bg-white/20" />
+          <Skeleton className="h-6 w-full rounded-lg bg-white/10" />
+          <Skeleton className="h-6 w-2/3 rounded-lg bg-white/10" />
+          <div className="mt-4 flex gap-3">
+            <Skeleton className="h-11 w-32 rounded-xl bg-[var(--accent-secondary)]/50" />
+            <Skeleton className="h-11 w-32 rounded-xl bg-white/10" />
           </div>
         </div>
         <div className="w-full md:w-2/5">
-          <Skeleton className="aspect-video w-full rounded-xl" />
+          <Skeleton className="aspect-video w-full rounded-2xl bg-white/10" />
         </div>
       </div>
     </Card>
@@ -89,31 +89,37 @@ function HeroBanner({
     >
       <Card
         className={cn(
-          "w-full rounded-2xl border-[var(--border-default)] bg-[var(--bg-surface)] p-5",
-          "shadow-[0_1px_3px_0_rgba(0,0,0,0.1),0_1px_2px_0_rgba(0,0,0,0.06)]"
+          "relative overflow-hidden w-full rounded-3xl border-0 bg-[var(--accent-primary)] p-8 md:p-12",
+          "shadow-[0_10px_40px_-10px_rgba(13,91,255,0.3)]"
         )}
       >
-        <div className="flex flex-col gap-6 md:flex-row md:items-center">
+        {/* Decorative background placeholder */}
+        <div className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1600&auto=format&fit=crop&q=60')] bg-cover bg-center opacity-20 mix-blend-overlay" />
+
+        <div className="relative z-10 flex flex-col gap-8 md:flex-row md:items-center">
           {/* Text region */}
-          <div className="flex flex-1 flex-col gap-3">
-            <HeadingTag className="text-2xl font-bold leading-8 text-[var(--text-primary)]">
+          <div className="flex flex-1 flex-col gap-4">
+            <HeadingTag className="text-3xl md:text-4xl font-bold leading-tight text-white">
               {headline}
             </HeadingTag>
 
             {description && (
-              <p className="text-base leading-6 text-[var(--text-secondary)]">
+              <p className="text-lg leading-relaxed text-white/80 max-w-[90%]">
                 {description}
               </p>
             )}
 
             {actions.length > 0 && (
-              <div className="mt-2 flex gap-3">
+              <div className="mt-4 flex gap-4">
                 {actions.slice(0, 2).map((action) => (
                   <Button
                     key={action.label}
-                    variant={action.primary ? "default" : "outline"}
+                    variant={action.primary ? "featured" : "secondary"}
                     size="lg"
-                    className="min-h-11 min-w-[44px] rounded-xl"
+                    className={cn(
+                      "min-h-12 min-w-[120px] rounded-xl font-semibold text-base",
+                      !action.primary && "border-white/20 bg-white/10 text-white hover:bg-white/20"
+                    )}
                     onClick={action.onClick}
                   >
                     {action.label}

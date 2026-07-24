@@ -58,10 +58,10 @@ function DesktopSidebar({
         <div className="flex h-full flex-col p-6">
           <ShellLogo className="mb-6 shrink-0" />
 
-          <WalletDisplayRegion
+          {/* <WalletDisplayRegion
             variant={variant}
             availableBalance={availableBalance}
-          />
+          /> */}
 
           <div className="min-h-0 flex-1 overflow-y-auto">
             <PrimaryNavigationRegion variant={variant} />

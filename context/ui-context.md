@@ -55,12 +55,12 @@ Raw hex colors must never be referenced inside components.
 
 | Role | CSS Variable | Value |
 |---------|----------------------|-----------|
-| Page Background | `--bg-base` | `#09090B` |
-| Elevated Background | `--bg-elevated` | `#0F1115` |
-| Primary Surface | `--bg-surface` | `#151821` |
-| Secondary Surface | `--bg-surface-secondary` | `#1C212B` |
-| Hover Surface | `--bg-hover` | `#252B36` |
-| Active Surface | `--bg-active` | `#303846` |
+| Page Background | `--bg-base` | `#080B14` |
+| Elevated Background | `--bg-elevated` | `#111827` |
+| Primary Surface | `--bg-surface` | `#161F33` |
+| Secondary Surface | `--bg-surface-secondary` | `#1E2A44` |
+| Hover Surface | `--bg-hover` | `#23324F` |
+| Active Surface | `--bg-active` | `#2A3A5A` |
 
 ---
 
@@ -80,11 +80,11 @@ Raw hex colors must never be referenced inside components.
 
 | Role | Variable | Value |
 |---------|----------------------|-----------|
-| Primary Accent | `--accent-primary` | `#7C3AED` |
-| Primary Hover | `--accent-primary-hover` | `#8B5CF6` |
-| Primary Active | `--accent-primary-active` | `#6D28D9` |
-| Secondary Accent | `--accent-secondary` | `#06B6D4` |
-| Secondary Hover | `--accent-secondary-hover` | `#0891B2` |
+| Primary Accent | `--accent-primary` | `#0D5BFF` |
+| Primary Hover | `--accent-primary-hover` | `#3A79FF` |
+| Primary Active | `--accent-primary-active` | `#0047DB` |
+| Secondary Accent | `--accent-secondary` | `#FFC91F` |
+| Secondary Hover | `--accent-secondary-hover` | `#FFD54F` |
 
 ---
 
@@ -92,8 +92,8 @@ Raw hex colors must never be referenced inside components.
 
 | Role | Variable | Value |
 |---------|----------------------|-----------|
-| Yes | `--market-yes` | `#10B981` |
-| Yes Hover | `--market-yes-hover` | `#059669` |
+| Yes | `--market-yes` | `#30D878` |
+| Yes Hover | `--market-yes-hover` | `#2BBE69` |
 | No | `--market-no` | `#EF4444` |
 | No Hover | `--market-no-hover` | `#DC2626` |
 
@@ -103,11 +103,11 @@ Raw hex colors must never be referenced inside components.
 
 | Role | Variable | Value |
 |---------|----------------------|-----------|
-| Profit | `--profit` | `#22C55E` |
+| Profit | `--profit` | `#30D878` |
 | Loss | `--loss` | `#EF4444` |
-| Wallet | `--wallet` | `#F59E0B` |
-| Deposit | `--deposit` | `#22C55E` |
-| Withdrawal | `--withdrawal` | `#F97316` |
+| Wallet | `--wallet` | `#FFC91F` |
+| Deposit | `--deposit` | `#30D878` |
+| Withdrawal | `--withdrawal` | `#FFC91F` |
 
 ---
 
@@ -115,8 +115,8 @@ Raw hex colors must never be referenced inside components.
 
 | Role | Variable | Value |
 |---------|----------------------|-----------|
-| Success | `--state-success` | `#22C55E` |
-| Warning | `--state-warning` | `#F59E0B` |
+| Success | `--state-success` | `#30D878` |
+| Warning | `--state-warning` | `#FFC91F` |
 | Error | `--state-error` | `#EF4444` |
 | Information | `--state-info` | `#3B82F6` |
 
@@ -128,7 +128,7 @@ Raw hex colors must never be referenced inside components.
 |---------|----------------------|-----------|
 | Default | `--border-default` | `#2B3240` |
 | Hover | `--border-hover` | `#3A4455` |
-| Active | `--border-active` | `#7C3AED` |
+| Active | `--border-active` | `#0D5BFF` |
 
 ---
 
@@ -136,7 +136,7 @@ Raw hex colors must never be referenced inside components.
 
 | Role | Font | Variable |
 |------|----------------|----------------|
-| UI | Geist Sans | `--font-sans` |
+| UI | Inter | `--font-sans` |
 | Numbers | Geist Mono | `--font-mono` |
 
 ### Font Sizes

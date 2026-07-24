@@ -61,7 +61,7 @@ function PrimaryNavigationRegion({
                   "outline-none transition-colors duration-200",
                   "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]",
                   active
-                    ? "bg-[var(--bg-active)] font-semibold text-[var(--text-primary)]"
+                    ? "bg-[var(--accent-primary)] font-semibold text-white"
                     : "font-normal text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
                 )}
               >

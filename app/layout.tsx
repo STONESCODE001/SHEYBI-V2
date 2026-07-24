@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { DialogProvider } from "@/components/dialog";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground" style={{ fontFamily: 'Inter, sans-serif' }}>
-        <TooltipProvider>{children}</TooltipProvider>
+        <DialogProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </DialogProvider>
       </body>
     </html>
   );

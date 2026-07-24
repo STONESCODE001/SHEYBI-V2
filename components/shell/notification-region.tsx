@@ -5,6 +5,7 @@ import { Bell } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { NotificationDot } from "@/components/child/notification-dot"
 import type { ShellVariant } from "./types"
+import { useDialog } from "@/components/dialog"
 
 interface NotificationRegionProps {
   readonly variant: ShellVariant
@@ -17,6 +18,7 @@ function NotificationRegion({
   unreadCount = 0,
   className,
 }: NotificationRegionProps) {
+  const dialog = useDialog()
   const href = variant === "admin" ? "/admin" : "/notifications"
   const hasUnread = unreadCount > 0
   const label = hasUnread
@@ -26,6 +28,12 @@ function NotificationRegion({
   return (
     <Link
       href={href}
+      onClick={(e) => {
+        if (variant !== "admin") {
+          e.preventDefault()
+          dialog.open("global/notifications")
+        }
+      }}
       data-slot="notification-region"
       aria-label={label}
       className={cn(

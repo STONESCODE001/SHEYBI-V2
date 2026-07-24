@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { ShellVariant } from "./types"
 import { PLACEHOLDER_USER_NAME } from "./constants"
+import { useDialog } from "@/components/dialog"
 
 interface UserProfileRegionProps {
   readonly variant: ShellVariant
@@ -20,6 +21,8 @@ function UserProfileRegion({
   userAvatarUrl,
   className,
 }: UserProfileRegionProps) {
+  const dialog = useDialog()
+
   if (variant === "guest") {
     return (
       <div
@@ -62,6 +65,12 @@ function UserProfileRegion({
     >
       <Link
         href={variant === "admin" ? "/admin/settings" : "/profile"}
+        onClick={(e) => {
+          if (variant !== "admin") {
+            e.preventDefault()
+            dialog.open("profile/menu", { userName, userAvatarUrl })
+          }
+        }}
         className={cn(
           "flex w-full items-center gap-3 rounded-xl outline-none",
           "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"

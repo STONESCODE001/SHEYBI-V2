@@ -6,7 +6,7 @@
 
 @theme inline {
     --font-heading: var(--font-sans);
-    --font-sans: var(--font-geist-sans);
+    --font-sans: "Inter", sans-serif;
     --font-mono: var(--font-geist-mono);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -110,79 +110,79 @@
     --text-inverse: #FFFFFF;
 
     /* Sheybi accent tokens */
-    --accent-primary: #7C3AED;
-    --accent-primary-hover: #8B5CF6;
-    --accent-primary-active: #6D28D9;
-    --accent-secondary: #06B6D4;
-    --accent-secondary-hover: #0891B2;
+    --accent-primary: #0D5BFF;
+    --accent-primary-hover: #3A79FF;
+    --accent-primary-active: #0047DB;
+    --accent-secondary: #FFC91F;
+    --accent-secondary-hover: #FFD54F;
 
     /* Sheybi market tokens */
-    --market-yes: #10B981;
-    --market-yes-hover: #059669;
+    --market-yes: #30D878;
+    --market-yes-hover: #2BBE69;
     --market-no: #EF4444;
     --market-no-hover: #DC2626;
 
     /* Sheybi financial tokens */
-    --profit: #22C55E;
+    --profit: #30D878;
     --loss: #EF4444;
-    --wallet: #F59E0B;
-    --deposit: #22C55E;
-    --withdrawal: #F97316;
+    --wallet: #FFC91F;
+    --deposit: #30D878;
+    --withdrawal: #FFC91F;
 
     /* Sheybi status tokens */
-    --state-success: #22C55E;
-    --state-warning: #F59E0B;
+    --state-success: #30D878;
+    --state-warning: #FFC91F;
     --state-error: #EF4444;
     --state-info: #3B82F6;
 
     /* Sheybi border tokens — light mode */
     --border-default: #D9DDE8;
     --border-hover: #C4C9D4;
-    --border-active: #7C3AED;
+    --border-active: #0D5BFF;
 }
 
 .dark {
     /* shadcn core tokens — dark mode mapped to ui-context.md */
-    --background: #09090B;
+    --background: #080B14;
     --foreground: #FFFFFF;
-    --card: #151821;
+    --card: #111827;
     --card-foreground: #FFFFFF;
-    --popover: #151821;
+    --popover: #111827;
     --popover-foreground: #FFFFFF;
-    --primary: #7C3AED;
+    --primary: #0D5BFF;
     --primary-foreground: #FFFFFF;
-    --secondary: #1C212B;
-    --secondary-foreground: #D1D5DB;
-    --muted: #1C212B;
+    --secondary: #161F33;
+    --secondary-foreground: #FFFFFF;
+    --muted: #161F33;
     --muted-foreground: #9CA3AF;
-    --accent: #252B36;
+    --accent: #1E2A44;
     --accent-foreground: #FFFFFF;
     --destructive: #EF4444;
-    --border: #2B3240;
-    --input: #2B3240;
-    --ring: #7C3AED;
-    --chart-1: #7C3AED;
-    --chart-2: #06B6D4;
-    --chart-3: #10B981;
-    --chart-4: #F59E0B;
+    --border: #1E2A44;
+    --input: #1E2A44;
+    --ring: #0D5BFF;
+    --chart-1: #0D5BFF;
+    --chart-2: #FFC91F;
+    --chart-3: #30D878;
+    --chart-4: #FFC91F;
     --chart-5: #EF4444;
     --radius: 0.625rem;
-    --sidebar: #0F1115;
+    --sidebar: #080B14;
     --sidebar-foreground: #FFFFFF;
-    --sidebar-primary: #7C3AED;
+    --sidebar-primary: #0D5BFF;
     --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #1C212B;
-    --sidebar-accent-foreground: #D1D5DB;
-    --sidebar-border: #2B3240;
-    --sidebar-ring: #7C3AED;
+    --sidebar-accent: #161F33;
+    --sidebar-accent-foreground: #FFFFFF;
+    --sidebar-border: #1E2A44;
+    --sidebar-ring: #0D5BFF;
 
     /* Sheybi semantic surface tokens — dark mode (from ui-context.md) */
-    --bg-base: #09090B;
-    --bg-elevated: #0F1115;
-    --bg-surface: #151821;
-    --bg-surface-secondary: #1C212B;
-    --bg-hover: #252B36;
-    --bg-active: #303846;
+    --bg-base: #080B14;
+    --bg-elevated: #111827;
+    --bg-surface: #161F33;
+    --bg-surface-secondary: #1E2A44;
+    --bg-hover: #23324F;
+    --bg-active: #2A3A5A;
 
     /* Sheybi text tokens — dark mode (from ui-context.md) */
     --text-primary: #FFFFFF;
@@ -192,35 +192,35 @@
     --text-inverse: #09090B;
 
     /* Sheybi accent tokens (same in both themes) */
-    --accent-primary: #7C3AED;
-    --accent-primary-hover: #8B5CF6;
-    --accent-primary-active: #6D28D9;
-    --accent-secondary: #06B6D4;
-    --accent-secondary-hover: #0891B2;
+    --accent-primary: #0D5BFF;
+    --accent-primary-hover: #3A79FF;
+    --accent-primary-active: #0047DB;
+    --accent-secondary: #FFC91F;
+    --accent-secondary-hover: #FFD54F;
 
     /* Sheybi market tokens */
-    --market-yes: #10B981;
-    --market-yes-hover: #059669;
+    --market-yes: #30D878;
+    --market-yes-hover: #2BBE69;
     --market-no: #EF4444;
     --market-no-hover: #DC2626;
 
     /* Sheybi financial tokens */
-    --profit: #22C55E;
+    --profit: #30D878;
     --loss: #EF4444;
-    --wallet: #F59E0B;
-    --deposit: #22C55E;
-    --withdrawal: #F97316;
+    --wallet: #FFC91F;
+    --deposit: #30D878;
+    --withdrawal: #FFC91F;
 
     /* Sheybi status tokens */
-    --state-success: #22C55E;
-    --state-warning: #F59E0B;
+    --state-success: #30D878;
+    --state-warning: #FFC91F;
     --state-error: #EF4444;
     --state-info: #3B82F6;
 
     /* Sheybi border tokens — dark mode (from ui-context.md) */
-    --border-default: #2B3240;
-    --border-hover: #3A4455;
-    --border-active: #7C3AED;
+    --border-default: #1E2A44;
+    --border-hover: #23324F;
+    --border-active: #0D5BFF;
 }
 
 @layer base {

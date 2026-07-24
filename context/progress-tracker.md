@@ -4,11 +4,10 @@ Update this document immediately after every completed implementation unit. This
 
 ---
 
-# Current Phase
+### Current Phase: Phase 2: Core UI (Completed)
 
-**Implementation**
-
-Core project documentation is complete. Implementation has begun with the Design System Foundation.
+### Current Implementation Target
+- None (Phase Complete)
 
 ---
    
@@ -36,28 +35,26 @@ Implement Pages as defined in `context/feature-specs/06-pages.md`.
 * Parent Components (`context/feature-specs/03-parent-components.md`)
 * Layouts (`context/feature-specs/05-layouts.md`)
 * Application Shell (`context/feature-specs/04-application-shell.md`)
+* Pages (`context/feature-specs/06-pages.md`)
 
 ---
 
 # In Progress
 
+- None (Specification Complete)
 
 # Next Up
 
 Implementation will continue in the following order:
 
-1. Pages (`06-pages.md`)
-2. Dialogs (`07-dialog.md`)
-3. Layouts composition alignment with Application Shell (`05-layouts.md`) as needed
-4. Authentication system
-5. Markets
-6. Wallet system
-7. Trading
-8. Portfolio
-9. Community
-10. Administration
-11. Background Jobs
-12. Production deployment
+4. Markets
+5. Wallet system
+6. Trading
+7. Portfolio
+8. Community
+9. Administration
+10. Background Jobs
+11. Production deployment
 
 Each feature will receive its own specification document before implementation begins.
 
@@ -144,5 +141,16 @@ Make sure you update this section after every meaningful implementation unit.
   * **Files Modified:** `app/globals.css` (ticker animation), `app/error.tsx` (ErrorLayout prop alignment for build), `context/progress-tracker.md`.
   * **Decisions:** Shell owns all persistent UI regions; Guest / Authenticated / Admin variants via `variant` prop; responsive behaviour via CSS breakpoints (mobile / md tablet / lg desktop); Clerk and wallet values use placeholders (auth & wallet logic out of scope); overlay z-index stack matches spec (drawer 30 → dialog 40 → toast 50 → loading 100).
   * **Verification:** `npm run build` succeeds with zero errors. All acceptance criteria and verification checklist items verified successfully. No missing requirements found.
-  * **Follow-up:** Begin Pages specification (`06-pages.md`).
+* **2026-07-22**
+  * **Feature Completed:** Layouts composition alignment with Application Shell (`05-layouts.md`).
+  * **Files Modified:** `components/layouts/authenticated-layout.tsx`, `components/layouts/public-layout.tsx`, `components/layouts/admin-layout.tsx`.
+  * **Decisions:** Refactored shell-composing layouts to act purely as structural containers. Replaced duplicated shell markup with `<ApplicationShell variant="...">` imports. Verified that container layouts (`centered-layout`, `error-layout`, etc.) already conformed to the architecture.
+  * **Verification:** `npm run build` succeeds with zero errors, validating the structural integrity of the composed components.
+  * **Follow-up:** Begin Pages implementation (`06-pages.md`).
 
+* **2026-07-22**
+  * **Feature Completed:** Dialogs Specification (`07-dialog.md`).
+  * **Files Modified:** `context/feature-specs/07-dialog.md`, `context/progress-tracker.md`.
+  * **Decisions:** Structured the reusable Dialog Framework addressing all 16 user review items (ownership rules, registry, promise-based API, queue behavior, dimensions, variants, z-index overlays, performance rules, testing invariants).
+  * **Verification:** `npm run build` succeeds with zero errors, validating the frontend architecture.
+  * **Follow-up:** Begin Markets specification.
