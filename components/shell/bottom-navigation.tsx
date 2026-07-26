@@ -51,7 +51,7 @@ function BottomNavigation({ variant, className }: BottomNavigationProps) {
 
           if (item.icon === "plus") {
             return (
-              <li key={item.href} className="flex min-w-0 flex-1 items-center justify-center">
+              <li key={item.label || item.href} className="flex min-w-0 flex-1 items-center justify-center">
                 <Link
                   href={item.href}
                   aria-label="Create market"
@@ -68,7 +68,7 @@ function BottomNavigation({ variant, className }: BottomNavigationProps) {
           }
 
           return (
-            <li key={item.href} className="flex min-w-0 flex-1">
+            <li key={item.label || item.href} className="flex min-w-0 flex-1">
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}

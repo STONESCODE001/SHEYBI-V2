@@ -137,7 +137,7 @@ Requirements
 
 - Full width
 - Fixed height
-- Dark `#0B0E14` background with subtle bottom border
+- Dark `#0B0E14` background (borderless)
 
 ---
 
@@ -349,7 +349,7 @@ Unused until specified.
 
 ## Dialog Layer
 
-Dialogs open nativly the way they are postioned like shadcn/ui
+Dialogs open natively positioned as modal overlays (centered on desktop, slide-up bottom sheets on mobile).
 
 Full width.
 
@@ -379,7 +379,7 @@ Blocks interaction.
 
 Application
 
-```
+```text
 Application
 │
 ├── Header
@@ -4455,28 +4455,26 @@ Future specification files must reference these components instead of creating n
 
 This document defines the visual structure of the Sheybi application.
 
-It owns the application's visual blueprint and component hierarchy.
+It owns the application's visual layout blueprint and structural inventory.
 
-Every specification document must reference this document instead of redefining layouts, pages, or reusable components.
+Every specification document must reference this document instead of redefining layouts, pages, or reusable component locations.
 
 ---
 
 # This Document Owns
 
-- Application Shell
-- Layout Inventory
+- Application Shell visual inventory
+- Layout Inventory & application structure
 - Responsive Layouts
 - Navigation Structure
 - Routed Pages
 - Shared UI Regions
 - Section Inventory
-- Parent Components
-- Child Components
-- Component Relationships
+- Visual Parent / Child Component Relationships (component semantics and implementation requirements are deferred to design-system.md and frontend component specifications)
 - Dialog Inventory
 - Component Checklist
 
-No other document may redefine these subjects.
+No other document may redefine these visual structural subjects.
 
 ---
 

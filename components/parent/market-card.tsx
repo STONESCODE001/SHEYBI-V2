@@ -115,24 +115,34 @@ function MarketCard({
     return <MarketCardSkeleton className={className} />
   }
 
-  const detailHref = id ? `/markets/${id}` : undefined
+  const detailHref = id && !disabled ? `/markets/${id}` : undefined
 
   return (
     <article
       data-slot="market-card"
       aria-label={title}
-      tabIndex={onClick ? 0 : undefined}
-      role={onClick ? "link" : undefined}
-      onClick={disabled ? undefined : onClick}
-      onKeyDown={
-        onClick && !disabled
-          ? (e: React.KeyboardEvent) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault()
+      tabIndex={onClick && !disabled ? 0 : undefined}
+      role={onClick && !disabled ? "link" : undefined}
+      onClick={
+        disabled || !onClick
+          ? undefined
+          : (e: React.MouseEvent) => {
+              const target = e.target as HTMLElement | null
+              if (target?.closest("a, button")) return
               onClick()
             }
-          }
-          : undefined
+      }
+      onKeyDown={
+        disabled || !onClick
+          ? undefined
+          : (e: React.KeyboardEvent) => {
+              const target = e.target as HTMLElement | null
+              if (target?.closest("a, button")) return
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                onClick()
+              }
+            }
       }
       className={cn(
         "group/market-card w-full rounded-2xl",

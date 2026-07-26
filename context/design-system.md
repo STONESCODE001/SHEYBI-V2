@@ -81,7 +81,7 @@ No exceptions.
 
 # Component Hierarchy
 
-```
+```text
 Application
 
 ├── Layouts
@@ -530,15 +530,15 @@ Represents one prediction market on home/feeds. Sheybi supports 3 distinct marke
 
 ### 1. 1v1 Matchup Card
 - **Structure**: Title (Question), Contestant 1 Avatar vs Contestant 2 Avatar, split Green/Yellow ratio bar, Yes (Green odds `1k -> 3k`) and No (Yellow odds `1k -> 5k`) action buttons.
-- **Visuals**: Dark `#0F1727` background, contestant headshots side-by-side with "VS" center label.
+- **Visuals**: Dark surface background (`var(--bg-surface)`), contestant headshots side-by-side with "VS" center label.
 
 ### 2. Binary Yes/No Card
-- **Structure**: Title (Question), dual-color Green (`#00D376`) & Yellow (`#FFC107`) ratio bar, Yes action button (Green odds e.g. `1k -> 3k`) and No action button (Yellow odds e.g. `1k -> 5k`).
-- **Visuals**: Clean elevated card surface `#0F1727` with full-width ratio indicator.
+- **Structure**: Title (Question), dual-color Green (`var(--market-yes)`) & Yellow (`var(--accent-yellow)`) ratio bar, Yes action button (Green odds e.g. `1k -> 3k`) and No action button (Yellow odds e.g. `1k -> 5k`).
+- **Visuals**: Clean elevated card surface (`var(--bg-surface)`) with full-width ratio indicator.
 
 ### 3. Multiple Options Card
 - **Structure**: Title (Question), list of outcome/contestant rows containing avatar image, contestant name, and outcome button (`Yes  1k -> 3k`), plus a `see more ...` expander button at the card footer.
-- **Visuals**: Stacked dark inner rows inside `#0F1727` card container.
+- **Visuals**: Stacked dark inner rows inside `var(--bg-surface)` card container.
 
 ### Common Card States
 
@@ -568,7 +568,7 @@ Anatomy & Trigger
 - **Desktop Component**: Center-aligned Modal Dialog with dark blurred backdrop.
 - **Mobile Component**: Smooth slide-up Bottom Sheet.
 - **Form Fields**: `Name`, `Market Rules`, `Description`.
-- **Primary Action**: "Submit Market Suggestion" (Accent Yellow button `#FFC107`).
+- **Primary Action**: "Submit Market Suggestion" (Accent Yellow button `var(--accent-yellow)`).
 
 ---
 
@@ -582,13 +582,13 @@ Anatomy & Structure by Variant
 
 ### Variant 1: Binary Yes/No Detail View
 - **Header**: Question Title (Large Inter Bold headline).
-- **Sub-header**: "Yes ( 50% Chance )" in Green `#00D376` vs "No ( 50% Chance )" in Yellow `#FFC107`.
+- **Sub-header**: "Yes ( 50% Chance )" in Green (`var(--market-yes)`) vs "No ( 50% Chance )" in Yellow (`var(--accent-yellow)`).
 - **Ratio Bar**: Full-width split Green/Yellow ratio indicator.
 - **Action Buttons**: Large `Yes  1k -> 3k` (Green odds) and `No  1k -> 5k` (Yellow odds).
 
 ### Variant 2: 1v1 Matchup Detail View
 - **Header**: Question Title (e.g. `Would Mercy Slap Ivana??`).
-- **Matchup Display**: Contestant 1 Avatar + Name + `% Chance` badge (Green `#00D376`) vs Contestant 2 Avatar + Name + `% Chance` badge (Yellow `#FFC107`).
+- **Matchup Display**: Contestant 1 Avatar + Name + `% Chance` badge (Green `var(--market-yes)`) vs Contestant 2 Avatar + Name + `% Chance` badge (Yellow `var(--accent-yellow)`).
 - **Ratio Bar**: Full-width split Green/Yellow ratio indicator.
 - **Action Buttons**: Dual outcome buttons per contestant (`Yes  1k -> 3k` green / `No  1k -> 5k` yellow).
 
@@ -600,8 +600,8 @@ Anatomy & Structure by Variant
 
 Common Detail Sections
 
-1. **Market Rules Section**: Border dividers top and bottom (`#1E2A3F`), Title `Market Rules`, muted text (`#7E8C9F`).
-2. **Trade History List**: Dark surface container (`#0F1727`) listing transactions (`Bought 200 YES Shares` + timestamp).
+1. **Market Rules Section**: Border dividers top and bottom (`var(--border-default)`), Title `Market Rules`, muted text (`var(--text-muted)`).
+2. **Trade History List**: Dark surface container (`var(--bg-surface)`) listing transactions (`Bought 200 YES Shares` + timestamp).
 3. **Explore Action**: Full-width button `Explore Markets...`.
 
 ---

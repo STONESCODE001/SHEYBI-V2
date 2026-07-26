@@ -981,7 +981,9 @@ Search supports:
 
 ---
 
-# Market Suggestion Flow (`+` Action)
+# Market Suggestion Flow (`+` Action UI Sequence)
+
+*(Note: Follows canonical Market Suggestion Flow lifecycle defined above; accepted suggestions create a Draft market in administrator queue)*
 
 Click `+` Plus Icon (Left Sidebar Desktop / Bottom Nav Mobile)
 
@@ -994,13 +996,14 @@ Open Market Suggestion Component (Modal Dialog Desktop / Bottom Sheet Mobile)
 Enter Market Information:
 - `Name` (Proposed market question title)
 - `Market Rules` (Criteria for outcome resolution)
-- `Description` (Background / context explanation)
+- `Description` (Background / context explanation, optional)
 
 ↓
 
 Validation:
 - Title non-empty
 - Rules non-empty
+- Description optional
 
 ↓
 
@@ -1008,7 +1011,7 @@ Submit Suggestion
 
 ↓
 
-Suggestion Sent to Administrator Queue
+Suggestion Sent to Administrator Queue (Creates Draft market upon admin acceptance)
 
 ↓
 

@@ -53,7 +53,7 @@ function PrimaryNavigationRegion({
 
           if (item.icon === "plus") {
             return (
-              <li key={item.href || "suggest"} role="none" className="mt-1">
+              <li key={item.label || item.href || "suggest"} role="none" className="mt-1">
                 <button
                   type="button"
                   role="menuitem"
@@ -80,7 +80,7 @@ function PrimaryNavigationRegion({
           }
 
           return (
-            <li key={item.href} role="none">
+            <li key={item.label || item.href} role="none">
               <Link
                 href={item.href}
                 role="menuitem"
