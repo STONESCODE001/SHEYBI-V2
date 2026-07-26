@@ -92,6 +92,10 @@ Record only decisions that permanently affect the architecture of the platform.
 | Documentation acts as the single source of truth | Eliminates conflicting documentation and undocumented behaviour.   |
 | Feature specifications are created individually  | Keeps implementation scoped, reviewable, and independent.          |
 | Tailwind CSS and shadcn/ui for components        | Rapid, consistent UI development based on `base-nova` style.       |
+| Notifications & Settings Paused                  | Streamline MVP scope by omitting Notifications & Settings pages.   |
+| Topbar Wallet Chip Direct Route Navigation       | Wallet balance chip navigates directly to `/wallet` page.         |
+| Market Suggestion FAB Trigger                    | Center `+` FAB opens Market Suggestion dialog/bottom-sheet.        |
+| Clerk User Profile Dual Presentation Strategy    | Desktop renders inline `<UserProfile/>`; Mobile triggers modal.    |
 
 ---
 

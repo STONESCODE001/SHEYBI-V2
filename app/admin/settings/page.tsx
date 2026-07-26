@@ -2,34 +2,20 @@
 
 import * as React from "react"
 import { AdminLayout } from "@/components/layouts"
-import { SectionHeader, SettingCard } from "@/components/parent"
+import { SectionHeader } from "@/components/parent"
+import { PauseCircle } from "lucide-react"
 
 export default function AdminSettingsPage() {
   return (
     <AdminLayout>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 max-w-4xl mx-auto py-2">
         <SectionHeader title="Platform Settings" />
-        
-        <div className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">General</h2>
-          <SettingCard
-            title="Maintenance Mode"
-            description="Toggle maintenance mode for the entire platform."
-            action={
-              <div className="flex h-6 w-11 items-center rounded-full bg-[var(--bg-surface-secondary)] p-1">
-                <div className="h-4 w-4 rounded-full bg-white transition-transform" />
-              </div>
-            }
-          />
-          <SettingCard
-            title="New User Registration"
-            description="Allow new users to sign up."
-            action={
-              <div className="flex h-6 w-11 items-center rounded-full bg-[var(--primary)] p-1">
-                <div className="h-4 w-4 translate-x-5 rounded-full bg-white transition-transform" />
-              </div>
-            }
-          />
+        <div className="flex flex-col items-center justify-center p-12 rounded-2xl border border-dashed border-[var(--border-default)] bg-[var(--bg-surface)] text-center space-y-3">
+          <PauseCircle className="size-12 text-[var(--text-muted)]" />
+          <h3 className="text-lg font-bold text-[var(--text-primary)]">Admin Settings Paused</h3>
+          <p className="text-sm text-[var(--text-muted)] max-w-md">
+            Platform settings configuration has been paused for the current MVP release build.
+          </p>
         </div>
       </div>
     </AdminLayout>

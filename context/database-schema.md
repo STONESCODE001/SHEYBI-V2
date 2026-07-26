@@ -1565,7 +1565,7 @@ Ledger
 - referenceId
 - createdAt
 
-Notifications
+Notifications (PAUSED / OUT OF SCOPE FOR CURRENT BUILD PHASE)
 
 - userId
 - isRead

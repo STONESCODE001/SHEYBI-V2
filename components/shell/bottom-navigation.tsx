@@ -11,6 +11,8 @@ import {
   NAV_ICONS,
 } from "./constants"
 
+import { useDialog } from "@/components/dialog"
+
 interface BottomNavigationProps {
   readonly variant: ShellVariant
   readonly className?: string
@@ -31,6 +33,7 @@ function isActivePath(pathname: string, href: string): boolean {
 
 function BottomNavigation({ variant, className }: BottomNavigationProps) {
   const pathname = usePathname()
+  const dialog = useDialog()
   const items = resolveItems(variant)
 
   return (
@@ -52,17 +55,18 @@ function BottomNavigation({ variant, className }: BottomNavigationProps) {
           if (item.icon === "plus") {
             return (
               <li key={item.label || item.href} className="flex min-w-0 flex-1 items-center justify-center">
-                <Link
-                  href={item.href}
-                  aria-label="Create market"
+                <button
+                  type="button"
+                  onClick={() => dialog.open("market/suggestion")}
+                  aria-label="Suggest market"
                   className={cn(
-                    "flex size-10 items-center justify-center rounded-xl",
+                    "flex size-10 items-center justify-center rounded-xl cursor-pointer",
                     "text-[var(--accent-yellow)] font-bold transition-transform active:scale-95",
                     "outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
                   )}
                 >
                   <Icon className="size-6 shrink-0" aria-hidden="true" />
-                </Link>
+                </button>
               </li>
             )
           }

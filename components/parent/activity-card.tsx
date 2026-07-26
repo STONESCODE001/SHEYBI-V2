@@ -126,17 +126,14 @@ function ActivityCard({
         </time>
       </div>
 
-      {/* Right: Amount and type */}
-      <div className="flex shrink-0 flex-col items-end gap-1">
-        {amount && (
+      {/* Right: Amount */}
+      {amount && (
+        <div className="flex shrink-0 flex-col items-end">
           <span className="font-mono text-sm font-semibold tabular-nums text-[var(--text-primary)]">
             {amount}
           </span>
-        )}
-        <Badge variant="secondary" className="rounded-md text-xs">
-          {ACTIVITY_LABELS[activityType]}
-        </Badge>
-      </div>
+        </div>
+      )}
     </div>
   )
 }

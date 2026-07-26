@@ -63,7 +63,7 @@ function PrimaryNavigationRegion({
                     if (variant === "guest") {
                       window.location.href = "/sign-in"
                     } else {
-                      dialog.open("market/suggest")
+                      dialog.open("market/suggestion")
                     }
                   }}
                   className={cn(

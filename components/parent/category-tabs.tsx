@@ -64,8 +64,8 @@ function CategoryTabs({
   }
 
   return (
-    <div data-slot="category-tabs" className={cn("w-full py-2", className)} {...props}>
-      <div className="flex items-center gap-3 overflow-x-auto scrollbar-none py-1">
+    <div data-slot="category-tabs" className={cn("w-full py-1", className)} {...props}>
+      <div className="inline-flex max-w-full items-center gap-2 overflow-x-auto scrollbar-none rounded-2xl border border-white/10 bg-[#0B101D] p-1.5 shadow-sm">
         {categories.map((category) => {
           const isActive = currentTab === category.value
           return (
@@ -75,14 +75,14 @@ function CategoryTabs({
               disabled={category.disabled}
               onClick={() => handleSelect(category.value)}
               className={cn(
-                "inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all duration-150 select-none cursor-pointer whitespace-nowrap",
+                "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-150 select-none cursor-pointer whitespace-nowrap outline-none",
                 isActive
-                  ? "bg-[#FFC700] text-black shadow-md"
-                  : "bg-transparent text-gray-300 hover:text-white hover:bg-white/5"
+                  ? "bg-[#FFC700] text-black shadow-sm"
+                  : "bg-transparent text-slate-300 hover:text-white hover:bg-white/5"
               )}
             >
               {category.icon ? (
-                <span className={cn("inline-flex items-center", isActive ? "text-black" : "text-gray-400")}>
+                <span className={cn("inline-flex items-center", isActive ? "text-black" : "text-slate-400")}>
                   {category.icon}
                 </span>
               ) : null}
@@ -98,4 +98,3 @@ function CategoryTabs({
 
 export { CategoryTabs }
 export type { CategoryTabsProps, CategoryTab }
-

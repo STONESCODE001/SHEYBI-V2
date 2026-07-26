@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils"
 import type { ShellVariant } from "./types"
 import { PLACEHOLDER_BALANCE } from "./constants"
-import { useDialog } from "@/components/dialog"
+import Link from "next/link"
 
 interface WalletChipProps {
   readonly variant: ShellVariant
@@ -16,16 +16,13 @@ function WalletChip({
   availableBalance = PLACEHOLDER_BALANCE,
   className,
 }: WalletChipProps) {
-  const dialog = useDialog()
-
   if (variant === "guest") {
     return null
   }
 
   return (
-    <button
-      type="button"
-      onClick={() => dialog.open("wallet/details", { availableBalance })}
+    <Link
+      href="/wallet"
       data-slot="wallet-chip"
       aria-live="polite"
       className={cn(
@@ -38,7 +35,7 @@ function WalletChip({
     >
       <span className="sr-only">Available balance</span>
       <span>{availableBalance}</span>
-    </button>
+    </Link>
   )
 }
 

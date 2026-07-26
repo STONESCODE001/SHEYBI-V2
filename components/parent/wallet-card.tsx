@@ -96,34 +96,14 @@ function WalletCard({
       </div>
 
       {/* Content */}
-      <div className="mt-4 space-y-4">
-        {/* Primary balance */}
+      <div className="mt-4">
+        {/* Single primary balance */}
         <div aria-label="Available Balance">
           <span className="text-sm text-[var(--text-muted)]">Available Balance</span>
-          <p className="mt-1 font-mono text-2xl font-bold tabular-nums text-[var(--text-primary)]">
+          <p className="mt-1 font-mono text-3xl font-bold tabular-nums text-[var(--text-primary)]">
             {availableBalance}
           </p>
         </div>
-
-        {/* Secondary metrics */}
-        {(lockedBalance || portfolioValue) && (
-          <div className="flex gap-6">
-            {lockedBalance && (
-              <StatisticDisplay
-                value={lockedBalance}
-                label="Locked"
-                className="text-sm [&_[data-slot=statistic-value]]:text-sm [&_[data-slot=statistic-value]]:font-semibold"
-              />
-            )}
-            {portfolioValue && (
-              <StatisticDisplay
-                value={portfolioValue}
-                label="Portfolio"
-                className="text-sm [&_[data-slot=statistic-value]]:text-sm [&_[data-slot=statistic-value]]:font-semibold"
-              />
-            )}
-          </div>
-        )}
       </div>
 
       {/* Footer */}

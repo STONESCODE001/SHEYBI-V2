@@ -31,7 +31,6 @@ export const PRIMARY_NAV_ADMIN: readonly NavItem[] = [
   { label: "Users", href: "/admin/users", icon: "users" },
   { label: "Transactions", href: "/admin/transactions", icon: "transactions" },
   { label: "Audit Logs", href: "/admin/audit-logs", icon: "audit" },
-  { label: "Settings", href: "/admin/settings", icon: "settings" },
 ] as const
 
 export const PRIMARY_NAV_GUEST: readonly NavItem[] = [
@@ -45,8 +44,8 @@ export const PRIMARY_NAV_GUEST: readonly NavItem[] = [
 export const BOTTOM_NAV_AUTHENTICATED: readonly NavItem[] = [
   { label: "Home", href: "/", icon: "home" },
   { label: "Markets", href: "/markets", icon: "markets" },
+  { label: "Suggest", href: "#suggest", icon: "plus" },
   { label: "Portfolio", href: "/portfolio", icon: "portfolio" },
-  { label: "Wallet", href: "/wallet", icon: "wallet" },
   { label: "Profile", href: "/profile", icon: "profile" },
 ] as const
 
@@ -63,7 +62,6 @@ export const BOTTOM_NAV_ADMIN: readonly NavItem[] = [
   { label: "Markets", href: "/admin/markets", icon: "markets" },
   { label: "Users", href: "/admin/users", icon: "users" },
   { label: "Transactions", href: "/admin/transactions", icon: "transactions" },
-  { label: "Settings", href: "/admin/settings", icon: "settings" },
 ] as const
 
 export const DEFAULT_CATEGORIES: readonly CategoryItem[] = [

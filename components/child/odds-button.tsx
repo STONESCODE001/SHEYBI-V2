@@ -23,7 +23,7 @@ export interface OddsButtonProps extends React.ComponentProps<"div"> {
 /**
  * OddsButton component
  * Renders an outcome display button (e.g., "Yes  1k -> 3k") linearly straight on a single line.
- * Uses `whitespace-nowrap` to strictly prevent text stacking.
+ * Keeps text responsive with tight padding and shrink constraints so it fits on all screen widths.
  */
 export function OddsButton({
   label,
@@ -36,21 +36,21 @@ export function OddsButton({
     <div
       data-slot="odds-button"
       className={cn(
-        "flex min-h-[40px] flex-1 flex-row items-center justify-between gap-2 whitespace-nowrap rounded-xl bg-[#0D1424] px-3 py-2 transition-colors",
+        "flex min-h-[38px] w-full min-w-0 flex-1 flex-row items-center justify-between gap-1.5 sm:gap-2 whitespace-nowrap rounded-xl bg-[#0D1424] px-2.5 sm:px-3 py-1.5 transition-colors overflow-hidden",
         "group-hover/market-card:bg-[#121B30]",
         className
       )}
       {...props}
     >
       {/* Outcome label (e.g., Yes / No) - strictly single line */}
-      <span className="shrink-0 text-xs font-medium whitespace-nowrap text-slate-300 sm:text-sm">
+      <span className="shrink-0 text-xs font-semibold whitespace-nowrap text-slate-300">
         {label}
       </span>
 
-      {/* Odds payout text (e.g., 1k -> 3k) - strictly single line */}
+      {/* Odds payout text (e.g., 1k -> 3k) - strictly single line font-mono */}
       <span
         className={cn(
-          "shrink-0 text-xs font-bold tracking-tight whitespace-nowrap sm:text-sm",
+          "shrink-0 text-xs font-bold tracking-tight whitespace-nowrap font-mono",
           variant === "yes" ? "text-[#30D878]" : "text-[#FFC91F]"
         )}
       >

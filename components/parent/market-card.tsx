@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { RatioBar } from "@/components/child/ratio-bar"
 import { OddsButton } from "@/components/child/odds-button"
+import { Heart } from "lucide-react"
 
 /**
  * DB INTEGRATION NOTE:
@@ -84,6 +85,18 @@ export interface MarketCardProps extends React.ComponentProps<"article"> {
    * Formatted No odds e.g. "1k -> 5k". If omitted, calculated dynamically from noProbability.
    */
   readonly noOdds?: string
+  /**
+   * DB INTEGRATION NOTE: Category label e.g. "Entertainment", "BBNaija", "Sports"
+   */
+  readonly categoryLabel?: string
+  /**
+   * DB INTEGRATION NOTE: Likes / Reaction count string e.g. "1.2k" or number
+   */
+  readonly likesCount?: number | string
+  /**
+   * DB INTEGRATION NOTE: Traded volume string e.g. "₦1.2M Vol"
+   */
+  readonly volume?: string
   /** Whether the card is loading. */
   readonly loading?: boolean
   /** Whether the card is disabled. */
@@ -118,8 +131,8 @@ function MarketCardSkeleton({
 /**
  * MarketCard Component
  * Implements the Figma Render Specification as the sole source of truth.
- * Ensures equal card height in grid rows (`h-full flex flex-col justify-between`).
- * Keeps odds buttons strictly linear on a single line.
+ * Ensures equal card height and mathematically aligned footers/likes across grid rows (`h-full flex flex-col justify-between`).
+ * Keeps odds buttons strictly linear on a single line without breaking on screen width changes.
  */
 function MarketCard({
   id = "1",
@@ -130,6 +143,9 @@ function MarketCard({
   noProbability = 66.7,
   yesOdds,
   noOdds,
+  categoryLabel = "Entertainment",
+  likesCount = "1.2k",
+  volume,
   loading = false,
   disabled = false,
   className,
@@ -158,7 +174,7 @@ function MarketCard({
       <Link
         href={disabled ? "#" : detailHref}
         className={cn(
-          "group/market-card flex h-full flex-col justify-between w-full rounded-2xl border border-white/10 bg-[#0B101D] p-4 sm:p-5 text-white transition-all duration-200",
+          "group/market-card flex h-full flex-col justify-between w-full rounded-2xl border border-white/10 bg-[#0B101D] p-4 sm:p-5 text-white transition-all duration-200 gap-4",
           "hover:border-white/20 hover:bg-[#0E1526] hover:shadow-md",
           disabled && "cursor-not-allowed opacity-50"
         )}
@@ -168,16 +184,18 @@ function MarketCard({
         {/* ============================================================ */}
         {variant === "1v1" && (
           <div className="flex flex-col flex-1 justify-between space-y-4">
-            <div className="space-y-4">
-              {/* Question Title */}
-              <h3 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight text-white group-hover/market-card:text-slate-100">
-                {title}
-              </h3>
+            <div className="space-y-3">
+              {/* Question Title (Fixed min-height slot for row alignment) */}
+              <div className="min-h-[3.25rem] flex items-start">
+                <h3 className="line-clamp-2 text-base sm:text-lg font-bold leading-snug tracking-tight text-white group-hover/market-card:text-slate-100">
+                  {title}
+                </h3>
+              </div>
 
               {/* Contestant 1 vs Contestant 2 Raw Headshots */}
               <div className="flex items-center justify-center gap-6 py-1">
                 {/* Left Contestant Headshot */}
-                <div className="relative h-16 w-16">
+                <div className="relative h-14 w-14 sm:h-16 sm:w-16">
                   <Image
                     src={contestants[0]?.avatarUrl || defaultTestImg}
                     alt={contestants[0]?.name || "Contestant 1"}
@@ -187,12 +205,12 @@ function MarketCard({
                 </div>
 
                 {/* Center VS Label */}
-                <span className="text-base font-black tracking-wider text-slate-300">
+                <span className="text-sm sm:text-base font-black tracking-wider text-slate-300">
                   VS
                 </span>
 
                 {/* Right Contestant Headshot */}
-                <div className="relative h-16 w-16">
+                <div className="relative h-14 w-14 sm:h-16 sm:w-16">
                   <Image
                     src={contestants[1]?.avatarUrl || defaultTestImg}
                     alt={contestants[1]?.name || "Contestant 2"}
@@ -203,7 +221,7 @@ function MarketCard({
               </div>
             </div>
 
-            <div className="space-y-4 pt-2">
+            <div className="space-y-3 pt-1">
               {/* Split Probability Ratio Bar */}
               <RatioBar
                 yesProbability={yesProbability}
@@ -211,7 +229,7 @@ function MarketCard({
               />
 
               {/* Outcome Odds Housing Container (Main Base BG Color) */}
-              <div className="flex flex-row items-center gap-2 rounded-2xl border border-white/5 bg-[#080D19] p-1.5">
+              <div className="flex flex-row items-center gap-1.5 sm:gap-2 rounded-2xl border border-white/5 bg-[#080D19] p-1.5 w-full overflow-hidden">
                 <OddsButton label="Yes" odds={computedYesOdds} variant="yes" />
                 <OddsButton label="No" odds={computedNoOdds} variant="no" />
               </div>
@@ -224,12 +242,14 @@ function MarketCard({
         {/* ============================================================ */}
         {variant === "binary" && (
           <div className="flex flex-col flex-1 justify-between space-y-4">
-            {/* Question Title */}
-            <h3 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight text-white group-hover/market-card:text-slate-100">
-              {title}
-            </h3>
+            {/* Question Title (Fixed min-height slot for row alignment) */}
+            <div className="min-h-[3.25rem] flex items-start">
+              <h3 className="line-clamp-2 text-base sm:text-lg font-bold leading-snug tracking-tight text-white group-hover/market-card:text-slate-100">
+                {title}
+              </h3>
+            </div>
 
-            <div className="space-y-4 pt-2">
+            <div className="space-y-3 pt-1">
               {/* Split Probability Ratio Bar */}
               <RatioBar
                 yesProbability={yesProbability}
@@ -237,7 +257,7 @@ function MarketCard({
               />
 
               {/* Outcome Odds Housing Container (Main Base BG Color) */}
-              <div className="flex flex-row items-center gap-2 rounded-2xl border border-white/5 bg-[#080D19] p-1.5">
+              <div className="flex flex-row items-center gap-1.5 sm:gap-2 rounded-2xl border border-white/5 bg-[#080D19] p-1.5 w-full overflow-hidden">
                 <OddsButton label="Yes" odds={computedYesOdds} variant="yes" />
                 <OddsButton label="No" odds={computedNoOdds} variant="no" />
               </div>
@@ -250,22 +270,24 @@ function MarketCard({
         {/* ============================================================ */}
         {variant === "multi_option" && (
           <div className="flex flex-col flex-1 justify-between space-y-4">
-            {/* Question Title */}
-            <h3 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight text-white group-hover/market-card:text-slate-100">
-              {title}
-            </h3>
+            {/* Question Title (Fixed min-height slot for row alignment) */}
+            <div className="min-h-[3.25rem] flex items-start">
+              <h3 className="line-clamp-2 text-base sm:text-lg font-bold leading-snug tracking-tight text-white group-hover/market-card:text-slate-100">
+                {title}
+              </h3>
+            </div>
 
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3 pt-1">
               {/* Stacked Contestant / Outcome Rows in Housing Container */}
               <div className="space-y-2 rounded-2xl border border-white/5 bg-[#080D19] p-2">
                 {contestants.map((c, i) => (
                   <div
                     key={c.id || i}
-                    className="flex items-center justify-between rounded-xl bg-[#0D1424] p-2.5 transition-colors group-hover/market-card:bg-[#121B30]"
+                    className="flex items-center justify-between rounded-xl bg-[#0D1424] p-2 sm:p-2.5 transition-colors group-hover/market-card:bg-[#121B30]"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       {/* Raw Contestant Avatar */}
-                      <div className="relative h-8 w-8">
+                      <div className="relative h-7 w-7 sm:h-8 sm:w-8 shrink-0">
                         <Image
                           src={c.avatarUrl || defaultTestImg}
                           alt={c.name}
@@ -273,12 +295,12 @@ function MarketCard({
                           className="object-contain"
                         />
                       </div>
-                      <span className="text-sm font-semibold text-slate-200">
+                      <span className="text-xs sm:text-sm font-semibold text-slate-200 truncate">
                         {c.name}
                       </span>
                     </div>
                     {/* Odds Button inside Row Housing Container */}
-                    <div className="rounded-lg border border-white/5 bg-[#080D19] p-1 flex-initial">
+                    <div className="rounded-lg border border-white/5 bg-[#080D19] p-1 shrink-0">
                       <OddsButton
                         label="Yes"
                         odds={
@@ -286,7 +308,7 @@ function MarketCard({
                           formatOddsFromProbability(c.probability || 25)
                         }
                         variant="yes"
-                        className="min-h-[32px] py-1 px-3 text-xs"
+                        className="min-h-[30px] py-0.5 px-2 text-xs"
                       />
                     </div>
                   </div>
@@ -294,7 +316,7 @@ function MarketCard({
               </div>
 
               {/* Footer Expander Link housed in Main Base BG Container */}
-              <div className="rounded-xl border border-white/5 bg-[#080D19] p-2.5 text-center">
+              <div className="rounded-xl border border-white/5 bg-[#080D19] p-2 text-center">
                 <span className="text-xs font-medium text-slate-400 hover:text-white transition-colors">
                   see more ...
                 </span>
@@ -302,6 +324,22 @@ function MarketCard({
             </div>
           </div>
         )}
+
+        {/* Standardized Card Footer (Always aligns horizontally at bottom) */}
+        <div className="mt-auto flex items-center justify-between pt-3 border-t border-white/5 text-xs text-slate-400">
+          <span className="font-semibold text-slate-300 truncate max-w-[130px]">
+            {categoryLabel}
+          </span>
+          <div className="flex items-center gap-3">
+            {volume && (
+              <span className="font-mono text-[11px] text-slate-400">{volume}</span>
+            )}
+            <span className="inline-flex items-center gap-1 text-slate-300 font-medium">
+              <Heart className="size-3.5 text-rose-500 fill-rose-500/20 shrink-0" />
+              <span>{likesCount}</span>
+            </span>
+          </div>
+        </div>
       </Link>
     </article>
   )
