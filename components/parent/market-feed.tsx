@@ -9,6 +9,8 @@ import type { MarketCardProps } from "./market-card"
 interface MarketFeedProps extends React.ComponentProps<"div"> {
   /** Array of market data to display. */
   readonly markets: readonly MarketCardProps[]
+  /** Selected category filter. */
+  readonly activeCategory?: string
   /** Whether the feed is in a loading state. */
   readonly loading?: boolean
   /** Number of skeleton cards to show during loading. */
@@ -29,6 +31,7 @@ interface MarketFeedProps extends React.ComponentProps<"div"> {
 
 function MarketFeed({
   markets,
+  activeCategory,
   loading = false,
   skeletonCount = 6,
   emptyTitle = "No markets found",
@@ -40,6 +43,16 @@ function MarketFeed({
   className,
   ...props
 }: MarketFeedProps): React.ReactElement {
+  const displayedMarkets = React.useMemo(() => {
+    if (!activeCategory || activeCategory === "trending") return markets
+    return markets.filter((m) => {
+      const cat = m.categoryLabel?.toLowerCase() || ""
+      const selected = activeCategory.toLowerCase()
+      if (selected === "hoh") return cat.includes("hoh") || cat.includes("bbnaija")
+      if (selected === "weekly") return cat.includes("weekly") || cat.includes("eviction") || cat.includes("bbnaija")
+      return cat.includes(selected)
+    })
+  }, [markets, activeCategory])
   if (loading) {
     return (
       <div className="flex flex-col gap-6 w-full">
@@ -61,7 +74,7 @@ function MarketFeed({
     )
   }
 
-  if (markets.length === 0) {
+  if (displayedMarkets.length === 0) {
     return (
       <div
         data-slot="market-feed"
@@ -101,7 +114,7 @@ function MarketFeed({
         )}
         {...props}
       >
-        {markets.map((market, index) => (
+        {displayedMarkets.map((market, index) => (
           <MarketCard key={market.title + index} {...market} />
         ))}
       </div>

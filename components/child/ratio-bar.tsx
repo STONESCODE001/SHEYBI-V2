@@ -29,11 +29,21 @@ export function RatioBar({
   ...props
 }: RatioBarProps): React.ReactElement {
   // Ensure percentages total 100% cleanly
-  const validatedYes = Math.max(0, Math.min(100, yesProbability))
-  const validatedNo =
-    noProbability !== undefined
-      ? Math.max(0, Math.min(100, noProbability))
-      : 100 - validatedYes
+  const rawYes = Math.max(0, Math.min(100, yesProbability))
+  let validatedYes = rawYes
+  let validatedNo = 100 - rawYes
+
+  if (noProbability !== undefined) {
+    const rawNo = Math.max(0, Math.min(100, noProbability))
+    const total = rawYes + rawNo
+    if (total > 0) {
+      validatedYes = Number(((rawYes / total) * 100).toFixed(1))
+      validatedNo = Number((100 - validatedYes).toFixed(1))
+    } else {
+      validatedYes = 50
+      validatedNo = 50
+    }
+  }
 
   return (
     <div

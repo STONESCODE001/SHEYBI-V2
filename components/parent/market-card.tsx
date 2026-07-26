@@ -20,14 +20,18 @@ export function formatOddsFromProbability(
   probabilityPercent?: number,
   baseStake = 1000
 ): string {
-  if (!probabilityPercent || probabilityPercent <= 0) return "1k -> 1k"
+  if (!probabilityPercent || probabilityPercent <= 0) return "₦1k -> ₦1k"
   const p = probabilityPercent / 100
-  const potentialPayout = Math.round(baseStake / p)
-  const stakeK = `${baseStake / 1000}k`
-  const payoutK =
-    potentialPayout >= 1000
-      ? `${Math.round(potentialPayout / 1000)}k`
-      : `₦${potentialPayout}`
+  const potentialPayout = baseStake / p
+  const stakeK = `₦${baseStake / 1000}k`
+  let payoutK: string
+  if (potentialPayout >= 1000) {
+    const kVal = potentialPayout / 1000
+    const formatted = Number.isInteger(kVal) ? kVal.toString() : kVal.toFixed(1).replace(/\.0$/, "")
+    payoutK = `₦${formatted}k`
+  } else {
+    payoutK = `₦${Math.round(potentialPayout)}`
+  }
   return `${stakeK} -> ${payoutK}`
 }
 
@@ -173,6 +177,13 @@ function MarketCard({
     >
       <Link
         href={disabled ? "#" : detailHref}
+        aria-disabled={disabled ? true : undefined}
+        tabIndex={disabled ? -1 : undefined}
+        onClick={(e) => {
+          if (disabled) {
+            e.preventDefault()
+          }
+        }}
         className={cn(
           "group/market-card flex h-full flex-col justify-between w-full rounded-2xl border border-white/10 bg-[#0B101D] p-4 sm:p-5 text-white transition-all duration-200 gap-4",
           "hover:border-white/20 hover:bg-[#0E1526] hover:shadow-md",

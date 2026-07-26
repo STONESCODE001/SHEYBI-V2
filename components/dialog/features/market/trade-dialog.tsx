@@ -15,11 +15,23 @@ export interface UserPosition {
   avgPrice: number
 }
 
+export interface TradeOrderPayload {
+  marketId?: string
+  optionId?: string
+  candidateId?: string
+  outcome: "yes" | "no"
+  side: "buy" | "sell"
+  amount: number
+  shares: number
+}
+
 interface TradeDialogProps {
   isOpen: boolean
   onClose: (confirmed: boolean) => void
   payload: {
     marketId?: string
+    optionId?: string
+    candidateId?: string
     marketTitle: string
     initialOutcome?: "yes" | "no"
     initialMode?: "buy" | "sell"
@@ -31,6 +43,7 @@ interface TradeDialogProps {
   }
   status: DialogStatus
   setStatus: (status: DialogStatus) => void
+  onExecuteTrade?: (order: TradeOrderPayload) => Promise<void>
 }
 
 /**
@@ -39,13 +52,15 @@ interface TradeDialogProps {
  * Renders as a modal dialog on desktop and a bottom sheet drawer on mobile.
  * Features single-outcome position collision detection (Single-Outcome Exposure Invariant).
  */
-export function TradeDialog({ isOpen, onClose, payload, status }: TradeDialogProps) {
+export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }: TradeDialogProps) {
   const dialog = useDialog()
 
   const [mode, setMode] = React.useState<"buy" | "sell">(payload.initialMode || "buy")
   const [outcome, setOutcome] = React.useState<"yes" | "no">(payload.initialOutcome || "yes")
   const [amount, setAmount] = React.useState<string>("1000")
   const [sellPercentage, setSellPercentage] = React.useState<number>(100)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
 
   // Prices and probabilities
   const yesPrice = payload.yesPrice || 0.33
@@ -78,27 +93,39 @@ export function TradeDialog({ isOpen, onClose, payload, status }: TradeDialogPro
   const sellPresets = [25, 50, 75, 100]
 
   const handleConfirmTrade = async () => {
-    onClose(true)
+    if (isSubmitting || hasCollision) return
+    setError(null)
+    setIsSubmitting(true)
 
-    const actionText = mode === "buy" ? `Buying ${outcome.toUpperCase()}` : `Selling ${outcome.toUpperCase()}`
-    const loader = dialog.loading({
-      title: `${actionText} Order`,
-      description: "Submitting order to prediction engine..."
-    })
+    const orderPayload: TradeOrderPayload = {
+      marketId: payload.marketId,
+      optionId: payload.optionId,
+      candidateId: payload.candidateId,
+      outcome,
+      side: mode,
+      amount: numericAmount,
+      shares: mode === "buy" ? sharesToReceive : sharesBeingSold,
+    }
 
-    await new Promise((r) => setTimeout(r, 1200))
-    loader.update("Updating prediction balances...")
-    await new Promise((r) => setTimeout(r, 800))
+    try {
+      if (onExecuteTrade) {
+        await onExecuteTrade(orderPayload)
+      }
 
-    loader.close()
+      onClose(true)
 
-    await dialog.success({
-      title: mode === "buy" ? "Prediction Placed!" : "Position Sold!",
-      description:
-        mode === "buy"
-          ? `Boom! You predicted ${outcome.toUpperCase()} with ₦${numericAmount.toLocaleString()}. Potential win: ₦${potentialWin.toLocaleString()}`
-          : `You sold ${sharesBeingSold} ${outcome.toUpperCase()} shares for ₦${cashReturn}. Funds returned to wallet!`
-    })
+      await dialog.success({
+        title: mode === "buy" ? "Prediction Placed!" : "Position Sold!",
+        description:
+          mode === "buy"
+            ? `Boom! You predicted ${outcome.toUpperCase()} with ₦${numericAmount.toLocaleString()}. Potential win: ₦${potentialWin.toLocaleString()}`
+            : `You sold ${sharesBeingSold} ${outcome.toUpperCase()} shares for ₦${cashReturn}. Funds returned to wallet!`,
+      })
+    } catch (err: any) {
+      setError(err?.message || "Trade execution failed. Please check your balance or position and try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleSwitchToSellPosition = () => {
@@ -321,10 +348,15 @@ export function TradeDialog({ isOpen, onClose, payload, status }: TradeDialogPro
           </div>
         )}
 
+        {error && (
+          <p className="text-xs font-semibold text-danger">{error}</p>
+        )}
+
         {/* Action Button */}
         <Button
           onClick={handleConfirmTrade}
           disabled={
+            isSubmitting ||
             hasCollision ||
             (mode === "buy" && numericAmount < 100) ||
             (mode === "sell" && sharesBeingSold <= 0)
@@ -336,7 +368,9 @@ export function TradeDialog({ isOpen, onClose, payload, status }: TradeDialogPro
               : "bg-[#FFC91F] hover:bg-[#E0B01B]"
           )}
         >
-          {mode === "buy" ? (
+          {isSubmitting ? (
+            "Executing Trade..."
+          ) : mode === "buy" ? (
             <>
               Predict {outcome.toUpperCase()} with ₦{numericAmount.toLocaleString()}
             </>

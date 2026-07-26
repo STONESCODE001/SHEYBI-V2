@@ -22,7 +22,7 @@ export default function LandingPage() {
 
         {/* Market Feed Grid */}
         <section className="flex flex-col gap-4">
-          <MarketFeed markets={MOCK_8_MARKETS} />
+          <MarketFeed markets={MOCK_8_MARKETS} activeCategory={activeTab} />
         </section>
       </div>
     </PublicLayout>

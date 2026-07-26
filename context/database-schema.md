@@ -500,15 +500,21 @@ Administrators may view every entry.
 | Field | Type | Required | Description | Default |
 |--------|------|----------|-------------|---------|
 | id | UUID | Yes | Ledger identifier | Generated |
+| sourceAccountId | UUID | Yes | Debit leg (origin / user wallet / platform account) | None |
+| destinationAccountId | UUID | Yes | Credit leg (destination / user wallet / platform fee account) | None |
 | userId | UUID | Optional | Related user | Null |
 | walletId | UUID | Optional | Related wallet | Null |
 | eventType | Enum | Yes | Financial event type | None |
-| debit | Decimal(18,4) | Yes | Money leaving | 0.0000 |
-| credit | Decimal(18,4) | Yes | Money entering | 0.0000 |
+| debit | Decimal(18,4) | Yes | Debit amount leaving source leg | 0.0000 |
+| credit | Decimal(18,4) | Yes | Credit amount entering destination leg | 0.0000 |
+| currency | String | Yes | ISO currency code | NGN |
+| idempotencyKey | String | Yes | Unique idempotency reference key for balanced transaction | None |
 | balanceAfter | Decimal(18,4) | Yes | Wallet balance after event | None |
 | referenceId | UUID | Optional | Related business record | Null |
 | description | String | Yes | Human-readable explanation | None |
 | createdAt | DateTime | Yes | Record timestamp | Current Time |
+
+*Double-Entry Accounting Rule*: Every ledger entry represents a balanced journal transaction where the debit leg equals the credit leg across identified origin, destination, and platform/fee accounts, bound by currency and a unique idempotency key.
 
 ---
 
@@ -684,6 +690,10 @@ Owned by one User.
 | settlementStatus | Enum | Yes | Pending, Settled | Pending |
 | createdAt | DateTime | Yes | Creation timestamp | Current Time |
 | updatedAt | DateTime | Yes | Last modification | Current Time |
+
+*Single-Outcome Exposure Invariant (Database Constraint & Transactional Rule)*:
+- Database Constraint: A Partial Unique Index `CREATE UNIQUE INDEX idx_active_user_market_position ON Position (userId, marketId) WHERE state IN ('Open', 'Partially Sold')` enforces that a user can have at most one active position record per market.
+- Transactional Rule: Keyed by `userId` and `marketId`, the prediction engine enforces that buying an outcome when the user holds an active position in another option of the same market is atomically rejected before any funds or shares are updated.
 
 ### Relationships
 
@@ -927,11 +937,17 @@ Referenced by one Wallet.
 | userId | UUID | Yes | Deposit owner | None |
 | walletId | UUID | Yes | Destination wallet | None |
 | provider | Enum | Yes | Payment provider | Paystack |
-| providerReference | String | Yes | External payment reference | None |
+| providerReference | String | Yes | Unique Paystack payment reference key | None |
+| providerEventId | String | Yes | Paystack recorded webhook event ID for idempotency | None |
 | amount | Decimal(18,4) | Yes | Deposit amount | None |
 | currency | String | Yes | Currency | NGN |
 | status | Enum | Yes | Pending, Processing, Completed, Failed | Pending |
 | completedAt | DateTime | Optional | Completion timestamp | Null |
+| createdAt | DateTime | Yes | Creation timestamp | Current Time |
+
+*Uniqueness & Webhook Idempotency Rules*:
+- Unique Constraint: `(provider, providerReference)` ensures each Paystack transaction reference creates at most one deposit record.
+- Idempotency Verification: Webhook listeners must verify `providerEventId` and `providerReference` before executing wallet credits, wallet transactions, or ledger entries to prevent duplicate processing from retried provider callbacks.
 | createdAt | DateTime | Yes | Creation timestamp | Current Time |
 
 ### Relationships
@@ -986,14 +1002,20 @@ Managed by Administrators.
 | grossAmount | Decimal(18,4) | Yes | Requested amount |
 | feeAmount | Decimal(18,4) | Yes | Withdrawal fee |
 | netAmount | Decimal(18,4) | Yes | Amount sent |
-| bankName | String | Yes | Destination bank |
-| accountName | String | Yes | Account holder |
-| accountNumber | String | Yes | Destination account |
+| bankName | String | Yes | Destination bank (Encrypted at rest) |
+| accountName | String | Yes | Account holder (Encrypted at rest) |
+| accountNumber | String | Yes | Destination account (Encrypted at rest) |
 | status | Enum | Yes | Pending, Approved, Processing, Paid, Rejected |
 | rejectionReason | String | Optional | Rejection explanation |
 | approvedBy | UUID | Optional | Administrator |
 | createdAt | DateTime | Yes | Request time |
 | updatedAt | DateTime | Yes | Last update |
+
+*PII & Bank Data Protection Rules*:
+- Field-Level Encryption: `bankName`, `accountName`, and `accountNumber` are protected using AES-256 field-level encryption / tokenization at rest.
+- Masked Display: API endpoints and UI components expose only masked values (e.g. `****1234`), revealing unmasked data exclusively to authorized payout processing services.
+- Least-Privilege RBAC & Audit Logging: Decrypting bank account details requires dedicated administrative permissions, with every view or decrypt event logged to an immutable security audit log.
+- Retention & Anonymization: Protected bank details are automatically anonymized or purged 90 days after withdrawal completion or account deletion.
 
 ### Relationships
 
@@ -1393,11 +1415,12 @@ Current MVP Fee
 
 Stored with every Withdrawal Request.
 
-Current MVP
+Current MVP Fee Policy:
 
-- 2.5%
+- 2.5% Rate
 - Minimum ₦150
-- Maximum ₦2,500
+- No maximum cap or upper limit
+- Net Withdrawal Amount = Gross Amount - Math.max(150, Gross Amount * 0.025)
 
 ---
 
@@ -2229,7 +2252,8 @@ The database must never violate these rules.
 ## Market Rules
 
 - Every Market belongs to exactly one Category.
-- Every Market contains at least two Market Options.
+- Every Binary Market contains exactly two Market Options (YES and NO).
+- Every Multi-Option Market contains at least three Market Options; creating or assigning a multi-option variant with fewer than three options is rejected.
 - Every Market Option belongs to exactly one Market.
 - Every Market has exactly one current Market State.
 - A Resolved Market must have exactly one Winning Option.

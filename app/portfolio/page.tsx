@@ -19,7 +19,7 @@ export default function PortfolioPage() {
         <div className="w-full">
           <PortfolioCard
             totalValue="₦140,000.00"
-            profitLoss="+₦15,000.00"
+            profitLoss="₦15,000.00"
             isProfit={true}
             percentageChange={12.0}
             status="Active"

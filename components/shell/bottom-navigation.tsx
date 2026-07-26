@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import type { NavItem, ShellVariant } from "./types"
 import {
@@ -33,8 +33,17 @@ function isActivePath(pathname: string, href: string): boolean {
 
 function BottomNavigation({ variant, className }: BottomNavigationProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const dialog = useDialog()
   const items = resolveItems(variant)
+
+  const handlePlusClick = () => {
+    if (variant === "guest") {
+      router.push("/sign-in")
+    } else {
+      dialog.open("market/suggestion")
+    }
+  }
 
   return (
     <nav
@@ -57,7 +66,7 @@ function BottomNavigation({ variant, className }: BottomNavigationProps) {
               <li key={item.label || item.href} className="flex min-w-0 flex-1 items-center justify-center">
                 <button
                   type="button"
-                  onClick={() => dialog.open("market/suggestion")}
+                  onClick={handlePlusClick}
                   aria-label="Suggest market"
                   className={cn(
                     "flex size-10 items-center justify-center rounded-xl cursor-pointer",

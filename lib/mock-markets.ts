@@ -119,6 +119,13 @@ export const MOCK_8_MARKETS: readonly MarketCardProps[] = [
         odds: "1k -> 4k",
         probability: 25,
       },
+      {
+        id: "c3",
+        name: "Adekunle Olopade",
+        avatarUrl: "/testimg.png",
+        odds: "1k -> 5k",
+        probability: 20,
+      },
     ],
   },
   {
@@ -139,6 +146,13 @@ export const MOCK_8_MARKETS: readonly MarketCardProps[] = [
         avatarUrl: "/testimg.png",
         odds: "1k -> 4.5k",
         probability: 22,
+      },
+      {
+        id: "m3",
+        name: "Whitemoney",
+        avatarUrl: "/testimg.png",
+        odds: "1k -> 6k",
+        probability: 15,
       },
     ],
   },

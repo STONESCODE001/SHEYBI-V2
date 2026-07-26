@@ -32,7 +32,7 @@ const DEFAULT_CATEGORIES: readonly CategoryTab[] = [
   {
     value: "trending",
     label: "Trending",
-    icon: <Star className="w-4 h-4 fill-black text-black" />,
+    icon: <Star className="w-4 h-4" />,
   },
   {
     value: "weekly",

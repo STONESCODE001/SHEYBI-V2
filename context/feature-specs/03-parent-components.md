@@ -250,7 +250,7 @@ Display a single prediction market as a compact, interactive card based on the 3
 
 #### Behaviour & Navigation
 
-- **Unified Navigation**: The entire card acts as a link navigating directly to `/markets/[id]`.
+- **Unified Navigation**: The entire card container acts as an outer `<Link>` navigating directly to `/markets/[id]`. To prevent nested interactive HTML elements (`<button>` inside `<a>`), embedded `OddsButton` items inside `MarketCard` are rendered as styled non-button visual components without conflicting onClick handlers.
 - **Pure UI Focus**: Presentation-only component with typed props and extensive comments (`/** DB INTEGRATION NOTE: ... */`) for future database connection.
 
 #### Responsive Behaviour

@@ -398,7 +398,7 @@ Footer Region:
 - Divider line (`#1F2937`)
 - Sheybi Logo (`PREDICT. PLAY. WIN.`)
 - Links: "Home", "Contact"
-- Risk Disclaimer: "Prediction markets involve financial risk—only trade with funds you can afford to lose. Bayse does not provide investment or financial advice. All market outcomes are resolved transparently using publicly verifiable sources. Participation is restricted to individuals 18 years and older and may be limited in some jurisdictions. Please review our Terms of Service, Privacy Policy, and Prohibition Policy before using the platform."
+- Risk Disclaimer: "Prediction markets involve financial risk—only trade with funds you can afford to lose. Sheybi does not provide investment or financial advice. All market outcomes are resolved transparently using publicly verifiable sources. Participation is restricted to individuals 18 years and older and may be limited in some jurisdictions. Please review our Terms of Service, Privacy Policy, and Prohibition Policy before using the platform."
 - Copyright: "© 2026 Sheybi. All rights reserved."
 
 ---

@@ -4,10 +4,10 @@ import * as React from "react"
 import { AuthenticatedLayout } from "@/components/layouts"
 import { ProfileSummaryCard, StatisticCard } from "@/components/parent"
 import { Button } from "@/components/ui/button"
-import { Avatar } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { useDialog } from "@/components/dialog"
-import { User, ShieldCheck, Settings as SettingsIcon, Sparkles } from "lucide-react"
+import { User, ShieldCheck, Settings as SettingsIcon } from "lucide-react"
 
 export default function ProfilePage() {
   const dialog = useDialog()
@@ -45,7 +45,9 @@ export default function ProfilePage() {
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <Avatar className="size-16 border-2 border-primary/20" />
+                <Avatar className="size-16 border-2 border-primary/20">
+                  <AvatarFallback className="font-bold text-primary">JD</AvatarFallback>
+                </Avatar>
                 <div className="absolute -bottom-1 -right-1 bg-success text-white p-0.5 rounded-full">
                   <ShieldCheck className="size-4" />
                 </div>
@@ -66,20 +68,11 @@ export default function ProfilePage() {
               className="bg-primary text-white hover:bg-primary-hover rounded-xl font-semibold gap-2"
             >
               <SettingsIcon className="size-4" />
-              <span>Account Settings (Clerk)</span>
+              <span>Edit Profile</span>
             </Button>
           </div>
 
-          {/* Inline Clerk User Profile Slot Placeholder */}
-          <div className="rounded-2xl border border-dashed border-primary/30 bg-[var(--bg-surface-secondary)]/60 p-6 text-center space-y-2">
-            <div className="flex items-center justify-center gap-2 text-primary font-bold text-sm">
-              <Sparkles className="size-4" />
-              <span>Clerk Authentication Slot</span>
-            </div>
-            <p className="text-xs text-[var(--text-muted)] max-w-md mx-auto">
-              On desktop viewports, the native Clerk <code className="font-mono text-primary">&lt;UserProfile /&gt;</code> component will render inline directly within this surface container when backend authentication is connected.
-            </p>
-          </div>
+          {/* Integration Note: On desktop viewports, the native Clerk <UserProfile /> component renders inline within this container when connected */}
         </div>
 
         {/* User Stats Summary Grid */}

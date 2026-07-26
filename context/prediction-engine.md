@@ -525,14 +525,15 @@ The engine must execute buying in the following order:
 4. Validate selected option.
 5. Validate trade amount.
 6. Validate wallet balance.
-7. Deduct trade amount.
-8. Deduct trading fee (2.5%).
-9. Calculate purchased shares.
-10. Update option probability.
-11. Update option share price.
-12. Create or update the user's position.
-13. Record the ledger entry.
-14. Update trading volume.
+7. Validate single-outcome exposure invariant (atomically reject purchase if user holds an active position in a different option of the same market; leave wallet, position, price, and ledger state unchanged).
+8. Deduct trade amount.
+9. Deduct trading fee (2.5%).
+10. Calculate purchased shares.
+11. Update option probability.
+12. Update option share price.
+13. Create or update the user's position.
+14. Record the ledger entry.
+15. Update trading volume.
 
 ---
 

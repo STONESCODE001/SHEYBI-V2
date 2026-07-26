@@ -1,5 +1,5 @@
 export { HeroBanner, HeroBannerSkeleton } from "./hero-banner"
-export type { HeroBannerProps, HeroBannerAction } from "./hero-banner"
+export type { HeroBannerProps } from "./hero-banner"
 
 export { MarketCard, MarketCardSkeleton } from "./market-card"
 export type { MarketCardProps } from "./market-card"

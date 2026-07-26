@@ -126,14 +126,26 @@ function ActivityCard({
         </time>
       </div>
 
-      {/* Right: Amount */}
-      {amount && (
-        <div className="flex shrink-0 flex-col items-end">
+      {/* Right: Amount & Activity Type Badge */}
+      <div className="flex shrink-0 flex-col items-end gap-1">
+        {amount && (
           <span className="font-mono text-sm font-semibold tabular-nums text-[var(--text-primary)]">
             {amount}
           </span>
-        </div>
-      )}
+        )}
+        <Badge
+          variant="outline"
+          className={cn(
+            "text-[10px] px-1.5 py-0 font-bold rounded-md border-none",
+            activityType === "trade" && "bg-primary/10 text-primary",
+            activityType === "deposit" && "bg-success-soft text-success",
+            activityType === "withdrawal" && "bg-danger-soft text-danger",
+            activityType === "market_event" && "bg-amber-500/10 text-amber-500"
+          )}
+        >
+          {ACTIVITY_LABELS[activityType]}
+        </Badge>
+      </div>
     </div>
   )
 }

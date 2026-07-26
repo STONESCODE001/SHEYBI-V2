@@ -2,22 +2,11 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 
-interface HeroBannerAction {
-  /** Button label text. */
-  readonly label: string
-  /** Click handler. */
-  readonly onClick?: () => void
-  /** Whether this is the primary (filled) action. */
-  readonly primary?: boolean
-}
-
 interface HeroBannerProps extends React.ComponentProps<"section"> {
   /** Optional custom headline text. */
   readonly headline?: string
   /** Optional custom description text. */
   readonly description?: string
-  /** Optional action buttons. */
-  readonly actions?: readonly HeroBannerAction[]
   /** Optional custom mascot image URL (defaults to /sheybi-mascot.png). */
   readonly mascotUrl?: string
   /** Whether the banner is in a loading state. */
@@ -44,12 +33,11 @@ function HeroBannerSkeleton({
 function HeroBanner({
   headline,
   description,
-  actions,
   mascotUrl = "/sheybi-mascot.png",
   loading = false,
   className,
   ...props
-}: HeroBannerProps): React.ReactElement | null {
+}: HeroBannerProps): React.ReactElement {
   if (loading) {
     return <HeroBannerSkeleton className={className} />
   }
@@ -99,7 +87,7 @@ function HeroBanner({
 }
 
 export { HeroBanner, HeroBannerSkeleton }
-export type { HeroBannerProps, HeroBannerAction }
+export type { HeroBannerProps }
 
 
 

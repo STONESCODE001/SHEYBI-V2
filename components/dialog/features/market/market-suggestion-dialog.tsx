@@ -15,34 +15,44 @@ interface MarketSuggestionDialogProps {
   onClose: () => void
   status: DialogStatus
   setStatus: (status: DialogStatus) => void
+  onSubmitSuggestion?: (data: { title: string; description: string }) => Promise<void>
 }
 
 export function MarketSuggestionDialog({
   isOpen,
   onClose,
   status,
+  onSubmitSuggestion,
 }: MarketSuggestionDialogProps) {
   const dialog = useDialog()
   const [title, setTitle] = React.useState("")
   const [description, setDescription] = React.useState("")
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title.trim()) return
+    if (!title.trim() || isSubmitting) return
 
+    setError(null)
     setIsSubmitting(true)
-    await new Promise((r) => setTimeout(r, 600))
-    setIsSubmitting(false)
-    onClose()
+    try {
+      if (onSubmitSuggestion) {
+        await onSubmitSuggestion({ title: title.trim(), description: description.trim() })
+      }
+      onClose()
+      setTitle("")
+      setDescription("")
 
-    setTitle("")
-    setDescription("")
-
-    await dialog.success({
-      title: "Market Suggestion Submitted!",
-      description: "Thank you! Your market suggestion has been sent to our admin team for review.",
-    })
+      await dialog.success({
+        title: "Market Suggestion Submitted!",
+        description: "Thank you! Your market suggestion has been sent to our admin team for review.",
+      })
+    } catch (err: any) {
+      setError(err?.message || "Failed to submit market suggestion. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -91,6 +101,8 @@ export function MarketSuggestionDialog({
             className="rounded-xl bg-[var(--bg-surface-secondary)] border-[var(--border-default)] text-sm focus-visible:ring-primary resize-none"
           />
         </div>
+
+        {error && <p className="text-xs font-semibold text-danger">{error}</p>}
 
         <DialogFooter className="mt-2 p-0 gap-2">
           <Button
