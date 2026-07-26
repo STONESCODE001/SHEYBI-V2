@@ -224,6 +224,12 @@ Make sure you update this section after every meaningful implementation unit.
   * **Decisions:** Guarded `detailHref` with `disabled` check in `MarketCard` and added `target.closest("a, button")` check in `onClick` and `onKeyDown` handlers; updated React keys in `PrimaryNavigationRegion` and `BottomNavigation` to use stable `item.label || item.href` identifiers; created functional `/contact` route in `app/contact/page.tsx`; replaced hardcoded hex colors in `design-system.md` with canonical CSS tokens; added `text` language specifiers to markdown code blocks; reconciled Market Suggestion flow across `user-flow.md`; updated `wireframe.md` to reflect borderless headers, modal dialog visual description, and removed duplicated section 10.
   * **Verification:** `npm run build` completed successfully in 65s with zero errors across all 28 routed pages.
 
+* **2026-07-26**
+  * **Feature Completed:** Market Cards Redesign (Figma Single Source of Truth Alignment).
+  * **Files Modified/Created:** `components/child/ratio-bar.tsx` [NEW], `components/child/odds-button.tsx` [NEW], `components/child/index.ts`, `components/parent/market-card.tsx`, `app/page.tsx`, `app/markets/page.tsx`, `context/design-system.md`, `context/specs/frontend/03-parent-components.md`, `context/feature-specs/03-parent-components.md`, `context/progress-tracker.md`.
+  * **Decisions:** Redesigned `MarketCard` to strictly follow the Figma render designs for `binary`, `1v1`, and `multi_option` variants as the sole source of truth; enforced Inter font-bold/black title typography; built `RatioBar` child component for Green (`#30D878`) / Yellow (`#FFC91F`) probability split indicator; built `OddsButton` child component for outcome display buttons (`Yes 1k -> 3k`, `No 1k -> 5k`); wrapped entire card container in unified link to `/markets/[id]`; added extensive developer comments (`/** DB INTEGRATION NOTE: ... */`) for future database integration.
+
+
 
 
 

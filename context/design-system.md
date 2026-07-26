@@ -526,19 +526,23 @@ Contains:
 
 Purpose
 
-Represents one prediction market on home/feeds. Sheybi supports 3 distinct market card layout variants:
+Represents one prediction market on home/feeds. The Figma render designs represent the **sole, singular source of truth** for all Market Cards across Sheybi. Sheybi supports 3 distinct market card layout variants:
 
-### 1. 1v1 Matchup Card
-- **Structure**: Title (Question), Contestant 1 Avatar vs Contestant 2 Avatar, split Green/Yellow ratio bar, Yes (Green odds `1k -> 3k`) and No (Yellow odds `1k -> 5k`) action buttons.
-- **Visuals**: Dark surface background (`var(--bg-surface)`), contestant headshots side-by-side with "VS" center label.
+### 1. 1v1 Matchup Card (`1v1`)
+- **Structure**: Question Title in Inter font (`font-bold` / `font-black`), Contestant 1 Avatar vs Contestant 2 Avatar with centered "VS" label, split Green/Yellow ratio bar, Yes (Green odds `1k -> 3k`) and No (Yellow odds `1k -> 5k`) action buttons.
+- **Visuals**: Dark surface background (`var(--bg-surface)` / `#0D1424`), contestant headshots side-by-side with "VS" center text.
 
-### 2. Binary Yes/No Card
-- **Structure**: Title (Question), dual-color Green (`var(--market-yes)`) & Yellow (`var(--accent-yellow)`) ratio bar, Yes action button (Green odds e.g. `1k -> 3k`) and No action button (Yellow odds e.g. `1k -> 5k`).
-- **Visuals**: Clean elevated card surface (`var(--bg-surface)`) with full-width ratio indicator.
+### 2. Binary Yes/No Card (`binary`)
+- **Structure**: Question Title in Inter font (`font-bold` / `font-black`), dual-color Green (`var(--market-yes)` / `#30D878`) & Yellow (`var(--accent-yellow)` / `#FFC91F`) ratio bar, Yes action button (Green odds e.g. `1k -> 3k`) and No action button (Yellow odds e.g. `1k -> 5k`).
+- **Visuals**: Clean elevated card surface (`var(--bg-surface)` / `#0D1424`) with full-width ratio indicator.
 
-### 3. Multiple Options Card
-- **Structure**: Title (Question), list of outcome/contestant rows containing avatar image, contestant name, and outcome button (`Yes  1k -> 3k`), plus a `see more ...` expander button at the card footer.
+### 3. Multiple Options Card (`multi_option`)
+- **Structure**: Question Title in Inter font (`font-bold` / `font-black`), list of outcome/contestant rows containing avatar image, contestant name, and outcome button (`Yes  1k -> 3k`), plus a `see more ...` expander button at the card footer.
 - **Visuals**: Stacked dark inner rows inside `var(--bg-surface)` card container.
+
+### Navigation & Odds Rules
+- **Unified Navigation**: The entire card acts as a link to `/markets/[id]` where users complete trading.
+- **Odds Calculation**: Odds buttons display `1k -> Xk` derived dynamically from outcome probability: $\text{Payout} = \frac{₦1000}{\text{Probability } p}$.
 
 ### Common Card States
 

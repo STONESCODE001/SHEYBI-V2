@@ -214,7 +214,7 @@ Introduce the current screen or highlight important platform content. Always app
 
 #### Purpose
 
-Display a single prediction market as a compact, interactive card. This is the primary unit of market discovery across the application.
+Display a single prediction market as a compact, interactive card based on the 3 Figma render variants (`1v1`, `binary`, `multi_option`). The Figma render designs serve as the **sole, singular source of truth** for all Market Cards across the application.
 
 #### Parent
 
@@ -226,47 +226,32 @@ Display a single prediction market as a compact, interactive card. This is the p
 
 #### Children
 
-- `Card`, `CardHeader`, `CardContent`, `CardFooter` (UI primitives)
-- `CardImage` (child component — market thumbnail)
-- `Badge` (UI primitive — category and status)
-- `MarketOutcomeChip` (child component — Yes/No probability)
-- `CountdownTimer` (child component — time remaining)
-- `StatisticDisplay` (child component — volume, traders)
-- `Button` (UI primitive — trade action)
-- `ActionIcon` (child component — share, bookmark)
+- `Card` (UI primitive)
+- `RatioBar` (child component — dual color Green/Yellow split progress bar)
+- `OddsButton` (child component — outcome display button e.g., `Yes 1k -> 3k`, `No 1k -> 5k`)
 
-#### Reusable Elements
+#### Variant Structure
 
-- Card container with `rounded-2xl` border radius
-- CardImage for thumbnail display (16:9 aspect ratio)
-- Badge for category label and market status
-- MarketOutcomeChip for probability display
-- CountdownTimer for closing time
-- StatisticDisplay for volume and participant count
-- Primary Button for trade action
-- ActionIcon for share/bookmark actions
+1. **1v1 Matchup Card (`1v1`)**:
+   - Title: Inter font (`font-bold` / `font-black`, white `#FFFFFF`).
+   - Contestants: Left headshot avatar, centered `"VS"` label, right headshot avatar.
+   - RatioBar: Green (`#30D878`) left, Yellow (`#FFC91F`) right.
+   - OddsButtons: `Yes 1k -> 3k` (green text) and `No 1k -> 5k` (yellow text).
 
-#### Composition Rules
+2. **Binary Yes/No Card (`binary`)**:
+   - Title: Inter font (`font-bold` / `font-black`, white `#FFFFFF`).
+   - RatioBar: Green left, Yellow right.
+   - OddsButtons: `Yes 1k -> 3k` and `No 1k -> 5k`.
 
-- Card layout is vertical (top to bottom):
-  1. CardImage (thumbnail) — full card width, fixed 16:9 aspect ratio
-  2. CardHeader — category Badge and status Badge side by side, right-aligned CountdownTimer
-  3. CardContent — market title (headline-sm, max 2 lines, truncated with ellipsis), market description (body-sm, max 2 lines, truncated), MarketOutcomeChip(s) showing current probabilities, StatisticDisplay row showing volume and traders
-  4. CardFooter — trade Button (full width) and ActionIcon row
-- Card minimum gap between adjacent cards: 24 px.
-- Card uses `--bg-surface` background and soft shadow (shadow-1).
-- Hover: card background elevates to `--bg-hover`, border transitions to `--border-hover`, shadow increases to shadow-2.
-- Internal padding: card-padding (16 px).
+3. **Multiple Options Card (`multi_option`)**:
+   - Title: Inter font (`font-bold` / `font-black`, white `#FFFFFF`).
+   - Outcome Rows: Stacked inner rows with contestant avatar, contestant name, and outcome button (`Yes 1k -> 3k`).
+   - Footer: `see more ...` expander link.
 
-#### Behaviour
+#### Behaviour & Navigation
 
-- Hover: background elevation and border highlight. No scaling animation.
-- Focus: visible focus outline using `--border-active`.
-- Active: background transitions to `--bg-active`.
-- Loading: skeleton placeholder matching card dimensions (CardImage skeleton, text skeletons, button skeleton).
-- Disabled: reduced opacity (0.5), no hover/focus interactions.
-- Image and title are independent, non-nested links that navigate to Market Details.
-- Trade button and action icons are separate sibling controls positioned within/alongside the card, keeping interactions isolated to avoid nested click/focus handlers.
+- **Unified Navigation**: The entire card acts as a link navigating directly to `/markets/[id]`.
+- **Pure UI Focus**: Presentation-only component with typed props and extensive comments (`/** DB INTEGRATION NOTE: ... */`) for future database connection.
 
 #### Responsive Behaviour
 

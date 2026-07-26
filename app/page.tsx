@@ -3,36 +3,7 @@
 import * as React from "react"
 import { PublicLayout } from "@/components/layouts"
 import { HeroBanner, SectionHeader, MarketFeed } from "@/components/parent"
-const MOCK_MARKETS: any[] = [
-  {
-    id: "1",
-    title: "Placeholder Market",
-    category: "Entertainment",
-    status: "active",
-    yesProbability: 45,
-    noProbability: 55,
-    volume: "₦1.2M",
-    traders: "1.2k",
-    outcomes: [
-      { id: "yes", label: "Yes", currentPrice: 0.45, color: "var(--success)" },
-      { id: "no", label: "No", currentPrice: 0.55, color: "var(--danger)" },
-    ],
-  },
-  {
-    id: "2",
-    title: "Another Market",
-    category: "Sports",
-    status: "active",
-    yesProbability: 75,
-    noProbability: 25,
-    volume: "₦850K",
-    traders: "840",
-    outcomes: [
-      { id: "yes", label: "Yes", currentPrice: 0.75, color: "var(--success)" },
-      { id: "no", label: "No", currentPrice: 0.25, color: "var(--danger)" },
-    ],
-  },
-]
+import { MOCK_8_MARKETS } from "@/lib/mock-markets"
 
 export default function LandingPage() {
   return (
@@ -63,7 +34,7 @@ export default function LandingPage() {
             onAction={() => console.log("Navigate to Markets")}
           />
           <MarketFeed
-            markets={MOCK_MARKETS}
+            markets={MOCK_8_MARKETS}
           />
         </section>
       </div>

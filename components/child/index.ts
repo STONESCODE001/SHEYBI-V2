@@ -63,3 +63,10 @@ export type {
 
 export { ActionIcon } from "./action-icon"
 export type { ActionIconProps } from "./action-icon"
+
+export { RatioBar } from "./ratio-bar"
+export type { RatioBarProps } from "./ratio-bar"
+
+export { OddsButton } from "./odds-button"
+export type { OddsButtonProps } from "./odds-button"
+
