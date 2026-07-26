@@ -10,7 +10,7 @@ export default function LoadingPage() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className="h-24 w-full animate-pulse rounded-lg bg-[var(--surface-variant)]"
+            className="h-24 w-full animate-pulse rounded-lg bg-[var(--bg-surface-secondary)]"
           />
         ))}
       </div>

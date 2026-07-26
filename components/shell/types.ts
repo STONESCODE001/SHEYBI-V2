@@ -15,6 +15,7 @@ export type NavIconName =
   | "audit"
   | "categories"
   | "dashboard"
+  | "plus"
 
 export interface NavItem {
   readonly label: string

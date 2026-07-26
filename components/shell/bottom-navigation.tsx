@@ -49,23 +49,50 @@ function BottomNavigation({ variant, className }: BottomNavigationProps) {
           const Icon = NAV_ICONS[item.icon]
           const active = isActivePath(pathname, item.href)
 
+          if (item.icon === "plus") {
+            return (
+              <li key={item.href} className="flex min-w-0 flex-1 items-center justify-center">
+                <Link
+                  href={item.href}
+                  aria-label="Create market"
+                  className={cn(
+                    "flex size-10 items-center justify-center rounded-xl",
+                    "text-[var(--accent-yellow)] font-bold transition-transform active:scale-95",
+                    "outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
+                  )}
+                >
+                  <Icon className="size-6 shrink-0" aria-hidden="true" />
+                </Link>
+              </li>
+            )
+          }
+
           return (
             <li key={item.href} className="flex min-w-0 flex-1">
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                aria-label={item.label}
+                aria-label={item.label || "Navigation tab"}
                 className={cn(
                   "flex min-h-11 w-full flex-col items-center justify-center gap-1 px-1",
                   "outline-none transition-colors duration-200",
                   "focus-visible:ring-2 focus-visible:ring-[var(--border-active)] focus-visible:ring-inset",
                   active
-                    ? "text-[var(--accent-primary)]"
+                    ? "text-[var(--accent-yellow)] font-bold"
                     : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                 )}
               >
-                <Icon className="size-5 shrink-0" aria-hidden="true" />
-                <span className="max-w-full truncate text-xs">{item.label}</span>
+                <div
+                  className={cn(
+                    "flex size-7 items-center justify-center rounded-full transition-colors",
+                    active && "bg-[var(--accent-yellow)]/15"
+                  )}
+                >
+                  <Icon className="size-5 shrink-0" aria-hidden="true" />
+                </div>
+                {item.label ? (
+                  <span className="max-w-full truncate text-[11px]">{item.label}</span>
+                ) : null}
               </Link>
             </li>
           )

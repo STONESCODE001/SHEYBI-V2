@@ -213,13 +213,12 @@ Primary navigation and persistent status for desktop users.
 Guest
 - Logo
 - Wallet placeholder
-- Login button
+- Log In & Sign up buttons
 
 Authenticated
 - Logo
 - Wallet Card
 - Primary Navigation
-- Category Navigation
 - Clerk User placeholder
 
 Admin
@@ -228,7 +227,7 @@ Admin
 - Clerk User placeholder
 
 ### Desktop Behaviour
-Always visible. Fixed to the left edge. Full height. Never overlays content.
+Always visible. Fixed to the left edge. Full height. Never overlays content. Categories section is explicitly removed from desktop sidebar. Scrollbar is hidden (`scrollbar-width: none`).
 
 ### Tablet Behaviour
 Collapsible. Can expand over content.
@@ -240,9 +239,8 @@ Hidden. Replaced by Hamburger Drawer and Bottom Navigation.
 Top: Logo
 Second: Wallet Card
 Third: Primary Navigation
-Fourth: Categories
 Bottom: User Region
-Secondary to Main Content, but pinned.
+Secondary to Main Content, but pinned. Categories are excluded.
 
 ### Component Sizing
 Fixed width `260px`. Full viewport height minus header.
@@ -254,7 +252,7 @@ Base padding `24px`. Consistent vertical spacing between navigation groups.
 Navigation labels use body typography (Base). Section labels use muted labels.
 
 ### Fixed vs Scrollable
-Sidebar remains fixed. Navigation region scrolls independently vertically if necessary.
+Sidebar remains fixed. Navigation region scrolls independently vertically if necessary with hidden scrollbar (`scrollbar-width: none`).
 
 ### Accessibility
 Keyboard navigable. Current page announced. Visible focus states. `nav` landmark. `aria-label="Main Navigation"`.
@@ -872,6 +870,9 @@ Navigation Items → `02-child-components.md`
 
 ## Live Market Ticker
 
+> [!NOTE]
+> Implementation and active rendering of the Live Market Ticker are currently **PAUSED** to prevent schema or build sequence disruption while preserving underlying component types for future reference.
+
 ### Purpose
 Displays continuously scrolling market activity.
 
@@ -1173,7 +1174,7 @@ No page may redefine any shell region.
 ## Primary Navigation Region
 - **Purpose**: Core application routes.
 - **Parent**: Desktop Sidebar, Hamburger Drawer.
-- **Children**: Navigation links (Home, Markets, Portfolio, Wallet, Notifications, Settings).
+- **Children**: Navigation links (Home, Market, Trades, Wallet, `+` [Market Suggestion action button]).
 - **Reusable Elements**: None.
 - **Ownership**: Application Shell.
 
@@ -1229,7 +1230,7 @@ No page may redefine any shell region.
 ## Bottom Navigation
 - **Purpose**: Mobile persistent navigation.
 - **Parent**: Application Root.
-- **Children**: Route Icons (Home, Markets, Portfolio, Wallet, Profile).
+- **Children**: Route Icons (Home, Markets, `+` [Market Suggestion center button], Trades, Profile).
 - **Reusable Elements**: NavigationIcon.
 - **Ownership**: Application Shell.
 

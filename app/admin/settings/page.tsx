@@ -16,7 +16,7 @@ export default function AdminSettingsPage() {
             title="Maintenance Mode"
             description="Toggle maintenance mode for the entire platform."
             action={
-              <div className="flex h-6 w-11 items-center rounded-full bg-[var(--surface-variant)] p-1">
+              <div className="flex h-6 w-11 items-center rounded-full bg-[var(--bg-surface-secondary)] p-1">
                 <div className="h-4 w-4 rounded-full bg-white transition-transform" />
               </div>
             }

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { cn } from "@/lib/utils"
 import { ResponsiveWrapper } from "../../responsive-wrapper"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

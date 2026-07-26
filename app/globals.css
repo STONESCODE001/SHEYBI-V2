@@ -8,6 +8,8 @@
     --font-heading: var(--font-sans);
     --font-sans: "Inter", sans-serif;
     --font-mono: var(--font-geist-mono);
+
+    /* shadcn core colors */
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,6 +41,8 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+
+    /* Border Radius Scale */
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -46,55 +50,129 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+
+    /* Sheybi semantic surface tokens */
+    --color-bg-base: var(--bg-base);
+    --color-bg-elevated: var(--bg-elevated);
+    --color-bg-surface: var(--bg-surface);
+    --color-bg-surface-secondary: var(--bg-surface-secondary);
+    --color-bg-hover: var(--bg-hover);
+    --color-bg-active: var(--bg-active);
+
+    /* Sheybi text tokens */
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-muted: var(--text-muted);
+    --color-text-disabled: var(--text-disabled);
+    --color-text-inverse: var(--text-inverse);
+
+    /* Sheybi accent tokens */
+    --color-accent-blue: var(--accent-blue);
+    --color-accent-yellow: var(--accent-yellow);
+    --color-accent-yellow-hover: var(--accent-yellow-hover);
+    --color-accent-green: var(--accent-green);
+    --color-accent-green-hover: var(--accent-green-hover);
+    --color-accent-primary: var(--accent-primary);
+    --color-accent-primary-hover: var(--accent-primary-hover);
+    --color-accent-primary-active: var(--accent-primary-active);
+    --color-accent-secondary: var(--accent-secondary);
+    --color-accent-secondary-hover: var(--accent-secondary-hover);
+
+    /* Sheybi market tokens */
+    --color-market-yes: var(--market-yes);
+    --color-market-yes-hover: var(--market-yes-hover);
+    --color-market-no: var(--market-no);
+    --color-market-no-hover: var(--market-no-hover);
+
+    /* Sheybi financial tokens */
+    --color-profit: var(--profit);
+    --color-loss: var(--loss);
+    --color-wallet: var(--wallet);
+    --color-deposit: var(--deposit);
+    --color-withdrawal: var(--withdrawal);
+
+    /* Sheybi status tokens */
+    --color-state-success: var(--state-success);
+    --color-state-warning: var(--state-warning);
+    --color-state-error: var(--state-error);
+    --color-state-info: var(--state-info);
+
+    /* Sheybi border tokens */
+    --color-border-default: var(--border-default);
+    --color-border-hover: var(--border-hover);
+    --color-border-active: var(--border-active);
+
+    /* Sheybi design system token aliases from RULE[user_global] & specs */
+    --color-surface: var(--surface);
+    --color-surface-dim: var(--surface-dim);
+    --color-surface-bright: var(--surface-bright);
+    --color-surface-container-lowest: var(--surface-container-lowest);
+    --color-surface-container-low: var(--surface-container-low);
+    --color-surface-container: var(--surface-container);
+    --color-surface-container-high: var(--surface-container-high);
+    --color-surface-container-highest: var(--surface-container-highest);
+    --color-on-surface: var(--on-surface);
+    --color-on-surface-variant: var(--on-surface-variant);
+    --color-inverse-surface: var(--inverse-surface);
+    --color-inverse-on-surface: var(--inverse-on-surface);
+    --color-outline: var(--outline);
+    --color-outline-variant: var(--outline-variant);
+    --color-surface-tint: var(--surface-tint);
+    --color-surface-variant: var(--surface-variant);
+    --color-surface-subtle: var(--surface-subtle);
+    --color-primary-hover: var(--primary-hover);
+    --color-success: var(--success);
+    --color-success-soft: var(--success-soft);
+    --color-danger: var(--danger);
+    --color-danger-soft: var(--danger-soft);
+    --color-warning: var(--warning);
+    --color-info: var(--info);
+    --color-trending-accent: var(--trending-accent);
 }
 
 /*
- * Design tokens from ui-context.md
+ * Sheybi Design System Tokens (ui-context.md, design-system.md, wireframe.md, specs)
  *
- * Light theme (:root) uses the shadcn neutral defaults.
- * Dark theme (.dark) maps to the Sheybi dark palette specified in ui-context.md.
- *
- * Sheybi-specific semantic tokens (surfaces, markets, financials, status)
- * are defined in both themes so components can reference them via
- * CSS custom properties without raw hex values.
+ * `:root` defines light mode defaults and core design system tokens.
+ * `.dark` defines pure dark mode Sheybi design tokens (#0B0E14 base, #0F1727 elevated surface).
  */
 
 :root {
     /* shadcn core tokens — light mode */
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+    --background: #F7F8FC;
+    --foreground: #111827;
+    --card: #FFFFFF;
+    --card-foreground: #111827;
+    --popover: #FFFFFF;
+    --popover-foreground: #111827;
+    --primary: #4F46E5;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F2F4FA;
+    --secondary-foreground: #111827;
+    --muted: #F2F4FA;
+    --muted-foreground: #4B5563;
+    --accent: #E8EAF0;
+    --accent-foreground: #111827;
+    --destructive: #DC2626;
+    --border: #D9DDE8;
+    --input: #D9DDE8;
+    --ring: #4F46E5;
+    --chart-1: #0D5BFF;
+    --chart-2: #FFC91F;
+    --chart-3: #30D878;
+    --chart-4: #FFC91F;
+    --chart-5: #EF4444;
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --sidebar: #FFFFFF;
+    --sidebar-foreground: #111827;
+    --sidebar-primary: #4F46E5;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #F2F4FA;
+    --sidebar-accent-foreground: #111827;
+    --sidebar-border: #D9DDE8;
+    --sidebar-ring: #4F46E5;
 
-    /* Sheybi semantic surface tokens — light mode equivalents */
+    /* Sheybi semantic surface tokens — light mode */
     --bg-base: #F7F8FC;
     --bg-elevated: #FFFFFF;
     --bg-surface: #FFFFFF;
@@ -110,26 +188,31 @@
     --text-inverse: #FFFFFF;
 
     /* Sheybi accent tokens */
+    --accent-blue: #0D47FF;
+    --accent-yellow: #FFC107;
+    --accent-yellow-hover: #E5AD00;
+    --accent-green: #00D376;
+    --accent-green-hover: #00B867;
     --accent-primary: #0D5BFF;
     --accent-primary-hover: #3A79FF;
     --accent-primary-active: #0047DB;
     --accent-secondary: #FFC91F;
     --accent-secondary-hover: #FFD54F;
 
-    /* Sheybi market tokens */
+    /* Sheybi market tokens — light mode */
     --market-yes: #30D878;
     --market-yes-hover: #2BBE69;
     --market-no: #EF4444;
     --market-no-hover: #DC2626;
 
-    /* Sheybi financial tokens */
+    /* Sheybi financial tokens — light mode */
     --profit: #30D878;
     --loss: #EF4444;
     --wallet: #FFC91F;
     --deposit: #30D878;
     --withdrawal: #FFC91F;
 
-    /* Sheybi status tokens */
+    /* Sheybi status tokens — light mode */
     --state-success: #30D878;
     --state-warning: #FFC91F;
     --state-error: #EF4444;
@@ -139,88 +222,143 @@
     --border-default: #D9DDE8;
     --border-hover: #C4C9D4;
     --border-active: #0D5BFF;
+
+    /* Design System tokens from RULE[user_global] */
+    --surface: #FFFFFF;
+    --surface-dim: #dcd8e5;
+    --surface-bright: #fcf8ff;
+    --surface-container-lowest: #ffffff;
+    --surface-container-low: #f5f2ff;
+    --surface-container: #f0ecf9;
+    --surface-container-high: #eae6f4;
+    --surface-container-highest: #e4e1ee;
+    --on-surface: #1b1b24;
+    --on-surface-variant: #464555;
+    --inverse-surface: #302f39;
+    --inverse-on-surface: #f3effc;
+    --outline: #777587;
+    --outline-variant: #c7c4d8;
+    --surface-tint: #4d44e3;
+    --primary-container: #4f46e5;
+    --on-primary-container: #dad7ff;
+    --inverse-primary: #c3c0ff;
+    --secondary-container: #dedfe3;
+    --on-secondary-container: #606366;
+    --tertiary: #7e3000;
+    --on-tertiary: #ffffff;
+    --tertiary-container: #a44100;
+    --on-tertiary-container: #ffd2be;
+    --error-container: #ffdad6;
+    --on-error-container: #93000a;
+    --primary-fixed: #e2dfff;
+    --primary-fixed-dim: #c3c0ff;
+    --on-primary-fixed: #0f0069;
+    --on-primary-fixed-variant: #3323cc;
+    --secondary-fixed: #e1e2e6;
+    --secondary-fixed-dim: #c5c6ca;
+    --on-secondary-fixed: #191c1f;
+    --on-secondary-fixed-variant: #44474a;
+    --tertiary-fixed: #ffdbcc;
+    --tertiary-fixed-dim: #ffb695;
+    --on-tertiary-fixed: #351000;
+    --on-tertiary-fixed-variant: #7b2f00;
+    --surface-variant: #e4e1ee;
+    --surface-subtle: #F2F4FA;
+    --primary-hover: #4338CA;
+    --success: #16A34A;
+    --success-soft: #DCFCE7;
+    --danger: #DC2626;
+    --danger-soft: #FEE2E2;
+    --warning: #F59E0B;
+    --info: #0EA5E9;
+    --trending-accent: #FF6A3D;
 }
 
 .dark {
-    /* shadcn core tokens — dark mode mapped to ui-context.md */
-    --background: #080B14;
+    /* shadcn core tokens — dark mode mapped to ui-context.md (#0B0E14 base, #0F1727 elevated surface) */
+    --background: #0B0E14;
     --foreground: #FFFFFF;
-    --card: #111827;
+    --card: #0F1727;
     --card-foreground: #FFFFFF;
-    --popover: #111827;
+    --popover: #0F1727;
     --popover-foreground: #FFFFFF;
     --primary: #0D5BFF;
     --primary-foreground: #FFFFFF;
-    --secondary: #161F33;
+    --secondary: #141E30;
     --secondary-foreground: #FFFFFF;
-    --muted: #161F33;
-    --muted-foreground: #9CA3AF;
-    --accent: #1E2A44;
+    --muted: #141E30;
+    --muted-foreground: #7E8C9F;
+    --accent: #1A263D;
     --accent-foreground: #FFFFFF;
     --destructive: #EF4444;
-    --border: #1E2A44;
-    --input: #1E2A44;
-    --ring: #0D5BFF;
+    --border: #1E2A3F;
+    --input: #1E2A3F;
+    --ring: #FFC107;
     --chart-1: #0D5BFF;
     --chart-2: #FFC91F;
-    --chart-3: #30D878;
+    --chart-3: #00D376;
     --chart-4: #FFC91F;
     --chart-5: #EF4444;
     --radius: 0.625rem;
-    --sidebar: #080B14;
+    --sidebar: #0F1727;
     --sidebar-foreground: #FFFFFF;
     --sidebar-primary: #0D5BFF;
     --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #161F33;
+    --sidebar-accent: #141E30;
     --sidebar-accent-foreground: #FFFFFF;
-    --sidebar-border: #1E2A44;
-    --sidebar-ring: #0D5BFF;
+    --sidebar-border: #1E2A3F;
+    --sidebar-ring: #FFC107;
 
     /* Sheybi semantic surface tokens — dark mode (from ui-context.md) */
-    --bg-base: #080B14;
-    --bg-elevated: #111827;
-    --bg-surface: #161F33;
-    --bg-surface-secondary: #1E2A44;
-    --bg-hover: #23324F;
-    --bg-active: #2A3A5A;
+    --bg-base: #0B0E14;
+    --bg-elevated: #0F1727;
+    --bg-surface: #0F1727;
+    --bg-surface-secondary: #141E30;
+    --bg-hover: #1A263D;
+    --bg-active: #22314E;
 
     /* Sheybi text tokens — dark mode (from ui-context.md) */
     --text-primary: #FFFFFF;
-    --text-secondary: #D1D5DB;
-    --text-muted: #9CA3AF;
-    --text-disabled: #6B7280;
-    --text-inverse: #09090B;
+    --text-secondary: #7E8C9F;
+    --text-muted: #6B7280;
+    --text-disabled: #4B5563;
+    --text-inverse: #0B0E14;
 
-    /* Sheybi accent tokens (same in both themes) */
+    /* Sheybi accent tokens (dark mode) */
+    --accent-blue: #0D47FF;
+    --accent-yellow: #FFC107;
+    --accent-yellow-hover: #E5AD00;
+    --accent-green: #00D376;
+    --accent-green-hover: #00B867;
     --accent-primary: #0D5BFF;
     --accent-primary-hover: #3A79FF;
     --accent-primary-active: #0047DB;
     --accent-secondary: #FFC91F;
     --accent-secondary-hover: #FFD54F;
 
-    /* Sheybi market tokens */
-    --market-yes: #30D878;
-    --market-yes-hover: #2BBE69;
-    --market-no: #EF4444;
-    --market-no-hover: #DC2626;
+    /* Sheybi market tokens — dark mode */
+    --market-yes: #00D376;
+    --market-yes-hover: #00B867;
+    --market-no: #FFC107;
+    --market-no-hover: #E5AD00;
 
-    /* Sheybi financial tokens */
-    --profit: #30D878;
-    --loss: #EF4444;
-    --wallet: #FFC91F;
-    --deposit: #30D878;
-    --withdrawal: #FFC91F;
+    /* Sheybi financial tokens — dark mode */
+    --profit: #00D376;
+    --loss: #FFC107;
+    --wallet: #FFC107;
+    --deposit: #00D376;
+    --withdrawal: #FFC107;
 
-    /* Sheybi status tokens */
-    --state-success: #30D878;
-    --state-warning: #FFC91F;
+    /* Sheybi status tokens — dark mode */
+    --state-success: #00D376;
+    --state-warning: #FFC107;
     --state-error: #EF4444;
-    --state-info: #3B82F6;
+    --state-info: #0D47FF;
 
-    /* Sheybi border tokens — dark mode (from ui-context.md) */
-    --border-default: #1E2A44;
-    --border-hover: #23324F;
-    --border-active: #0D5BFF;
+    /* Sheybi border tokens — dark mode */
+    --border-default: #1E2A3F;
+    --border-hover: #2E3D59;
+    --border-active: #FFC107;
 }
 
 @layer base {

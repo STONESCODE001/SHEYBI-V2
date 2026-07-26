@@ -120,16 +120,12 @@ It remains visually consistent across the platform.
 
 Purpose
 
-Primary application navigation.
+Top header region containing centered search input.
 
 Children
 
-- Logo
-- Search
-- Global Market Categories
-- Notification Button
-- Wallet Button
-- Profile Button
+- Center: Search Bar ("Hinted search text")
+- Right (Authenticated): Wallet Balance Pill (Accent Yellow `#FFC107` pill with bold black text e.g. `₦ 2000.0`)
 
 Behaviour
 
@@ -141,7 +137,7 @@ Requirements
 
 - Full width
 - Fixed height
-- Always visible
+- Dark `#0B0E14` background with subtle bottom border
 
 ---
 
@@ -149,21 +145,21 @@ Requirements
 
 Purpose
 
-Primary navigation.
+Primary navigation shell (260px fixed width).
 
 Children
 
-- Dashboard
-- Markets
-- Portfolio
-- Wallet
-- Notifications
-- Profile
-- Settings
+- Sheybi Logo (Top header)
+- Home (Pill nav item, active in Accent Yellow `#FFC107` when on `/`)
+- Market (Pill nav item, active in Accent Yellow `#FFC107` when on `/markets`)
+- Trades (Pill nav item, active in Accent Yellow `#FFC107` when on `/trades`)
+- Wallet (Pill nav item, active in Accent Yellow `#FFC107` when on `/wallet`)
+- `+` Plus Button (Market Suggestion trigger, outlined in Accent Yellow border)
 
-Administrator accounts additionally display
+Bottom Sidebar Children (Authentication Dependent)
 
-- Admin
+- Unauthenticated: Log In (Dark container button) & Sign up (Accent Yellow `#FFC107` primary button)
+- Authenticated: User Profile Button (Dark container with User Icon + "User Name" label)
 
 Behaviour
 
@@ -173,8 +169,9 @@ Never scrolls.
 
 Requirements
 
-- Fixed width
-- Full viewport height below header
+- Fixed 260px width
+- Dark `#0F1727` background
+- Full viewport height
 
 ---
 
@@ -316,10 +313,10 @@ Primary navigation.
 
 Children
 
-- Home
+- Home (Yellow active icon + label)
 - Markets
-- Portfolio
-- Wallet
+- `+` Plus (Center action button triggering Market Suggestion bottom-sheet)
+- Trades
 - Profile
 
 Behaviour
@@ -330,9 +327,9 @@ Always visible.
 
 Requirements
 
-Equal spacing.
+Equal 5-column spacing.
 
-Safe area aware.
+Safe area aware. Dark `#0B0E14` elevated background.
 
 ---
 

@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { ShellVariant } from "./types"
@@ -28,21 +27,29 @@ function UserProfileRegion({
       <div
         data-slot="user-profile-region"
         className={cn(
-          "flex h-16 w-full shrink-0 items-center border-t border-[var(--border-default)] bg-[var(--bg-surface)] p-4",
+          "flex w-full flex-col gap-2 shrink-0 p-4",
           className
         )}
       >
         <Link
           href="/sign-in"
           className={cn(
-            "flex w-full items-center gap-3 rounded-xl text-sm text-[var(--text-primary)]",
-            "outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
+            "flex h-11 w-full items-center justify-center rounded-xl font-semibold text-sm",
+            "bg-[var(--bg-base)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]",
+            "outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
           )}
         >
-          <span className="flex size-10 items-center justify-center rounded-xl bg-[var(--bg-surface-secondary)] text-[var(--text-muted)]">
-            <User className="size-5" aria-hidden="true" />
-          </span>
-          <span>Login / Create Account</span>
+          Log In
+        </Link>
+        <Link
+          href="/sign-in"
+          className={cn(
+            "flex h-11 w-full items-center justify-center rounded-xl font-semibold text-sm",
+            "bg-[var(--accent-yellow)] text-[var(--text-inverse)] hover:bg-[var(--accent-yellow-hover)]",
+            "outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
+          )}
+        >
+          Sign up
         </Link>
       </div>
     )
@@ -59,7 +66,7 @@ function UserProfileRegion({
     <div
       data-slot="user-profile-region"
       className={cn(
-        "flex h-16 w-full shrink-0 items-center border-t border-[var(--border-default)] bg-[var(--bg-surface)] p-4",
+        "flex w-full shrink-0 items-center p-4 pt-2",
         className
       )}
     >
@@ -72,26 +79,22 @@ function UserProfileRegion({
           }
         }}
         className={cn(
-          "flex w-full items-center gap-3 rounded-xl outline-none",
+          "flex h-11 w-full items-center gap-3 rounded-xl bg-[var(--bg-base)] px-3.5 outline-none transition-colors hover:bg-[var(--bg-hover)]",
           "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
         )}
         aria-label="Open profile menu"
       >
-        <Avatar className="size-10">
+        <Avatar className="size-6">
           {userAvatarUrl ? (
             <AvatarImage src={userAvatarUrl} alt={`${userName} avatar`} />
           ) : null}
-          <AvatarFallback>{initials}</AvatarFallback>
+          <AvatarFallback className="bg-[var(--bg-surface-secondary)] text-[10px] text-[var(--text-primary)] font-bold">
+            {initials}
+          </AvatarFallback>
         </Avatar>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-[var(--text-primary)]">
-            {userName}
-          </p>
-          <p className="truncate text-xs text-[var(--text-muted)]">
-            {/* Clerk User Button placeholder — auth wiring is out of scope */}
-            {variant === "admin" ? "Administrator" : "View profile"}
-          </p>
-        </div>
+        <span className="truncate text-sm font-semibold text-[var(--text-primary)]">
+          {userName}
+        </span>
       </Link>
     </div>
   )

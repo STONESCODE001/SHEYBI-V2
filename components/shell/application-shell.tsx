@@ -7,9 +7,9 @@ import { ActionIcon } from "@/components/child/action-icon"
 import { DesktopSidebar } from "./desktop-sidebar"
 import { DesktopHeader } from "./desktop-header"
 import { MobileHeader } from "./mobile-header"
-import { HamburgerDrawer } from "./hamburger-drawer"
 import { BottomNavigation } from "./bottom-navigation"
 import { LiveMarketTicker } from "./live-market-ticker"
+import { FooterRegion } from "./footer-region"
 import { DialogLayer } from "./dialog-layer"
 import { ToastLayer } from "./toast-layer"
 import { LoadingLayer } from "./loading-layer"
@@ -33,10 +33,8 @@ function ApplicationShell({
   userName = PLACEHOLDER_USER_NAME,
   userAvatarUrl,
   tickerItems = DEFAULT_TICKER_ITEMS,
-  categories = DEFAULT_CATEGORIES,
   className,
 }: ApplicationShellProps) {
-  const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [tabletSidebarOpen, setTabletSidebarOpen] = React.useState(false)
 
   return (
@@ -54,7 +52,6 @@ function ApplicationShell({
         availableBalance={availableBalance}
         userName={userName}
         userAvatarUrl={userAvatarUrl}
-        categories={categories}
         expanded={tabletSidebarOpen}
         onClose={() => setTabletSidebarOpen(false)}
       />
@@ -88,10 +85,9 @@ function ApplicationShell({
         <MobileHeader
           variant={variant}
           availableBalance={availableBalance}
-          onOpenDrawer={() => setDrawerOpen(true)}
         />
 
-        <LiveMarketTicker items={tickerItems} />
+        {/* LiveMarketTicker implementation paused: <LiveMarketTicker items={tickerItems} /> */}
 
         {/* Main Content Region — owns vertical scrolling */}
         <main
@@ -103,28 +99,19 @@ function ApplicationShell({
         >
           <div
             className={cn(
-              "mx-auto w-full max-w-[1200px]",
+              "mx-auto w-full max-w-[1200px] min-h-[calc(100vh-160px)]",
               "px-4 py-4 md:px-8 md:py-6"
             )}
           >
             {children}
           </div>
+          <FooterRegion />
         </main>
 
         <BottomNavigation variant={variant} />
       </div>
 
       {/* Overlay regions */}
-      <HamburgerDrawer
-        open={drawerOpen}
-        onOpenChange={setDrawerOpen}
-        variant={variant}
-        availableBalance={availableBalance}
-        userName={userName}
-        userAvatarUrl={userAvatarUrl}
-        categories={categories}
-      />
-
       <DialogLayer>{dialog || <DialogViewport />}</DialogLayer>
       <ToastLayer>{toast}</ToastLayer>
       <LoadingLayer visible={isLoading} />

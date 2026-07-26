@@ -273,7 +273,7 @@ All new components will be placed under `components/child/` following the folder
 ### Empty Illustration (New)
 **Purpose**: Visual placeholder when no data is available.
 **Used By**: Empty state screens across features.
-**Variants**: Light, Dark mode versions.
+**Variants**: Pure Dark mode version.
 **States**: Static.
 **Responsive Behaviour**: Scales to container width, maintains aspect ratio.
 **Accessibility**: `role="img"` with descriptive `alt` text; hidden from screen readers if decorative (`aria-hidden="true"`).

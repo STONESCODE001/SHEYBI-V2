@@ -12,16 +12,16 @@ import {
   ScrollText,
   Tags,
   Home,
+  Plus,
 } from "lucide-react"
 import type { CategoryItem, NavIconName, NavItem, TickerItem } from "./types"
 
 export const PRIMARY_NAV_AUTHENTICATED: readonly NavItem[] = [
   { label: "Home", href: "/", icon: "home" },
-  { label: "Markets", href: "/markets", icon: "markets" },
-  { label: "Portfolio", href: "/portfolio", icon: "portfolio" },
+  { label: "Market", href: "/markets", icon: "markets" },
+  { label: "Trades", href: "/portfolio", icon: "portfolio" },
   { label: "Wallet", href: "/wallet", icon: "wallet" },
-  { label: "Notifications", href: "/notifications", icon: "notifications" },
-  { label: "Settings", href: "/settings", icon: "settings" },
+  { label: "Market Suggestion", href: "#suggest", icon: "plus" },
 ] as const
 
 export const PRIMARY_NAV_ADMIN: readonly NavItem[] = [
@@ -36,7 +36,10 @@ export const PRIMARY_NAV_ADMIN: readonly NavItem[] = [
 
 export const PRIMARY_NAV_GUEST: readonly NavItem[] = [
   { label: "Home", href: "/", icon: "home" },
-  { label: "Markets", href: "/markets", icon: "markets" },
+  { label: "Market", href: "/markets", icon: "markets" },
+  { label: "Trades", href: "/sign-in", icon: "portfolio" },
+  { label: "Wallet", href: "/sign-in", icon: "wallet" },
+  { label: "Create", href: "/sign-in", icon: "plus" },
 ] as const
 
 export const BOTTOM_NAV_AUTHENTICATED: readonly NavItem[] = [
@@ -49,7 +52,10 @@ export const BOTTOM_NAV_AUTHENTICATED: readonly NavItem[] = [
 
 export const BOTTOM_NAV_GUEST: readonly NavItem[] = [
   { label: "Home", href: "/", icon: "home" },
-  { label: "Login", href: "/sign-in", icon: "profile" },
+  { label: "Markets", href: "/markets", icon: "markets" },
+  { label: "Create", href: "/sign-in", icon: "plus" },
+  { label: "Trades", href: "/sign-in", icon: "portfolio" },
+  { label: "Profile", href: "/sign-in", icon: "profile" },
 ] as const
 
 export const BOTTOM_NAV_ADMIN: readonly NavItem[] = [
@@ -88,6 +94,7 @@ export const NAV_ICONS: Record<NavIconName, LucideIcon> = {
   audit: ScrollText,
   categories: Tags,
   dashboard: LayoutDashboard,
+  plus: Plus,
 }
 
 export const PLACEHOLDER_BALANCE = "₦125,000.00"

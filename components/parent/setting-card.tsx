@@ -17,7 +17,7 @@ export function SettingCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-[var(--radius-lg)] bg-[var(--surface)] p-4 shadow-sm outline outline-1 -outline-offset-1 outline-[var(--border)] sm:flex-row sm:items-center sm:justify-between sm:p-5",
+        "flex flex-col gap-4 rounded-2xl bg-[var(--bg-surface)] p-4 shadow-sm border border-[var(--border-default)] sm:flex-row sm:items-center sm:justify-between sm:p-5",
         className
       )}
       {...props}

@@ -18,12 +18,12 @@ export function PlaceholderFeedbackCard({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-4 rounded-[var(--radius-lg)] bg-[var(--surface)] p-8 text-center shadow-sm outline outline-1 -outline-offset-1 outline-[var(--border)]",
+        "flex flex-col items-center justify-center gap-4 rounded-2xl bg-[var(--bg-surface)] p-8 text-center shadow-sm border border-[var(--border-default)]",
         className
       )}
       {...props}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--primary-fixed)] text-[var(--on-primary-fixed)]">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--bg-surface-secondary)] text-[var(--accent-primary)]">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

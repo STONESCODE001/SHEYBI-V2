@@ -83,7 +83,7 @@ All primitives are **atomic** (no children) except `Button` (variant wrapper) an
 
 ### Typography Usage
 - **Body text**: `--font-sans` (Inter) – default for all primitives.
-- **Numeric data** (prices, probabilities): `--font-mono` (Geist Mono) – used in `Badge` (e.g., market odds) and `Tooltip` when displaying numbers.
+- **Numeric data** (prices, probabilities, odds): `--font-sans` (Inter SemiBold/Bold) – used in `Badge` (e.g., market odds), wallet balances, and numeric displays.
 - Font sizes follow the **Font Sizes** token table (`sm`, `base`, `lg`, etc.) appropriate to the primitive’s hierarchy level.
 
 ### Spacing Rules

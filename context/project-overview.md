@@ -19,7 +19,7 @@ Sheybi is a real-money prediction market platform where users predict the outcom
 2. Allow users to deposit funds, trade prediction markets, and request withdrawals.
 3. Support both binary (Yes/No) and multi-option prediction markets.
 4. Update market prices in real time as users trade.
-5. Provide a clean, modern, mobile-first experience that feels social rather than financial.
+5. Provide a clean, modern, dark-mode experience with high visual polish, soft elevated card surfaces (`#0F1727`), and vibrant accents (`#0D47FF`, `#00D376`, `#FFC107`).
 6. Keep the prediction engine deterministic, auditable, and easy to maintain.
 7. Build the system so additional market categories can be added without architectural changes.
 8. Record every financial action through a ledger for complete auditability.
@@ -194,8 +194,7 @@ The MVP includes:
 - Manual withdrawals
 - Real-time updates
 - Mobile and desktop layouts
-- Dark mode
-- Light mode
+- Pure Dark mode theme
 
 ---
 

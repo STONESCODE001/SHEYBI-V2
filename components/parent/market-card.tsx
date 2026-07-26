@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -14,6 +15,8 @@ import { ActionIcon } from "@/components/child/action-icon"
 import { Share2, Bookmark } from "lucide-react"
 
 interface MarketCardProps extends React.ComponentProps<"article"> {
+  /** Market ID for navigation to /markets/[id]. */
+  readonly id?: string
   /** Market title. */
   readonly title: string
   /** Market description. */
@@ -38,7 +41,7 @@ interface MarketCardProps extends React.ComponentProps<"article"> {
   readonly loading?: boolean
   /** Whether the card is disabled. */
   readonly disabled?: boolean
-  /** Card click handler (navigate to market details). */
+  /** Card click handler. */
   readonly onClick?: () => void
   /** Trade button click handler. */
   readonly onTrade?: () => void
@@ -87,6 +90,7 @@ function MarketCardSkeleton({
 }
 
 function MarketCard({
+  id,
   title,
   description,
   imageUrl,
@@ -111,6 +115,8 @@ function MarketCard({
     return <MarketCardSkeleton className={className} />
   }
 
+  const detailHref = id ? `/markets/${id}` : undefined
+
   return (
     <article
       data-slot="market-card"
@@ -134,25 +140,32 @@ function MarketCard({
         "shadow-[0_1px_3px_0_rgba(0,0,0,0.1),0_1px_2px_0_rgba(0,0,0,0.06)]",
         "transition-all duration-200",
         "outline-none",
-        onClick && !disabled && [
-          "cursor-pointer",
-          "hover:bg-[var(--bg-hover)] hover:border-[var(--border-hover)]",
-          "hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)]",
-          "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]",
-        ],
+        "hover:bg-[var(--bg-hover)] hover:border-[var(--border-hover)]",
+        "hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)]",
+        onClick && !disabled && "cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--border-active)]",
         disabled && "cursor-not-allowed opacity-50",
         className
       )}
       {...props}
     >
-      {/* Thumbnail 
-      <div className="overflow-hidden rounded-t-2xl">
-        <CardImage
-          src={imageUrl}
-          alt={`${title} thumbnail`}
-          className="rounded-none"
-        />
-      </div>*/}
+      {/* Thumbnail Link */}
+      {detailHref ? (
+        <Link href={detailHref} className="block overflow-hidden rounded-t-2xl">
+          <CardImage
+            src={imageUrl}
+            alt={`${title} thumbnail`}
+            className="rounded-none transition-transform duration-200 group-hover/market-card:scale-[1.02]"
+          />
+        </Link>
+      ) : (
+        <div className="overflow-hidden rounded-t-2xl">
+          <CardImage
+            src={imageUrl}
+            alt={`${title} thumbnail`}
+            className="rounded-none"
+          />
+        </div>
+      )}
 
       {/* Header — category, status, countdown */}
       <div className="flex items-center gap-2 px-4 pt-3">
@@ -171,9 +184,17 @@ function MarketCard({
 
       {/* Content — title, description, outcomes, stats */}
       <div className="space-y-3 px-4 pt-3">
-        <h3 className="line-clamp-2 text-lg font-semibold leading-[26px] text-[var(--text-primary)]">
-          {title}
-        </h3>
+        {detailHref ? (
+          <Link href={detailHref} className="group/title block">
+            <h3 className="line-clamp-2 text-lg font-semibold leading-[26px] text-[var(--text-primary)] transition-colors group-hover/title:text-[var(--accent-primary)] hover:underline">
+              {title}
+            </h3>
+          </Link>
+        ) : (
+          <h3 className="line-clamp-2 text-lg font-semibold leading-[26px] text-[var(--text-primary)]">
+            {title}
+          </h3>
+        )}
 
         {description && (
           <p className="line-clamp-2 text-sm leading-5 text-[var(--text-secondary)]">

@@ -51,8 +51,8 @@ function CategoryNavigationRegion({
                     "outline-none transition-colors duration-200",
                     "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]",
                     active
-                      ? "bg-[var(--accent-primary)] font-medium text-white"
-                      : "font-normal text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)]"
+                      ? "bg-[var(--accent-yellow)] font-semibold text-[var(--text-inverse)] shadow-sm"
+                      : "font-normal text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
                   )}
                 >
                   {category.label}

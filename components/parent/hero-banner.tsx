@@ -39,22 +39,23 @@ function HeroBannerSkeleton({
   return (
     <Card
       className={cn(
-        "relative overflow-hidden w-full rounded-3xl border-0 bg-[var(--accent-primary)] p-8 md:p-12",
+        "relative overflow-hidden w-full rounded-3xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-8 md:p-12",
+        "shadow-[0_1px_3px_0_rgba(0,0,0,0.1),0_1px_2px_0_rgba(0,0,0,0.06)]",
         className
       )}
     >
       <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center">
         <div className="flex flex-1 flex-col gap-3">
-          <Skeleton className="h-10 w-3/4 rounded-lg bg-white/20" />
-          <Skeleton className="h-6 w-full rounded-lg bg-white/10" />
-          <Skeleton className="h-6 w-2/3 rounded-lg bg-white/10" />
+          <Skeleton className="h-10 w-3/4 rounded-lg bg-[var(--bg-surface-secondary)]" />
+          <Skeleton className="h-6 w-full rounded-lg bg-[var(--bg-surface-secondary)]" />
+          <Skeleton className="h-6 w-2/3 rounded-lg bg-[var(--bg-surface-secondary)]" />
           <div className="mt-4 flex gap-3">
-            <Skeleton className="h-11 w-32 rounded-xl bg-[var(--accent-secondary)]/50" />
-            <Skeleton className="h-11 w-32 rounded-xl bg-white/10" />
+            <Skeleton className="h-11 w-32 rounded-xl bg-[var(--accent-primary)]/50" />
+            <Skeleton className="h-11 w-32 rounded-xl bg-[var(--bg-surface-secondary)]" />
           </div>
         </div>
         <div className="w-full md:w-2/5">
-          <Skeleton className="aspect-video w-full rounded-2xl bg-white/10" />
+          <Skeleton className="aspect-video w-full rounded-2xl bg-[var(--bg-surface-secondary)]" />
         </div>
       </div>
     </Card>
@@ -89,22 +90,19 @@ function HeroBanner({
     >
       <Card
         className={cn(
-          "relative overflow-hidden w-full rounded-3xl border-0 bg-[var(--accent-primary)] p-8 md:p-12",
-          "shadow-[0_10px_40px_-10px_rgba(13,91,255,0.3)]"
+          "relative overflow-hidden w-full rounded-3xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-8 md:p-12",
+          "shadow-[0_1px_3px_0_rgba(0,0,0,0.1),0_1px_2px_0_rgba(0,0,0,0.06)]"
         )}
       >
-        {/* Decorative background placeholder */}
-        <div className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1600&auto=format&fit=crop&q=60')] bg-cover bg-center opacity-20 mix-blend-overlay" />
-
         <div className="relative z-10 flex flex-col gap-8 md:flex-row md:items-center">
           {/* Text region */}
           <div className="flex flex-1 flex-col gap-4">
-            <HeadingTag className="text-3xl md:text-4xl font-bold leading-tight text-white">
+            <HeadingTag className="text-3xl md:text-4xl font-bold leading-tight text-[var(--text-primary)]">
               {headline}
             </HeadingTag>
 
             {description && (
-              <p className="text-lg leading-relaxed text-white/80 max-w-[90%]">
+              <p className="text-lg leading-relaxed text-[var(--text-secondary)] max-w-[90%]">
                 {description}
               </p>
             )}
@@ -114,11 +112,13 @@ function HeroBanner({
                 {actions.slice(0, 2).map((action) => (
                   <Button
                     key={action.label}
-                    variant={action.primary ? "featured" : "secondary"}
+                    variant={action.primary ? "default" : "outline"}
                     size="lg"
                     className={cn(
                       "min-h-12 min-w-[120px] rounded-xl font-semibold text-base",
-                      !action.primary && "border-white/20 bg-white/10 text-white hover:bg-white/20"
+                      action.primary
+                        ? "bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white"
+                        : "border-[var(--border-default)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                     )}
                     onClick={action.onClick}
                   >

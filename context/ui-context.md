@@ -32,6 +32,9 @@ Every visual decision must reinforce confidence in the platform.
 
 ---
 
+**Brand Personality / Ethos:**
+    - Bold. Youthful. Confident. Made for Africa
+
 # Theme
 
 - Dark mode and light mode allowed
@@ -315,29 +318,43 @@ Financial confirmation dialogs require explicit confirmation.
 
 # Navigation Pattern
 
-Desktop
+Desktop Navigation
 
-Top navigation
-
-Contains:
-
-- Logo
-- Search
-- Categories
-- Wallet
-- Notifications
-- Profile
-
-Mobile
-
-Bottom navigation
+Primary Navigation: Left Sidebar (260px fixed width, elevated dark surface `#0F1727`)
 
 Contains:
 
-- Home
+- Logo (`/logo.png` + `PREDICT. PLAY. WIN.`)
+- Home (Active item: Rounded card box with filled Accent Yellow `#FFC107` and dark text `#0B0E14`)
+- Market (Inactive item: Rounded card box with main base background `#0B0E14`)
+- Trades (Inactive item: Rounded card box with main base background `#0B0E14`)
+- Wallet (Inactive item: Rounded card box with main base background `#0B0E14`)
+- `+` Plus Button (Card box with main base background `#0B0E14`, yellow border & icon)
+- Bottom User Profile Box (Card box with main base background `#0B0E14`)
+
+Header:
+
+- Background: Main base background `#0B0E14`
+- Center: Search Bar ("Hinted search text")
+- Right (Authenticated): Wallet Balance Pill (`₦ 2000.0` in Accent Yellow `#FFC107`)
+
+Mobile Navigation
+
+Mobile Topbar:
+
+- Background: Main base background `#0B0E14`
+- Logo (Left)
+- Search Icon + Wallet Balance Pill (`₦ 2000.0` in Accent Yellow) (Right)
+- No Hamburger Drawer menu icon
+
+*(Note: Live Market Ticker implementation and build are paused)*
+
+Mobile Bottom Navigation (5 items):
+
+- Home (Active yellow icon + label)
 - Markets
-- Portfolio
-- Wallet
+- `+` Plus (Center action button triggering Market Suggestion bottom-sheet)
+- Trades
 - Profile
 
 ---

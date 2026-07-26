@@ -1,34 +1,41 @@
 import Link from "next/link"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 interface ShellLogoProps {
   readonly className?: string
   readonly compact?: boolean
+  readonly showTagline?: boolean
 }
 
-function ShellLogo({ className, compact = false }: ShellLogoProps) {
+function ShellLogo({
+  className,
+  compact = false,
+  showTagline = true,
+}: ShellLogoProps) {
   return (
     <Link
       href="/"
       className={cn(
-        "flex shrink-0 items-center gap-2 rounded-xl outline-none",
+        "flex shrink-0 flex-col items-start gap-0.5 rounded-xl outline-none",
         "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]",
         className
       )}
       aria-label="Sheybi home"
     >
-      <span
-        className={cn(
-          "flex items-center justify-center rounded-xl bg-[var(--accent-primary)] font-semibold text-[var(--text-inverse)]",
-          compact ? "size-8 text-sm" : "size-10 text-base"
-        )}
-        aria-hidden="true"
-      >
-        S
-      </span>
-      {!compact && (
-        <span className="text-lg font-semibold tracking-tight text-[var(--text-primary)]">
-          Sheybi
+      <div className="flex items-center gap-2">
+        <Image
+          src="/logo.png"
+          alt="Sheybi Logo"
+          width={compact ? 100 : 130}
+          height={compact ? 28 : 36}
+          className="h-auto w-auto max-h-9 object-contain"
+          priority
+        />
+      </div>
+      {!compact && showTagline && (
+        <span className="text-[9px] font-bold tracking-[0.2em] uppercase text-[var(--text-muted)]">
+          PREDICT. PLAY. WIN.
         </span>
       )}
     </Link>
@@ -37,3 +44,4 @@ function ShellLogo({ className, compact = false }: ShellLogoProps) {
 
 export { ShellLogo }
 export type { ShellLogoProps }
+

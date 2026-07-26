@@ -475,85 +475,72 @@ Never skipped.
 
 # Navigation Components
 
-## Top Navigation
+## Desktop Left Sidebar
 
-Contains
+Primary navigation for all desktop users (260px fixed width, dark elevated surface `#0F1727`).
 
-Logo
+Contains:
 
-Search
-
-Categories
-
-Wallet
-
-Notifications
-
-Profile
+- Logo (`/logo.png` + tagline `PREDICT. PLAY. WIN.`)
+- Home (Active Accent Yellow `#FFC107` rounded card box with dark text `#0B0E14`)
+- Market (Inactive: Rounded card box with main base background `#0B0E14`)
+- Trades (Inactive: Rounded card box with main base background `#0B0E14`)
+- Wallet (Inactive: Rounded card box with main base background `#0B0E14`)
+- `+` Plus Button (Card box with main base background `#0B0E14`, yellow border & icon)
+- Bottom Auth / Wallet section: Log In & Sign up (logged-out) OR User Profile Card (logged-in, rounded card box with main base background `#0B0E14`)
 
 Never scrolls independently.
 
 ---
 
-## Bottom Navigation
+## Desktop Header
 
-Mobile only.
+Background: Main base background `#0B0E14`.
 
-Contains
+Contains:
 
-Home
-
-Markets
-
-Portfolio
-
-Wallet
-
-Profile
+- Centered Search Bar ("Hinted search text")
+- Wallet Balance Pill (`₦ 2000.0` in Accent Yellow `#FFC107`)
 
 ---
 
-## Sidebar
+## Bottom Navigation
 
-Desktop admin only.
+Mobile only (5 items).
 
-Contains
+Background: Main base background `#0B0E14`. No hamburger menu icon on mobile header.
 
-Navigation
+Contains:
 
-User
-
-Settings
-
-Logout
+- Home
+- Markets
+- `+` Plus (Center action button triggering Market Suggestion bottom-sheet)
+- Trades
+- Profile
 
 ---
 
 # Market Components
 
-## Market Card
+## Market Card (3 Card Layout Variants)
 
 Purpose
 
-Represents one prediction market.
+Represents one prediction market on home/feeds. Sheybi supports 3 distinct market card layout variants:
 
-Contains
+### 1. 1v1 Matchup Card
+- **Structure**: Title (Question), Contestant 1 Avatar vs Contestant 2 Avatar, split Green/Yellow ratio bar, Yes (Green odds `1k -> 3k`) and No (Yellow odds `1k -> 5k`) action buttons.
+- **Visuals**: Dark `#0F1727` background, contestant headshots side-by-side with "VS" center label.
 
-Title
+### 2. Binary Yes/No Card
+- **Structure**: Title (Question), dual-color Green (`#00D376`) & Yellow (`#FFC107`) ratio bar, Yes action button (Green odds e.g. `1k -> 3k`) and No action button (Yellow odds e.g. `1k -> 5k`).
+- **Visuals**: Clean elevated card surface `#0F1727` with full-width ratio indicator.
 
-Category
+### 3. Multiple Options Card
+- **Structure**: Title (Question), list of outcome/contestant rows containing avatar image, contestant name, and outcome button (`Yes  1k -> 3k`), plus a `see more ...` expander button at the card footer.
+- **Visuals**: Stacked dark inner rows inside `#0F1727` card container.
 
-Probability
-
-Trading Volume
-
-Time Remaining
-
-Status
-
-Primary Action
-
-### States
+### Common Card States
 
 Open
 
@@ -566,6 +553,56 @@ Cancelled
 Featured
 
 Trending
+
+---
+
+## Market Suggestion Component (`+` Action)
+
+Purpose
+
+Allows users to propose new prediction market topics.
+
+Anatomy & Trigger
+
+- **Trigger**: `+` Plus button in Desktop Left Sidebar or Mobile Bottom Nav.
+- **Desktop Component**: Center-aligned Modal Dialog with dark blurred backdrop.
+- **Mobile Component**: Smooth slide-up Bottom Sheet.
+- **Form Fields**: `Name`, `Market Rules`, `Description`.
+- **Primary Action**: "Submit Market Suggestion" (Accent Yellow button `#FFC107`).
+
+---
+
+## Expanded Market Detail View
+
+Purpose
+
+Renders the full detailed interactive view when a user clicks on any market card.
+
+Anatomy & Structure by Variant
+
+### Variant 1: Binary Yes/No Detail View
+- **Header**: Question Title (Large Inter Bold headline).
+- **Sub-header**: "Yes ( 50% Chance )" in Green `#00D376` vs "No ( 50% Chance )" in Yellow `#FFC107`.
+- **Ratio Bar**: Full-width split Green/Yellow ratio indicator.
+- **Action Buttons**: Large `Yes  1k -> 3k` (Green odds) and `No  1k -> 5k` (Yellow odds).
+
+### Variant 2: 1v1 Matchup Detail View
+- **Header**: Question Title (e.g. `Would Mercy Slap Ivana??`).
+- **Matchup Display**: Contestant 1 Avatar + Name + `% Chance` badge (Green `#00D376`) vs Contestant 2 Avatar + Name + `% Chance` badge (Yellow `#FFC107`).
+- **Ratio Bar**: Full-width split Green/Yellow ratio indicator.
+- **Action Buttons**: Dual outcome buttons per contestant (`Yes  1k -> 3k` green / `No  1k -> 5k` yellow).
+
+### Variant 3: Multiple Options Detail View
+- **Header**: Question Title (e.g. `Will a Female Housemate win HoH this week?`).
+- **Total Volume Subtitle**: `Trades: ₦ 250,000` (Inter Medium muted text).
+- **Contestant Option Cards List**: Stacked cards where each contestant row contains Avatar, Name, option volume (`Trades: ₦ 567k`), and dual `Yes / No` action buttons.
+- **Option Expander**: `see more ...` button at footer of contestant options list.
+
+Common Detail Sections
+
+1. **Market Rules Section**: Border dividers top and bottom (`#1E2A3F`), Title `Market Rules`, muted text (`#7E8C9F`).
+2. **Trade History List**: Dark surface container (`#0F1727`) listing transactions (`Bought 200 YES Shares` + timestamp).
+3. **Explore Action**: Full-width button `Explore Markets...`.
 
 ---
 
@@ -1088,6 +1125,10 @@ The design system must always satisfy the following rules:
 14. Every loading state must have a corresponding error and empty state.
 
 15. Every component must remain functional on desktop, tablet and mobile.
+
+16. Desktop Sidebar must never render a categories navigation section.
+
+17. Desktop Sidebar must hide default browser scrollbars (`scrollbar-width: none`).
 
 ---
 

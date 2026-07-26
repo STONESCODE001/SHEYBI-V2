@@ -981,6 +981,41 @@ Search supports:
 
 ---
 
+# Market Suggestion Flow (`+` Action)
+
+Click `+` Plus Icon (Left Sidebar Desktop / Bottom Nav Mobile)
+
+↓
+
+Open Market Suggestion Component (Modal Dialog Desktop / Bottom Sheet Mobile)
+
+↓
+
+Enter Market Information:
+- `Name` (Proposed market question title)
+- `Market Rules` (Criteria for outcome resolution)
+- `Description` (Background / context explanation)
+
+↓
+
+Validation:
+- Title non-empty
+- Rules non-empty
+
+↓
+
+Submit Suggestion
+
+↓
+
+Suggestion Sent to Administrator Queue
+
+↓
+
+Display Success Toast / Confirmation
+
+---
+
 # Error Flows
 
 Every flow must define an error destination.

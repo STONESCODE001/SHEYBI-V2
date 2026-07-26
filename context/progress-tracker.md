@@ -13,7 +13,7 @@ Update this document immediately after every completed implementation unit. This
    
 # Current Goal
 
-Implement Pages as defined in `context/feature-specs/06-pages.md`.
+Implement Markets feature specification.
 
 ---
 
@@ -36,12 +36,21 @@ Implement Pages as defined in `context/feature-specs/06-pages.md`.
 * Layouts (`context/feature-specs/05-layouts.md`)
 * Application Shell (`context/feature-specs/04-application-shell.md`)
 * Pages (`context/feature-specs/06-pages.md`)
+* Dialog Framework (`context/feature-specs/07-dialog.md`)
+* Design System Foundation & `globals.css` rewrite in v2 (`app/globals.css`).
+* Shell Background & Sidebar Card Layout Alignment (`components/shell/*`).
+* Notification Pause, Yellow Wallet Chip & Desktop Sidebar Figma Alignment (`components/shell/*`).
+* Desktop Sidebar 3-Tier Elevated Parent Container Architecture Alignment (`components/shell/desktop-sidebar.tsx`).
+* Authenticated Sidebar Navigation Buttons Alignment (`components/shell/constants.ts`).
+* Live Market Ticker Implementation Pause & Documentation Recording (`components/shell/application-shell.tsx`).
+* Borderless Shell Headers & Desktop Sidebar Alignment (`components/shell/*`).
+* Sheybi V2 Dark Mode Design System alignment (`ui-context.md`, `design-system.md`, `wireframe.md`, `user-flow.md`, `project-overview.md`).
 
 ---
 
 # In Progress
 
-- None (Specification Complete)
+- None (Phase Complete)
 
 # Next Up
 
@@ -154,3 +163,64 @@ Make sure you update this section after every meaningful implementation unit.
   * **Decisions:** Structured the reusable Dialog Framework addressing all 16 user review items (ownership rules, registry, promise-based API, queue behavior, dimensions, variants, z-index overlays, performance rules, testing invariants).
   * **Verification:** `npm run build` succeeds with zero errors, validating the frontend architecture.
   * **Follow-up:** Begin Markets specification.
+
+* **2026-07-24**
+  * **Feature Completed:** Reusable Dialog Framework (`07-dialog.md`).
+  * **Files Created/Modified:** `components/dialog/*` including `dialog-context.tsx`, `dialog-registry.ts`, `dialog-viewport.tsx`, `index.ts`, `primitives.tsx`, `register-dialogs.ts`, `responsive-wrapper.tsx`, `types.ts`, `use-media-query.ts`, `infrastructure/*` (14 infrastructure dialogs), `features/*` (Market, Wallet, Profile, Search, Settings, Notification feature dialogs).
+  * **Decisions:** Built complete Radix UI & React Context dialog infrastructure supporting promise-based modal calls (`confirm`, `alert`, `error`, `loading`), responsive drawer sheets/modals, financial lock safety rules, focus trapping, scroll locking, and accessible ARIA dialog regions.
+  * **Verification:** Implementation fully completed and verified.
+
+* **2026-07-24**
+  * **Refinement Completed:** MarketCard Navigation to Market Details (`/markets/[id]`).
+  * **Files Modified:** `components/parent/market-card.tsx`, `app/page.tsx`, `app/markets/page.tsx`, `app/dashboard/page.tsx`.
+  * **Decisions:** Imported Next.js `Link`, extended `MarketCardProps` with `id?: string`, wrapped thumbnail image and title in `<Link href={`/markets/${id}`}>` per `03-parent-components.md` spec while preserving isolated button event propagation for Trade and Action icons. Added stable `id` fields to mock datasets across pages.
+  * **Verification:** `npm run build` succeeds with zero errors. All 27 application routes compiled cleanly.
+
+* **2026-07-24**
+  * **Feature Completed:** 80/20/10 Design System Refactoring & Token Standardization.
+  * **Files Modified:** `components/parent/hero-banner.tsx`, `components/ui/button.tsx`, `components/parent/setting-card.tsx`, `components/parent/placeholder-feedback-card.tsx`, `components/parent/admin-table.tsx`, `app/profile/page.tsx`, `app/loading.tsx`, `app/admin/settings/page.tsx`.
+  * **Decisions:** Refactored HeroBanner container background to 80% `--bg-surface` neutral surface with `--border-default` border and `--text-primary` typography, reserving `--accent-primary` for the 10% CTA button focal point. Removed hardcoded `#080B14` hex color in button primitive. Standardized all non-standard tokens (`--surface`, `--surface-subtle`, `--surface-variant`) to standard 80/20/10 CSS variables (`--bg-surface`, `--bg-surface-secondary`).
+  * **Verification:** `npm run build` completed successfully in 32.1s with zero errors across all 27 routed pages.
+
+* **2026-07-26**
+  * **Feature Completed:** Unauthenticated (Guest) Shell & Footer Alignment.
+  * **Files Modified/Created:** `public/logo.png`, `components/shell/shell-logo.tsx`, `components/shell/footer-region.tsx` [NEW], `components/shell/constants.ts`, `components/shell/types.ts`, `components/shell/user-profile-region.tsx`, `components/shell/desktop-header.tsx`, `components/shell/mobile-header.tsx`, `components/shell/bottom-navigation.tsx`, `components/shell/application-shell.tsx`, `components/shell/index.ts`, `context/progress-tracker.md`.
+  * **Decisions:** Integrated Sheybi logo asset `/logo.png` with tagline `PREDICT. PLAY. WIN.`; added `<FooterRegion />` with legal financial disclaimers and quick links; aligned guest sidebar & bottom nav to 5 items with yellow active tabs and yellow `+` card button; added dual **Log In** & **Sign up** buttons in guest mobile header and sidebar.
+  * **Verification:** `npm run build` completed successfully with zero errors across all application routes.
+
+* **2026-07-26**
+  * **Refinement & Policy Enforcement Completed:** Desktop Sidebar Categories Removal & Scrollbar Hiding.
+  * **Files Modified:** `components/shell/desktop-sidebar.tsx`, `context/feature-specs/04-application-shell.md`, `context/ui-context.md`, `context/design-system.md`, `context/progress-tracker.md`.
+  * **Decisions:** Removed `<CategoryNavigationRegion />` from Desktop Sidebar; enforced policy that desktop sidebar contains no categories section; added custom scrollbar hiding utility (`[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden`); updated core architecture and design system invariants to strictly enforce this rule across all future iterations.
+  * **Verification:** `npm run build` completed successfully with zero errors across all 27 application routes.
+
+* **2026-07-26**
+  * **Feature Completed:** Shell Background & Sidebar Card Layout Alignment (Figma Alignment).
+  * **Files Modified:** `components/shell/mobile-header.tsx`, `components/shell/desktop-header.tsx`, `components/shell/primary-navigation.tsx`, `components/shell/user-profile-region.tsx`, `components/shell/application-shell.tsx`, `context/ui-context.md`, `context/design-system.md`, `context/progress-tracker.md`.
+  * **Decisions:** Removed mobile hamburger drawer menu icon from `MobileHeader` per Figma screens; updated `DesktopHeader` and `MobileHeader` container backgrounds from elevated surface color (`#0F1727`) to main base background color (`bg-[var(--bg-base)]` `#0B0E14`); styled inactive sidebar navigation items (`Market`, `Trades`, `Wallet`), `+` box, and bottom profile box as rounded card containers using `bg-[var(--bg-base)]` (`#0B0E14`) inside elevated sidebar; active item (`Home`) renders as filled yellow (`#FFC107`) card box with dark text (`#0B0E14`).
+  * **Verification:** `npm run build` completed successfully in 62s with zero errors across all 27 application routes.
+
+* **2026-07-26**
+  * **Feature Completed:** Notification Pause, Yellow Wallet Chip & Desktop Sidebar Figma Alignment.
+  * **Files Modified:** `components/shell/desktop-header.tsx`, `components/shell/wallet-chip.tsx`, `components/shell/primary-navigation.tsx`, `components/shell/user-profile-region.tsx`, `context/ui-context.md`, `context/design-system.md`, `context/progress-tracker.md`.
+  * **Decisions:** Paused notification implementation and removed `<NotificationRegion />` from `DesktopHeader`; updated `WalletChip` to render as a solid bright yellow pill (`bg-[var(--accent-yellow)]` `#FFC107`) with bold dark text (`#0B0E14`) without internal dot indicator matching Figma renders (`image_1.png` and `image.png`); pixel-aligned desktop sidebar cards (`Market`, `Trades`, `Wallet`, `+` box, user profile card) with `bg-[var(--bg-base)]` (`#0B0E14`) containers inside elevated sidebar (`#0F1727`).
+  * **Verification:** `npm run build` completed successfully in 2.0min with zero errors across all 27 routed pages.
+
+* **2026-07-26**
+  * **Feature Completed:** Desktop Sidebar 3-Tier Elevated Parent Container Architecture Alignment.
+  * **Files Modified:** `components/shell/desktop-sidebar.tsx`, `components/shell/primary-navigation.tsx`, `components/shell/user-profile-region.tsx`, `context/ui-context.md`, `context/design-system.md`, `context/progress-tracker.md`.
+  * **Decisions:** Restructured `DesktopSidebar` into a 3-tier container architecture: Outer column uses main base background (`bg-[var(--bg-base)]` `#0B0E14`) with padding; inner parent container card uses floating elevated dark surface (`bg-[var(--bg-surface)]` `#0F1727`) with `rounded-2xl` and `border border-[#1E2A3F]`; nested navigation cards (`Market`, `Trades`, `Wallet`), `+` box, and bottom profile box use main base background (`#0B0E14`) rounded cards while `Home` uses solid filled yellow (`#FFC107`) card, perfectly matching Figma `image_1.png`.
+  * **Verification:** `npm run build` completed successfully in 72s with zero errors across all 27 routed pages.
+
+* **2026-07-26**
+  * **Feature Completed:** Borderless Shell Headers & Desktop Sidebar Alignment.
+  * **Files Modified:** `components/shell/desktop-header.tsx`, `components/shell/mobile-header.tsx`, `components/shell/desktop-sidebar.tsx`, `context/ui-context.md`, `context/design-system.md`, `context/progress-tracker.md`.
+  * **Decisions:** Removed bottom borders from `DesktopHeader` and `MobileHeader`, and removed outer right border and inner container border from `DesktopSidebar` to establish a seamless, borderless dark surface aesthetic matching Figma design.
+  * **Verification:** `npm run build` completed successfully in 70s with zero errors across all 27 routed pages.
+
+
+
+
+
+
+

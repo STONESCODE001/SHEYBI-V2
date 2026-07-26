@@ -2,18 +2,15 @@
 
 import { cn } from "@/lib/utils"
 import { ShellLogo } from "./shell-logo"
-import { WalletDisplayRegion } from "./wallet-display-region"
 import { PrimaryNavigationRegion } from "./primary-navigation"
-import { CategoryNavigationRegion } from "./category-navigation"
 import { UserProfileRegion } from "./user-profile-region"
-import type { CategoryItem, ShellVariant } from "./types"
+import type { ShellVariant } from "./types"
 
 interface DesktopSidebarProps {
   readonly variant: ShellVariant
   readonly availableBalance?: string
   readonly userName?: string
   readonly userAvatarUrl?: string
-  readonly categories?: readonly CategoryItem[]
   /** Tablet collapsible: when true, sidebar overlays content. */
   readonly expanded?: boolean
   readonly onClose?: () => void
@@ -25,7 +22,6 @@ function DesktopSidebar({
   availableBalance,
   userName,
   userAvatarUrl,
-  categories,
   expanded = false,
   onClose,
   className,
@@ -45,8 +41,8 @@ function DesktopSidebar({
       <aside
         data-slot="desktop-sidebar"
         className={cn(
-          "fixed inset-y-0 left-0 z-[30] hidden w-[260px] flex-col",
-          "border-r border-[var(--border-default)] bg-[var(--bg-surface)]",
+          "fixed inset-y-0 left-0 z-[30] hidden w-[260px] flex-col p-3.5 md:p-4",
+          "bg-[var(--bg-base)]",
           "transition-transform duration-300 ease-in-out",
           // Desktop: always visible and static in flow via sibling spacer
           "lg:flex lg:translate-x-0",
@@ -55,26 +51,19 @@ function DesktopSidebar({
           className
         )}
       >
-        <div className="flex h-full flex-col p-6">
+        {/* Elevated floating parent container card wrapping entire sidebar content (borderless) */}
+        <div className="flex h-full w-full flex-col rounded-2xl bg-[var(--bg-surface)] p-4 shadow-sm">
           <ShellLogo className="mb-6 shrink-0" />
 
-          {/* <WalletDisplayRegion
-            variant={variant}
-            availableBalance={availableBalance}
-          /> */}
-
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="min-h-0 flex-1 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <PrimaryNavigationRegion variant={variant} />
-            {variant !== "admin" ? (
-              <CategoryNavigationRegion categories={categories} />
-            ) : null}
           </div>
 
           <UserProfileRegion
             variant={variant}
             userName={userName}
             userAvatarUrl={userAvatarUrl}
-            className="-mx-6 mt-4"
+            className="-mx-4 -mb-4 mt-4"
           />
         </div>
       </aside>
