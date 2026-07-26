@@ -1,9 +1,6 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { CardImage } from "@/components/child/card-image"
 
 interface HeroBannerAction {
   /** Button label text. */
@@ -15,20 +12,16 @@ interface HeroBannerAction {
 }
 
 interface HeroBannerProps extends React.ComponentProps<"section"> {
-  /** Banner headline text. */
-  readonly headline: string
-  /** Supporting description text. */
+  /** Optional custom headline text. */
+  readonly headline?: string
+  /** Optional custom description text. */
   readonly description?: string
-  /** Promotional image URL. */
-  readonly imageUrl?: string
-  /** Image alt text. */
-  readonly imageAlt?: string
-  /** Up to two action buttons. */
+  /** Optional action buttons. */
   readonly actions?: readonly HeroBannerAction[]
+  /** Optional custom mascot image URL (defaults to /sheybi-mascot.png). */
+  readonly mascotUrl?: string
   /** Whether the banner is in a loading state. */
   readonly loading?: boolean
-  /** Heading level for semantic hierarchy. */
-  readonly headingLevel?: "h1" | "h2"
 }
 
 function HeroBannerSkeleton({
@@ -37,39 +30,23 @@ function HeroBannerSkeleton({
   className?: string
 }): React.ReactElement {
   return (
-    <Card
-      className={cn(
-        "relative overflow-hidden w-full rounded-3xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-8 md:p-12",
-        "shadow-[0_1px_3px_0_rgba(0,0,0,0.1),0_1px_2px_0_rgba(0,0,0,0.06)]",
-        className
-      )}
-    >
-      <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center">
-        <div className="flex flex-1 flex-col gap-3">
-          <Skeleton className="h-10 w-3/4 rounded-lg bg-[var(--bg-surface-secondary)]" />
-          <Skeleton className="h-6 w-full rounded-lg bg-[var(--bg-surface-secondary)]" />
-          <Skeleton className="h-6 w-2/3 rounded-lg bg-[var(--bg-surface-secondary)]" />
-          <div className="mt-4 flex gap-3">
-            <Skeleton className="h-11 w-32 rounded-xl bg-[var(--accent-primary)]/50" />
-            <Skeleton className="h-11 w-32 rounded-xl bg-[var(--bg-surface-secondary)]" />
-          </div>
-        </div>
-        <div className="w-full md:w-2/5">
-          <Skeleton className="aspect-video w-full rounded-2xl bg-[var(--bg-surface-secondary)]" />
-        </div>
+    <div className={cn("w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-6", className)}>
+      <div className="flex flex-col gap-3 flex-1 w-full">
+        <Skeleton className="h-14 w-48 rounded-xl bg-[var(--bg-surface)]" />
+        <Skeleton className="h-14 w-72 rounded-xl bg-[var(--bg-surface)]" />
+        <Skeleton className="h-14 w-64 rounded-xl bg-[var(--bg-surface)]" />
       </div>
-    </Card>
+      <Skeleton className="hidden md:block h-72 w-72 rounded-full bg-[var(--bg-surface)]" />
+    </div>
   )
 }
 
 function HeroBanner({
   headline,
   description,
-  imageUrl,
-  imageAlt = "Promotional image",
-  actions = [],
+  actions,
+  mascotUrl = "/sheybi-mascot.png",
   loading = false,
-  headingLevel: HeadingTag = "h2",
   className,
   ...props
 }: HeroBannerProps): React.ReactElement | null {
@@ -77,69 +54,52 @@ function HeroBanner({
     return <HeroBannerSkeleton className={className} />
   }
 
-  if (!headline) {
-    return null
-  }
-
   return (
     <section
       data-slot="hero-banner"
       role="banner"
-      className={cn("w-full", className)}
+      className={cn("w-full py-2 sm:py-4 md:py-6", className)}
       {...props}
     >
-      <Card
-        className={cn(
-          "relative overflow-hidden w-full rounded-3xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-8 md:p-12",
-          "shadow-[0_1px_3px_0_rgba(0,0,0,0.1),0_1px_2px_0_rgba(0,0,0,0.06)]"
-        )}
-      >
-        <div className="relative z-10 flex flex-col gap-8 md:flex-row md:items-center">
-          {/* Text region */}
-          <div className="flex flex-1 flex-col gap-4">
-            <HeadingTag className="text-3xl md:text-4xl font-bold leading-tight text-[var(--text-primary)]">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8">
+        {/* Left: Stacked Headline (Left aligned on all viewports) */}
+        <div className="flex flex-col items-start text-left select-none max-w-2xl">
+          {headline ? (
+            <h1 className="font-black text-4xl sm:text-5xl md:text-6xl tracking-tight text-white leading-tight">
               {headline}
-            </HeadingTag>
+            </h1>
+          ) : (
+            <h1 className="flex flex-col font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[80px] tracking-tight leading-[1.02]">
+              <span className="text-white">Predict</span>
+              <span className="text-[#2563EB]">The Outcome.</span>
+              <span className="text-[#2563EB]">
+                Win Bigger<span className="text-[#FFC700]">.</span>
+              </span>
+            </h1>
+          )}
 
-            {description && (
-              <p className="text-lg leading-relaxed text-[var(--text-secondary)] max-w-[90%]">
-                {description}
-              </p>
-            )}
-
-            {actions.length > 0 && (
-              <div className="mt-4 flex gap-4">
-                {actions.slice(0, 2).map((action) => (
-                  <Button
-                    key={action.label}
-                    variant={action.primary ? "default" : "outline"}
-                    size="lg"
-                    className={cn(
-                      "min-h-12 min-w-[120px] rounded-xl font-semibold text-base",
-                      action.primary
-                        ? "bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white"
-                        : "border-[var(--border-default)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
-                    )}
-                    onClick={action.onClick}
-                  >
-                    {action.label}
-                  </Button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Image region */}
-          {imageUrl && (
-            <div className="w-full md:w-2/5 lg:w-1/3">
-              <CardImage src={imageUrl} alt={imageAlt} />
-            </div>
+          {description && (
+            <p className="mt-3 text-base sm:text-lg text-gray-300 max-w-xl text-left">
+              {description}
+            </p>
           )}
         </div>
-      </Card>
+
+        {/* Right: Mascot Image (Hidden on Mobile per Figma design; visible & enlarged on Desktop) */}
+        <div className="hidden md:flex relative w-64 md:w-[320px] lg:w-[380px] xl:w-[420px] shrink-0 justify-end items-center">
+          <img
+            src={mascotUrl}
+            alt="Sheybi Mascot"
+            className="w-full h-auto object-contain max-h-[360px] lg:max-h-[400px] drop-shadow-2xl pointer-events-none select-none"
+          />
+        </div>
+      </div>
     </section>
   )
 }
 
 export { HeroBanner, HeroBannerSkeleton }
 export type { HeroBannerProps, HeroBannerAction }
+
+
+

@@ -2,8 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
+import { Star } from "lucide-react"
 
 interface CategoryTab {
   /** Unique identifier for the tab. */
@@ -12,77 +11,91 @@ interface CategoryTab {
   readonly label: string
   /** Optional market count. */
   readonly count?: number
+  /** Optional icon to display alongside label. */
+  readonly icon?: React.ReactNode
   /** Whether the tab is disabled. */
   readonly disabled?: boolean
 }
 
 interface CategoryTabsProps extends React.ComponentProps<"div"> {
   /** Array of category tab definitions. */
-  readonly categories: readonly CategoryTab[]
+  readonly categories?: readonly CategoryTab[]
   /** Currently active tab value. */
   readonly activeCategory?: string
   /** Callback when the active category changes. */
   readonly onCategoryChange?: (value: string) => void
-  /** Content to render for the active tab. */
+  /** Content to render below tabs. */
   readonly children?: React.ReactNode
 }
 
+const DEFAULT_CATEGORIES: readonly CategoryTab[] = [
+  {
+    value: "trending",
+    label: "Trending",
+    icon: <Star className="w-4 h-4 fill-black text-black" />,
+  },
+  {
+    value: "weekly",
+    label: "Weekly",
+  },
+  {
+    value: "hoh",
+    label: "HOH",
+  },
+]
+
 function CategoryTabs({
-  categories,
+  categories = DEFAULT_CATEGORIES,
   activeCategory,
   onCategoryChange,
   children,
   className,
   ...props
 }: CategoryTabsProps): React.ReactElement {
-  const defaultValue = activeCategory || categories[0]?.value || ""
+  const [selected, setSelected] = React.useState<string>(
+    activeCategory || categories[0]?.value || "trending"
+  )
+
+  const currentTab = activeCategory !== undefined ? activeCategory : selected
+
+  const handleSelect = (val: string) => {
+    setSelected(val)
+    onCategoryChange?.(val)
+  }
 
   return (
-    <div data-slot="category-tabs" className={cn("w-full", className)} {...props}>
-      <Tabs
-        defaultValue={defaultValue}
-        value={activeCategory}
-        onValueChange={onCategoryChange}
-      >
-        <div className="overflow-x-auto scrollbar-none">
-          <TabsList
-            variant="line"
-            className="w-full justify-start gap-1"
-            aria-label="Market categories"
-          >
-            {categories.map((category) => (
-              <TabsTrigger
-                key={category.value}
-                value={category.value}
-                disabled={category.disabled}
-                className={cn(
-                  "min-h-[44px] min-w-[44px] gap-1.5 rounded-lg px-3 py-2",
-                  "text-sm transition-colors duration-200",
-                  "hover:bg-[var(--bg-hover)]",
-                  "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]",
-                  "disabled:opacity-50 disabled:cursor-not-allowed"
-                )}
-              >
-                {category.label}
-                {category.count !== undefined && (
-                  <Badge
-                    variant="secondary"
-                    className="ml-1 min-w-[20px] rounded-full px-1.5 py-0 text-xs"
-                  >
-                    {category.count}
-                  </Badge>
-                )}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
-        <TabsContent value={activeCategory || defaultValue} className="outline-none">
-          {children}
-        </TabsContent>
-      </Tabs>
+    <div data-slot="category-tabs" className={cn("w-full py-2", className)} {...props}>
+      <div className="flex items-center gap-3 overflow-x-auto scrollbar-none py-1">
+        {categories.map((category) => {
+          const isActive = currentTab === category.value
+          return (
+            <button
+              key={category.value}
+              type="button"
+              disabled={category.disabled}
+              onClick={() => handleSelect(category.value)}
+              className={cn(
+                "inline-flex items-center justify-center gap-2 px-5 py-2 rounded-full text-xs sm:text-sm font-bold transition-all duration-150 select-none cursor-pointer whitespace-nowrap",
+                isActive
+                  ? "bg-[#FFC700] text-black shadow-md"
+                  : "bg-transparent text-gray-300 hover:text-white hover:bg-white/5"
+              )}
+            >
+              {category.icon ? (
+                <span className={cn("inline-flex items-center", isActive ? "text-black" : "text-gray-400")}>
+                  {category.icon}
+                </span>
+              ) : null}
+              <span>{category.label}</span>
+            </button>
+          )
+        })}
+      </div>
+      {children && <div className="mt-4">{children}</div>}
     </div>
   )
 }
 
 export { CategoryTabs }
 export type { CategoryTabsProps, CategoryTab }
+

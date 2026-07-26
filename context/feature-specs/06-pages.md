@@ -433,18 +433,23 @@ Authenticated Layout
 #### Assigned Application Shell
 Authenticated Application Shell
 #### Main Content
-- Section Header (Market Title/Status)
-- Statistic Card (Market Stats)
-- Trade Panel
-- Activity Feed
+- Back Link (`← Back`)
+- Market Title Header
+- **Binary Feed Variant (`BinaryMarketView`)**: Probability ratio bar (`RatioBar`) with percentage badges (`Yes 50%` / `No 50%`), quick outcome cards (`Yes 1k → 3k` / `No 1k → 5k`).
+- **1v1 Matchup Variant (`VersusMarketView`)**: Player 1 & Player 2 avatar cards/blocks, central gold **`VS`** separator, player-specific probability badges, player-specific odds rows (`Yes 1k → 3k` / `No 1k → 5k`).
+- **Multi-Option Variant (`MultiOptionMarketView`)**: Candidate row cards list (unrounded avatars, name, trade volume e.g. `Trades: ₦667k`, dual `Yes`/`No` odds buttons), initial top 6–10 candidate view with `see more ...` expander button.
+- Market Rules section (framed by top and bottom dividers).
+- Trade History container card (recent trade logs, candidate-attributed for multi-option markets + `see more ...` history log expander button).
+- Explore Markets pill button (`see more ...` / `explore markets...`).
+- Responsive Trade Dialog Sheet (`TradeDialog`: modal on desktop, bottom sheet on mobile with Single-Outcome Exposure Invariant check).
 #### Placeholder Content
-- Dummy market title, statistics, static graph placeholder, and placeholder activity items.
+- Dummy binary market title ("Will a Female Housemate win HoH this week?"), 1v1 matchup title ("Would Mercy Slap Ivana??"), or multi-option title ("Who would be Evicted First ??"), dynamic probability split, candidate list, generated rules text, and mock trade history entries.
 #### Navigation Entry Points
 - Dashboard, Markets, Portfolio, Search
 #### Responsive Behaviour
-- Desktop: Graph and trade panel side by side.
-- Tablet: Trade panel below graph.
-- Mobile: Sections stack vertically, trade panel full width.
+- Single-column feed flow matching Figma renders across Mobile and Desktop.
+- Desktop: Rendered within application shell main region with left sidebar and search topbar.
+- Mobile: Rendered full-width with topbar header and bottom navigation. Trade execution opens as a bottom sheet.
 #### Accessibility Notes
 - Complex charts must have accessible alternatives (tables or screen reader text).
 

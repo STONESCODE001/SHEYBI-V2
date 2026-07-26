@@ -25,6 +25,7 @@ import { WalletDetailsDialog } from "./features/wallet/wallet-details-dialog"
 import { DepositDialog } from "./features/wallet/deposit-dialog"
 import { WithdrawDialog } from "./features/wallet/withdraw-dialog"
 import { TradeConfirmDialog } from "./features/market/trade-confirm-dialog"
+import { TradeDialog } from "./features/market/trade-dialog"
 import { ShareDialog } from "./features/market/share-dialog"
 import { FilterDialog } from "./features/market/filter-dialog"
 import { ProfileMenuDialog } from "./features/profile/profile-menu-dialog"
@@ -65,6 +66,8 @@ export function registerDialogs() {
   DialogRegistry.register("wallet/deposit", DepositDialog as any)
   DialogRegistry.register("wallet/withdraw", WithdrawDialog as any)
   DialogRegistry.register("trade/confirm", TradeConfirmDialog as any)
+  DialogRegistry.register("trade/dialog", TradeDialog as any)
+  DialogRegistry.register("trade/panel", TradeDialog as any)
   DialogRegistry.register("market/share", ShareDialog as any)
   DialogRegistry.register("market/filters", FilterDialog as any)
   DialogRegistry.register("profile/menu", ProfileMenuDialog as any)

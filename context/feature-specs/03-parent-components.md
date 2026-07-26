@@ -911,6 +911,9 @@ All parent components will be created under `components/parent/`:
 | `components/parent/category-tabs.tsx` | CategoryTabs |
 | `components/parent/section-header.tsx` | SectionHeader |
 | `components/parent/trade-panel.tsx` | TradePanel |
+| `components/parent/market-details/binary-market-view.tsx` | BinaryMarketView |
+| `components/parent/market-details/versus-market-view.tsx` | VersusMarketView |
+| `components/parent/market-details/multi-option-market-view.tsx` | MultiOptionMarketView |
 | `components/parent/search-result-card.tsx` | SearchResultCard |
 | `components/parent/notification-item.tsx` | NotificationItem |
 | `components/parent/profile-summary-card.tsx` | ProfileSummaryCard |

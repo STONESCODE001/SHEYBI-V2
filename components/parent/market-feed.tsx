@@ -1,4 +1,5 @@
 import * as React from "react"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { EmptyIllustration } from "@/components/child/empty-illustration"
@@ -20,6 +21,10 @@ interface MarketFeedProps extends React.ComponentProps<"div"> {
   readonly emptyActionLabel?: string
   /** Optional action button handler for empty state. */
   readonly onEmptyAction?: () => void
+  /** Whether to show the full-width 'see more ...' button below grid. Defaults to true. */
+  readonly showSeeMore?: boolean
+  /** Target link URL for 'see more ...' button. Defaults to /markets. */
+  readonly seeMoreHref?: string
 }
 
 function MarketFeed({
@@ -30,24 +35,28 @@ function MarketFeed({
   emptyDescription = "There are no markets to display right now. Check back later for new predictions.",
   emptyActionLabel,
   onEmptyAction,
+  showSeeMore = true,
+  seeMoreHref = "/markets",
   className,
   ...props
 }: MarketFeedProps): React.ReactElement {
   if (loading) {
     return (
-      <div
-        data-slot="market-feed"
-        role="feed"
-        aria-busy="true"
-        className={cn(
-          "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3",
-          className
-        )}
-        {...props}
-      >
-        {Array.from({ length: skeletonCount }, (_, i) => (
-          <MarketCardSkeleton key={`skeleton-${i}`} />
-        ))}
+      <div className="flex flex-col gap-6 w-full">
+        <div
+          data-slot="market-feed"
+          role="feed"
+          aria-busy="true"
+          className={cn(
+            "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3",
+            className
+          )}
+          {...props}
+        >
+          {Array.from({ length: skeletonCount }, (_, i) => (
+            <MarketCardSkeleton key={`skeleton-${i}`} />
+          ))}
+        </div>
       </div>
     )
   }
@@ -81,22 +90,36 @@ function MarketFeed({
   }
 
   return (
-    <div
-      data-slot="market-feed"
-      role="feed"
-      aria-busy="false"
-      className={cn(
-        "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3",
-        className
+    <div data-slot="market-feed-container" className="flex flex-col gap-6 w-full">
+      <div
+        data-slot="market-feed"
+        role="feed"
+        aria-busy="false"
+        className={cn(
+          "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3",
+          className
+        )}
+        {...props}
+      >
+        {markets.map((market, index) => (
+          <MarketCard key={market.title + index} {...market} />
+        ))}
+      </div>
+
+      {showSeeMore && (
+        <div className="w-full flex justify-center pt-2">
+          <Link
+            href={seeMoreHref}
+            className="w-full flex items-center justify-center py-3.5 px-6 rounded-xl bg-[#111726] hover:bg-[#1A2338] border border-[var(--border-default)] text-sm font-semibold text-gray-300 hover:text-white transition-all duration-200 select-none shadow-sm cursor-pointer"
+          >
+            see more ...
+          </Link>
+        </div>
       )}
-      {...props}
-    >
-      {markets.map((market, index) => (
-        <MarketCard key={market.title + index} {...market} />
-      ))}
     </div>
   )
 }
 
 export { MarketFeed }
 export type { MarketFeedProps }
+

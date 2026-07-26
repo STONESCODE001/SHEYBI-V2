@@ -44,13 +44,15 @@ Implement Markets feature specification.
 * Authenticated Sidebar Navigation Buttons Alignment (`components/shell/constants.ts`).
 * Live Market Ticker Implementation Pause & Documentation Recording (`components/shell/application-shell.tsx`).
 * Borderless Shell Headers & Desktop Sidebar Alignment (`components/shell/*`).
-* Sheybi V2 Dark Mode Design System alignment (`ui-context.md`, `design-system.md`, `wireframe.md`, `user-flow.md`, `project-overview.md`).
+* Homepage Figma Design Alignment documentation (`ui-context.md`, `wireframe.md`, `design-system.md`, `progress-tracker.md`) detailing 3D Mascot graphic (`/sheybi-mascot.png`), "Predict The Outcome. Win Bigger." Hero Banner typography, Category Filter tabs (`Trending`, `Weekly`, `HOH`), Market Grid layout, and Footer Region.
+* Homepage Hero Header UI & Category Tabs Implementation (`components/parent/hero-banner.tsx`, `components/parent/category-tabs.tsx`, `app/page.tsx`, `app/dashboard/page.tsx`) rendering 3-line stacked typography ("Predict", "The Outcome.", "Win Bigger.") with bold font-black styling, left-aligned mobile text, mascot graphic hidden on mobile and enlarged on desktop (`/sheybi-mascot.png`), consistent wording across auth/guest states, and category filter pills (`Trending`, `Weekly`, `HOH`).
+* MarketFeed Expander Button (`components/parent/market-feed.tsx`) adding a full-width `see more ...` dark pill button below market grids for mobile/desktop and auth/unauth users linking directly to `/markets`.
 
 ---
 
 # In Progress
 
-- None (Phase Complete)
+- None (Completed)
 
 # Next Up
 
@@ -225,9 +227,12 @@ Make sure you update this section after every meaningful implementation unit.
   * **Verification:** `npm run build` completed successfully in 65s with zero errors across all 28 routed pages.
 
 * **2026-07-26**
-  * **Feature Completed:** Market Cards Redesign (Figma Single Source of Truth Alignment).
-  * **Files Modified/Created:** `components/child/ratio-bar.tsx` [NEW], `components/child/odds-button.tsx` [NEW], `components/child/index.ts`, `components/parent/market-card.tsx`, `app/page.tsx`, `app/markets/page.tsx`, `context/design-system.md`, `context/specs/frontend/03-parent-components.md`, `context/feature-specs/03-parent-components.md`, `context/progress-tracker.md`.
-  * **Decisions:** Redesigned `MarketCard` to strictly follow the Figma render designs for `binary`, `1v1`, and `multi_option` variants as the sole source of truth; enforced Inter font-bold/black title typography; built `RatioBar` child component for Green (`#30D878`) / Yellow (`#FFC91F`) probability split indicator; built `OddsButton` child component for outcome display buttons (`Yes 1k -> 3k`, `No 1k -> 5k`); wrapped entire card container in unified link to `/markets/[id]`; added extensive developer comments (`/** DB INTEGRATION NOTE: ... */`) for future database integration.
+  * **Feature Completed:** Multi-Option Market Details Page Redesign & Expander Button Differentiation (`/markets/[id]`) (Figma Single Source of Truth).
+  * **Files Modified/Created:** `components/parent/market-details/multi-option-market-view.tsx` [NEW], `components/parent/market-details/versus-market-view.tsx`, `components/parent/market-details/binary-market-view.tsx`, `components/parent/market-details/index.ts`, `app/markets/[id]/page.tsx`, `context/ui-context.md`, `context/wireframe.md`, `context/feature-specs/06-pages.md`, `context/feature-specs/03-parent-components.md`, `context/progress-tracker.md`.
+  * **Decisions:** Built `MultiOptionMarketView` component strictly aligned with Figma renders (*"Who would be Evicted First ??"*); differentiated expander buttons with distinct names and visual hierarchy: 1) `show more housemates...` (green outline pill button for candidates list expander), 2) `show full trade history...` (slate card pill button for trade log expander), 3) `see more ...` (prominent gold-accented elevated CTA button linking to `/markets` feed page); integrated with responsive `TradeDialog` sheet; updated context specs via targeted line-by-line diffs.
+
+
+
 
 
 

@@ -330,13 +330,16 @@ Contains:
 - Trades (Inactive item: Rounded card box with main base background `#0B0E14`)
 - Wallet (Inactive item: Rounded card box with main base background `#0B0E14`)
 - `+` Plus Button (Card box with main base background `#0B0E14`, yellow border & icon)
-- Bottom User Profile Box (Card box with main base background `#0B0E14`)
+- Bottom Auth / Profile Section:
+  - **Authenticated State**: User Profile Box (Card box with main base background `#0B0E14`, User Icon + "User Name" label)
+  - **Unauthenticated State**: Stacked Auth Buttons — "Log In" (Dark surface button `#0B0E14`) and "Sign up" (Filled Accent Yellow `#FFC107` primary button with dark text `#0B0E14`)
 
 Header:
 
 - Background: Main base background `#0B0E14`
-- Center: Search Bar ("Hinted search text")
+- Center: Search Bar ("Hinted search text" with search glass icon)
 - Right (Authenticated): Wallet Balance Pill (`₦ 2000.0` in Accent Yellow `#FFC107`)
+- Right (Unauthenticated Mobile): "Log In" dark button & "Sign in" Accent Yellow pill
 
 Mobile Navigation
 
@@ -344,7 +347,7 @@ Mobile Topbar:
 
 - Background: Main base background `#0B0E14`
 - Logo (Left)
-- Search Icon + Wallet Balance Pill (`₦ 2000.0` in Accent Yellow) (Right)
+- Right: Search Icon + Wallet Balance Pill (Authenticated) OR "Log In" & "Sign in" buttons (Unauthenticated)
 - No Hamburger Drawer menu icon
 
 *(Note: Live Market Ticker implementation and build are paused)*
@@ -363,49 +366,142 @@ Mobile Bottom Navigation (5 items):
 
 ## Home
 
-Hero
+Hero Banner Section:
+- Headline: "Predict The Outcome. Win Bigger."
+  - "Predict": White text (`#FFFFFF`)
+  - "The Outcome.": Electric Blue text (`#2563EB` / `#0D5BFF`)
+  - "Win Bigger.": Electric Blue text (`#2563EB` / `#0D5BFF`) with bright Golden Yellow period (`#FFC700`)
+- Hero Mascot Asset: 3D Blue Mascot image (`/sheybi-mascot.png` located in `public/sheybi-mascot.png`) positioned on the right side of the hero on Desktop.
 
 ↓
 
-Featured Markets
+Category Filter Tabs:
+- "Trending" (Active: Golden Yellow pill `#FFC700` with star icon + bold black text `#000000`)
+- "Weekly" (Inactive text `#9CA3AF`)
+- "HOH" (Inactive text `#9CA3AF`)
 
 ↓
 
-Trending Markets
+Market Grid (2-column responsive layout on Desktop, 1-column on Mobile):
+- 1v1 Matchup Card (`1v1`)
+- Binary Yes/No Card (`binary`)
+- Multiple Options Card (`multi_option`)
 
 ↓
 
-Categories
+Grid Expander Button:
+- Full-width `see more ...` dark pill button below the market grid.
 
 ↓
 
-Recently Resolved
+Footer Region:
+- Divider line (`#1F2937`)
+- Sheybi Logo (`PREDICT. PLAY. WIN.`)
+- Links: "Home", "Contact"
+- Risk Disclaimer: "Prediction markets involve financial risk—only trade with funds you can afford to lose. Bayse does not provide investment or financial advice. All market outcomes are resolved transparently using publicly verifiable sources. Participation is restricted to individuals 18 years and older and may be limited in some jurisdictions. Please review our Terms of Service, Privacy Policy, and Prohibition Policy before using the platform."
+- Copyright: "© 2026 Sheybi. All rights reserved."
 
 ---
 
-## Market Details
+## Market Details (Binary Market Feed)
 
-Market Header
-
-↓
-
-Probability Cards
+Back Link (`← Back`)
 
 ↓
 
-Trade Panel
+Market Title Header
 
 ↓
 
-Price History
+Probability Ratio Bar & Percentage Badges (`RatioBar`: `Yes ( 50% Chance )` / `No ( 50% Chance )`)
 
 ↓
 
-Market Information
+Quick Outcome Selection Cards (`OddsButton`: `Yes 1k → 3k` / `No 1k → 5k`)
 
 ↓
 
-Activity Feed
+Market Rules Section (Framed by top and bottom horizontal rule dividers)
+
+↓
+
+Trade History Container Card (Recent trade activity list)
+
+↓
+
+Explore Markets Pill CTA (`explore markets...`)
+
+↓
+
+Responsive Trade Sheet (Modal dialog on desktop, bottom sheet on mobile with single-outcome exposure check & ultra-simple Gen Z Buy/Sell controls)
+
+---
+
+## Market Details (1v1 Matchup Feed)
+
+Back Link (`← Back`)
+
+↓
+
+Market Title Header (e.g. "Would Mercy Slap Ivana??")
+
+↓
+
+1v1 Hero Matchup Blocks / Card:
+- Mobile: Player 1 Avatar & Name $\rightarrow$ Green `50% Chance` Badge $\rightarrow$ Player 1 Odds Cards $\rightarrow$ Gold **`VS`** Badge $\rightarrow$ Player 2 Avatar & Name $\rightarrow$ Gold `50% Chance` Badge $\rightarrow$ Player 2 Odds Cards.
+- Desktop: Elevated Dark Container Card (`bg-[#0F1727]`) with side-by-side Player Avatars, central **`VS`**, `RatioBar`, and player odds rows.
+
+↓
+
+Market Rules Section (Framed by top and bottom horizontal rule dividers)
+
+↓
+
+Trade History Container Card (Player-attributed trade logs e.g. "Bought 200 YES Shares from Mercy")
+
+↓
+
+Explore Markets Pill CTA (`Explore Markets...`)
+
+↓
+
+Responsive Trade Sheet (`TradeDialog`: pre-selected to clicked player & outcome)
+
+---
+
+## Market Details (Multi-Option Market Feed)
+
+Back Link (`← Back`)
+
+↓
+
+Market Title Header (e.g. "Who would be Evicted First ??") + Subtitle Metric (`Trades: ₦ 250,000`)
+
+↓
+
+Candidate Row Cards List:
+- Individual Row Card per Candidate (`bg-[#0B0E14] border border-[#1E2A44]`): Candidate avatar (`rounded-none border-none`), Name, Volume metric (`Trades: ₦667k`), Dual Odds Buttons (`Yes 1k → 3k` / `No 1k → 3k`).
+- Initial view displays top 6–10 candidates.
+
+↓
+
+Options Expander Pill CTA (`see more ...` button directly below candidate rows)
+
+↓
+
+Market Rules Section (Framed by top and bottom horizontal rule dividers)
+
+↓
+
+Trade History Container Card (Recent trade log entries + `see more ...` log expander button)
+
+↓
+
+Explore Markets Pill CTA (`see more ...` / `explore markets...` button)
+
+↓
+
+Responsive Trade Sheet (`TradeDialog`: pre-selected to clicked candidate & outcome)
 
 ---
 

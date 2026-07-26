@@ -575,7 +575,7 @@ Resolved positions no longer fluctuate.
 - Trades execute immediately.
 - Partial selling is allowed.
 - Users may buy the same option multiple times.
-- Users may own multiple positions in the same market.
+- **Single-Outcome Exposure Invariant**: Users may only hold an active position in ONE outcome of a given market at any time. A user holding YES shares cannot purchase NO shares (or vice versa) without fully exiting their existing position first.
 - No order book exists.
 - Trades always execute against the current market price.
 - Trading automatically stops when a market closes.

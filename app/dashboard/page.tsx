@@ -11,17 +11,7 @@ export default function DashboardPage() {
   return (
     <AuthenticatedLayout>
       <div className="flex flex-col gap-8 md:gap-10">
-        <HeroBanner
-          headline="Welcome to Sheybi"
-          description="Discover new markets, track your predictions, and climb the leaderboard."
-          actions={[
-            {
-              label: "Explore Markets",
-              onClick: () => console.log("Navigate to markets"),
-              primary: true,
-            },
-          ]}
-        />
+        <HeroBanner />
 
         <div className="flex flex-col gap-6">
           <CategoryTabs

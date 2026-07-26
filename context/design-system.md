@@ -520,6 +520,53 @@ Contains:
 
 ---
 
+## Hero Banner Component (`HeroBanner`)
+
+Purpose
+
+Renders the top hero section on the Homepage matching the Figma design.
+
+Anatomy & Structure
+
+- **Left Content**: Large stacked typography:
+  - Line 1: `Predict` in White font (`#FFFFFF`)
+  - Line 2: `The Outcome.` in Electric Blue font (`#2563EB` / `#0D5BFF`)
+  - Line 3: `Win Bigger.` in Electric Blue font (`#2563EB` / `#0D5BFF`) with bright Golden Yellow period (`#FFC700`)
+- **Right Content (Desktop)**: 3D Blue Mascot graphic (`/sheybi-mascot.png` located in `public/sheybi-mascot.png`).
+- **Responsive Behavior**: Stacked layout on Mobile, side-by-side flex layout on Desktop.
+
+---
+
+## Category Filter Tabs (`CategoryFilterTabs`)
+
+Purpose
+
+Renders horizontal filter pills below the Hero Banner.
+
+Anatomy & Pills
+
+- **Trending**: Active pill in Golden Yellow `#FFC700` with star icon + dark text `#000000`.
+- **Weekly**: Inactive filter pill with muted text `#9CA3AF`.
+- **HOH**: Inactive filter pill with muted text `#9CA3AF`.
+
+---
+
+## Footer Region (`FooterRegion`)
+
+Purpose
+
+Renders global platform branding, navigation links, risk disclaimer, and copyright at the bottom of the main content container.
+
+Anatomy & Content
+
+- **Border Top**: Top divider line (`#1F2937`).
+- **Brand**: Sheybi logo + `PREDICT. PLAY. WIN.` tagline.
+- **Quick Links**: `Home`, `Contact`.
+- **Risk Disclaimer**: "Prediction markets involve financial risk—only trade with funds you can afford to lose. Bayse does not provide investment or financial advice. All market outcomes are resolved transparently using publicly verifiable sources. Participation is restricted to individuals 18 years and older and may be limited in some jurisdictions. Please review our Terms of Service, Privacy Policy, and Prohibition Policy before using the platform."
+- **Copyright**: "© 2026 Sheybi. All rights reserved."
+
+---
+
 # Market Components
 
 ## Market Card (3 Card Layout Variants)

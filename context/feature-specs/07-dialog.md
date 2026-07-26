@@ -240,6 +240,7 @@ Dialogs executing financial operations (e.g., Deposit, Withdraw, Trade Buy/Sell,
 3. **Explicit Close Action**: The dialog close button must be hidden or disabled during processing.
 4. **Disabled Interactive Inputs**: While processing (in `Disabled` state), all inputs, checkboxes, sliders, and buttons must be set to `disabled`.
 5. **No Route Interruption**: If a route change is attempted, route transitions must be blocked or the dialog must warn the user before destroying the session.
+6. **Single-Outcome Exposure Enforcement**: In Trade Dialogs (`trade/confirm`, `trade/panel`), if a user currently holds an active position in one outcome (e.g. `NO`), the dialog must strictly block purchasing the opposite outcome (`YES`) until the user has fully exited their existing position. An outcome switch prompt ("Sell All NO Shares") must be displayed to resolve position collisions safely.
 
 ---
 
