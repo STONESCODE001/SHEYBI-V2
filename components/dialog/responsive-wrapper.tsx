@@ -147,3 +147,5 @@ export function ResponsiveWrapper({
   )
 }
 export default ResponsiveWrapper
+export { ResponsiveWrapper as ResponsiveDialog }
+

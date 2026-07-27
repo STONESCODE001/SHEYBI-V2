@@ -4,7 +4,7 @@ Update this document immediately after every completed implementation unit. This
 
 ---
 
-## Current Phase: Phase 2: Core UI (Completed)
+## Current Phase: Phase 4: Core Engine & Algorithm Implementation
 
 ### Current Implementation Target
 - None (Phase Complete)
@@ -49,13 +49,19 @@ Implement Markets feature specification.
 * Homepage Hero Header UI & Category Tabs Implementation (`components/parent/hero-banner.tsx`, `components/parent/category-tabs.tsx`, `app/page.tsx`, `app/dashboard/page.tsx`) rendering 3-line stacked typography ("Predict", "The Outcome.", "Win Bigger.") with bold font-black styling, left-aligned mobile text, mascot graphic hidden on mobile and enlarged on desktop (`/sheybi-mascot.png`), consistent wording across auth/guest states, and category filter pills (`Trending`, `Weekly`, `HOH`).
 * MarketFeed Expander Button (`components/parent/market-feed.tsx`) adding a full-width `see more ...` dark pill button below market grids for mobile/desktop and auth/unauth users linking directly to `/markets`.
 * Real-Time User Authentication (`context/feature-specs/08-realtime-authentication-spec.md`) integrating Clerk (`@clerk/nextjs`, `@clerk/themes`), `ClerkProvider` inside `<body>` in `app/layout.tsx`, `middleware.ts` route protection & admin metadata role guard (`await auth()`), catch-all auth pages (`/auth/sign-in/[[...sign-in]]`, `/auth/sign-up/[[...sign-up]]`), `<UserButton />` in `UserProfileRegion`, and embedded `<UserProfile />` in `app/profile/page.tsx`.
+* Real-Time User Authentication Specification & Verification (`context/feature-specs/08-realtime-authentication-spec.md`) — Verification of Clerk authentication, route guards, admin metadata role protection, and UI shell profile components completed 100%.
 * Lean Admin Module Feature Specification & Control Workspace (`context/feature-specs/09-lean-admin-spec.md`, `app/admin/page.tsx`, `components/admin/*`) featuring Platform Financial Summary KPI cards, Market Management Table with `CreateMarketDialog` (Binary & Multi-option probability checksums) and `ResolveMarketDialog`, User Market Suggestions Queue with pre-fill trigger, Withdrawal Requests Review with `WithdrawalActionDialog`, Category Taxonomy Manager, and Immutable System Audit Logs.
+* Prediction Engine Algorithm Specification & Implementation (`context/feature-specs/10-prediction-algorithm.md`, `lib/prediction-engine/lmsr.ts`, `lib/prediction-engine/types.ts`, `lib/prediction-engine/run-tests.ts`) implementing Logarithmic Market Scoring Rule (LMSR) softmax pricing, $b$ parameter calculation from Naira liquidity, closed-form buy/sell share calculation, probability normalization to 100%, single-outcome exposure invariant, withdrawal fee 3.0%, and automated invariant test suite passing 100%.
+* InstantDB Graph Schema Definition (`instant.schema.ts`) supporting `categories`, `markets` (`state`: `"draft" | "scheduled" | "open" | "paused" | "closed" | "resolved" | "cancelled"`), `market_options`, `positions`, `wallets`, `ledger`, `market_activity`, `market_suggestions`, and `audit_logs`.
+* Market Action Validation & Dialog Components (`lib/actions/market-actions.ts`, `components/dialog/features/market/*`, `components/dialog/register-dialogs.ts`) implementing `ResolveMarketDialog` (with ALL CAPS market title match safeguard), `ReopenMarketDialog` (reopening `closed` markets), and `PauseMarketDialog` (emergency situational pausing).
+* Prediction Algorithm Specification & Implementation (`context/feature-specs/10-prediction-algorithm.md`, `lib/prediction-engine/lmsr.ts`, `lib/prediction-engine/types.ts`, `lib/prediction-engine/lmsr.test.ts`, `lib/prediction-engine/run-tests.ts`) — Verified LMSR mathematical pricing engine, $b$ parameter calculation, closed-form buy/sell share formulas, probability normalization to 100%, single-outcome exposure invariant, numerical log-sum-exp stabilization, and automated test suite passing 100%.
+* Markets Feature Real-Time Specification & Implementation (`context/feature-specs/11-markets-feature.md`, `lib/instant.ts`, `lib/instant-admin.ts`, `lib/hooks/use-markets.ts`, `lib/hooks/use-categories.ts`, `lib/market-adapter.ts`, `app/page.tsx`, `app/dashboard/page.tsx`) — InstantDB graph schema initialization, client and server admin configuration, real-time reactive query hooks (`useMarkets`, `useCategories`), data adapter (`adaptMarketToCardProps`), and real-time feed integration across guest and authenticated pages.
 
 ---
 
 # In Progress
 
-- None (Completed)
+- None (Phase Complete)
 
 # Next Up
 
@@ -254,7 +260,11 @@ Make sure you update this section after every meaningful implementation unit.
   * **Decisions:** Confirmed permanent Dark theme (`#0B0E14` base background, `#0F1727` surface); set `app/globals.css` as canonical design system source of truth; confirmed Notifications & Settings as strictly PAUSED project-wide; confirmed permanent removal of `<CategoryNavigationRegion />`; confirmed dummy auth and mock dataset UI status until Phase 4 Real Database & Prediction Engine build; structured Phase 4 Database Build blueprint.
   * **Verification:** `npx tsc --noEmit` and documentation links verified with zero errors across all modules.
 
-
+* **2026-07-27**
+  * **Feature Completed:** Prediction Engine Integration Layer & Repository Pattern (`12-prediction-engine-integration.md`).
+  * **Files Created/Modified:** `lib/repositories/types.ts` [NEW], `lib/repositories/mock-repository.ts` [NEW], `lib/repositories/index.ts` [NEW], `lib/actions/trade-actions.ts` [NEW], `lib/actions/wallet-actions.ts` [NEW], `lib/actions/market-actions.ts`, `context/feature-specs/12-prediction-engine-integration.md` [NEW], `context/progress-tracker.md`.
+  * **Decisions:** Implemented a Repository Pattern abstracting data persistence so the engine connects to an in-memory mock repository now and can be swapped to InstantDB later via a single-line import change; 1v1 markets are represented as 4-option multi-option markets (A YES, A NO, B YES, B NO) with 25% initial split; wallet balance model uses `availableBalance` (ready funds) and `lockedBalance` (position funds); trade Server Actions use real Clerk `auth()` and delegate math to `lmsr.ts`; withdrawals deduct `availableBalance` immediately and never touch `lockedBalance`.
+  * **Verification:** `npx tsc --noEmit` passes cleanly with zero errors; automated invariant tests pass 100%.
 
 
 

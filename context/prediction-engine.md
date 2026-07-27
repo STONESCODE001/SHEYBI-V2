@@ -239,7 +239,7 @@ Trading Fee = **2.5%** of the trade value.
 
 A platform fee charged on completed withdrawals.
 
-Withdrawal Fee = **2.5%** of the withdrawal amount.
+Withdrawal Fee = **3.0%** of the withdrawal amount.
 
 Minimum fee: **₦150**
 
@@ -321,13 +321,25 @@ No further buys or sells are accepted.
 
 ---
 
-## Extend Market
+## Pause Market
 
-Allowed only while Closed and before Resolution.
+Allowed only while Open.
+
+Moves Open to Paused.
+
+Temporarily suspends all trading (buys and sells) for exceptional situations.
+
+Unpausing returns market to Open.
+
+---
+
+## Extend / Reopen Market
+
+Allowed while Open or Closed before Resolution.
 
 Updates closing time.
 
-Returns market to Open.
+Moves state (or returns Closed market) to Open.
 
 ---
 
@@ -349,7 +361,7 @@ Market enters Cancelled.
 
 Allowed only once.
 
-Administrator must confirm the market title before final submission.
+Administrator must manually type the exact market title in ALL CAPS and confirm via double-confirmation dialog before final submission.
 
 Winning option becomes immutable.
 
@@ -438,13 +450,25 @@ Buying and selling are permitted.
 
 ---
 
+## Paused
+
+Trading is temporarily suspended for exceptional situations.
+
+No new buys or sells are permitted.
+
+Existing user positions remain unchanged.
+
+Can be unpaused by administrator back to Open.
+
+---
+
 ## Closed
 
-Trading permanently stops.
+Trading stops.
 
 No new trades.
 
-Waiting for resolution.
+Waiting for resolution or administrative extension/reopening.
 
 ---
 
@@ -689,7 +713,7 @@ Trading fees are deducted immediately when the trade executes.
 
 ## Withdrawal Fee
 
-- 2.5% of the withdrawal amount.
+- 3.0% of the withdrawal amount.
 - Minimum: ₦150.
 - Maximum: unlimited.
 

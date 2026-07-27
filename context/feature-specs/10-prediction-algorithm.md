@@ -33,6 +33,8 @@ This document defines only the mathematical model and its computational procedur
 
 ---
 
+
+
 # Pricing Model
 
 ## Algorithm: LMSR (Logarithmic Market Scoring Rule)

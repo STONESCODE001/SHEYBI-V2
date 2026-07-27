@@ -29,6 +29,9 @@ import { TradeDialog } from "./features/market/trade-dialog"
 import { ShareDialog } from "./features/market/share-dialog"
 import { FilterDialog } from "./features/market/filter-dialog"
 import { MarketSuggestionDialog } from "./features/market/market-suggestion-dialog"
+import { ResolveMarketDialog } from "./features/market/resolve-market-dialog"
+import { ReopenMarketDialog } from "./features/market/reopen-market-dialog"
+import { PauseMarketDialog } from "./features/market/pause-market-dialog"
 import { ProfileMenuDialog } from "./features/profile/profile-menu-dialog"
 import { EditProfileDialog } from "./features/profile/edit-profile-dialog"
 import { ChangeEmailDialog } from "./features/settings/change-email-dialog"
@@ -72,6 +75,9 @@ export function registerDialogs() {
   DialogRegistry.register("market/share", ShareDialog as any)
   DialogRegistry.register("market/filters", FilterDialog as any)
   DialogRegistry.register("market/suggestion", MarketSuggestionDialog as any)
+  DialogRegistry.register("market/resolve", ResolveMarketDialog as any)
+  DialogRegistry.register("market/reopen", ReopenMarketDialog as any)
+  DialogRegistry.register("market/pause", PauseMarketDialog as any)
   DialogRegistry.register("profile/menu", ProfileMenuDialog as any)
   DialogRegistry.register("profile/edit", EditProfileDialog as any)
   DialogRegistry.register("settings/change-email", ChangeEmailDialog as any)
