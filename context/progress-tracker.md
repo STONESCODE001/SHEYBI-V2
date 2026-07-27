@@ -95,7 +95,11 @@ Record only decisions that permanently affect the architecture of the platform.
 | Notifications & Settings Paused                  | Streamline MVP scope by omitting Notifications & Settings pages.   |
 | Topbar Wallet Chip Direct Route Navigation       | Wallet balance chip navigates directly to `/wallet` page.         |
 | Market Suggestion FAB Trigger                    | Center `+` FAB opens Market Suggestion dialog/bottom-sheet.        |
-| Clerk User Profile Dual Presentation Strategy    | Desktop renders inline `<UserProfile/>`; Mobile triggers modal.    |
+| Permanent Dark Theme Aesthetic (`#0B0E14`)        | Enforce dark theme (#0B0E14 base, #0F1727 surface) project-wide.   |
+| Canonical Design System (`globals.css`)          | Use `app/globals.css` as single source of truth for design tokens. |
+| Permanent Removal of CategoryNavigationRegion    | Omit desktop sidebar categories section per Figma layout.          |
+| Simulated Auth & Transient UI Mock Phase         | Retain mock auth state and static datasets until Phase 4 Real DB.  |
+| InstantDB Realtime Database Architecture         | Use InstantDB graph schema for instant real-time sync & optimistic updates. |
 
 ---
 
@@ -234,6 +238,13 @@ Make sure you update this section after every meaningful implementation unit.
   * **Feature Completed:** Multi-Option Market Details Page Redesign & Expander Button Differentiation (`/markets/[id]`) (Figma Single Source of Truth).
   * **Files Modified/Created:** `components/parent/market-details/multi-option-market-view.tsx` [NEW], `components/parent/market-details/versus-market-view.tsx`, `components/parent/market-details/binary-market-view.tsx`, `components/parent/market-details/index.ts`, `app/markets/[id]/page.tsx`, `context/ui-context.md`, `context/wireframe.md`, `context/feature-specs/06-pages.md`, `context/feature-specs/03-parent-components.md`, `context/progress-tracker.md`.
   * **Decisions:** Built `MultiOptionMarketView` component strictly aligned with Figma renders (*"Who would be Evicted First ??"*); differentiated expander buttons with distinct names and visual hierarchy: 1) `show more housemates...` (green outline pill button for candidates list expander), 2) `show full trade history...` (slate card pill button for trade log expander), 3) `see more ...` (prominent gold-accented elevated CTA button linking to `/markets` feed page); integrated with responsive `TradeDialog` sheet; updated context specs via targeted line-by-line diffs.
+
+* **2026-07-27**
+  * **Audit & Alignment Completed:** Project-Wide Context & Codebase Conflict Resolution & Phase 4 DB Plan.
+  * **Files Modified:** `AGENTS.md`, `context/progress-tracker.md`, `implementation_plan.md`.
+  * **Decisions:** Confirmed permanent Dark theme (`#0B0E14` base background, `#0F1727` surface); set `app/globals.css` as canonical design system source of truth; confirmed Notifications & Settings as strictly PAUSED project-wide; confirmed permanent removal of `<CategoryNavigationRegion />`; confirmed dummy auth and mock dataset UI status until Phase 4 Real Database & Prediction Engine build; structured Phase 4 Database Build blueprint.
+  * **Verification:** `npx tsc --noEmit` and documentation links verified with zero errors across all modules.
+
 
 
 

@@ -122,7 +122,7 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
         </div>
 
         {/* Quick Outcome Selection / Betting Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 p-1.5 rounded-2xl bg-[#0B0E14] border border-[#1E2A44]">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
           <button
             type="button"
             disabled={!hasRules}
@@ -149,7 +149,7 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
         </div>
 
         {/* Market Rules Section */}
-        <div className="py-5 border-y border-[#1F2937] space-y-2">
+        <div className="py-5 border-y border-[var(--border-default)] space-y-2">
           <h2 className="text-base sm:text-lg font-bold text-[var(--text-primary)]">
             Market Rules
           </h2>
@@ -164,7 +164,7 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
             Trade History
           </h2>
 
-          <div className="rounded-2xl border border-[#1E2A44] bg-[#0F1727] p-4 sm:p-5 divide-y divide-[#1F2937]/50">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 sm:p-5 divide-y divide-[var(--border-default)]/50">
             {historyItems.map((item, idx) => (
               <div
                 key={item.id || idx}
@@ -172,7 +172,7 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
               >
                 <div className="text-[var(--text-primary)]">
                   Bought {item.shares}{" "}
-                  <span className={cn(item.outcome === "yes" ? "text-[#30D878]" : "text-[#FFC91F]")}>
+                  <span className={cn(item.outcome === "yes" ? "text-[var(--market-yes)]" : "text-[var(--accent-yellow)]")}>
                     {item.outcome.toUpperCase()}
                   </span>{" "}
                   Shares
@@ -189,7 +189,7 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
         <div className="pt-2 pb-4 text-center">
           <Link
             href="/markets"
-            className="inline-flex items-center justify-center w-full px-8 py-3.5 rounded-2xl bg-[#0F1727] border border-[#1E2A44] hover:bg-[#162238] hover:border-[#FFC91F]/50 font-extrabold text-sm text-[var(--text-primary)] transition-all shadow-md active:scale-[0.99]"
+            className="inline-flex items-center justify-center w-full px-8 py-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] hover:bg-[var(--bg-hover)] hover:border-[var(--accent-yellow)]/50 font-extrabold text-sm text-[var(--text-primary)] transition-all shadow-md active:scale-[0.99]"
           >
             see more ...
           </Link>

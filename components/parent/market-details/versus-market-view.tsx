@@ -117,26 +117,27 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
         <div className="md:hidden space-y-6">
           {/* Player 1 Block */}
           <div className="flex flex-col items-center space-y-3">
-            <div className="relative size-28 overflow-hidden bg-[#0F1727] flex items-center justify-center">
+            <div className="relative size-28 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center">
               {player1.avatarUrl ? (
                 <Image
                   src={player1.avatarUrl}
                   alt={player1.name}
                   fill
+                  sizes="(max-width: 768px) 112px, 112px"
                   className="object-cover"
                 />
               ) : (
-                <User className="size-12 text-[#30D878]" />
+                <User className="size-12 text-[var(--accent-green)]" />
               )}
             </div>
 
-            <h2 className="text-lg font-black text-white">{player1.name}</h2>
+            <h2 className="text-lg font-black text-[var(--text-primary)]">{player1.name}</h2>
 
-            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#30D878]/10 border border-[#30D878] text-[#30D878] font-bold text-sm">
+            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[var(--accent-green)]/10 border border-[var(--accent-green)] text-[var(--accent-green)] font-bold text-sm">
               {p1Prob}% Chance
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[#0B0E14] border border-[#1E2A44]">
+            <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
               <button
                 type="button"
                 onClick={() => handleOpenTradeDialog(player1, "yes")}
@@ -156,33 +157,34 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
 
           {/* Central VS Separator */}
           <div className="text-center my-2">
-            <span className="text-2xl font-black text-[#FFC91F] tracking-widest uppercase">
+            <span className="text-2xl font-black text-[var(--accent-yellow)] tracking-widest uppercase">
               VS
             </span>
           </div>
 
           {/* Player 2 Block */}
           <div className="flex flex-col items-center space-y-3">
-            <div className="relative size-28 overflow-hidden bg-[#0F1727] flex items-center justify-center">
+            <div className="relative size-28 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center">
               {player2.avatarUrl ? (
                 <Image
                   src={player2.avatarUrl}
                   alt={player2.name}
                   fill
+                  sizes="(max-width: 768px) 112px, 112px"
                   className="object-cover"
                 />
               ) : (
-                <User className="size-12 text-[#FFC91F]" />
+                <User className="size-12 text-[var(--accent-yellow)]" />
               )}
             </div>
 
-            <h2 className="text-lg font-black text-white">{player2.name}</h2>
+            <h2 className="text-lg font-black text-[var(--text-primary)]">{player2.name}</h2>
 
-            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#FFC91F]/10 border border-[#FFC91F] text-[#FFC91F] font-bold text-sm">
+            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[var(--accent-yellow)]/10 border border-[var(--accent-yellow)] text-[var(--accent-yellow)] font-bold text-sm">
               {p2Prob}% Chance
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[#0B0E14] border border-[#1E2A44]">
+            <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
               <button
                 type="button"
                 onClick={() => handleOpenTradeDialog(player2, "yes")}
@@ -203,51 +205,53 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
 
         {/* DESKTOP VIEW (Figma Screen 2 - Hero Matchup Card) */}
         <div className="hidden md:block space-y-6">
-          <div className="p-6 rounded-2xl bg-[#0F1727] border border-[#1E2A44] space-y-6 shadow-xl">
+          <div className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] space-y-6 shadow-xl">
             <div className="grid grid-cols-3 items-center text-center">
               {/* Player 1 Avatar & Name */}
               <div className="flex flex-col items-center space-y-2.5">
-                <div className="relative size-24 overflow-hidden bg-[#0B0E14] flex items-center justify-center">
+                <div className="relative size-24 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center">
                   {player1.avatarUrl ? (
                     <Image
                       src={player1.avatarUrl}
                       alt={player1.name}
                       fill
+                      sizes="(max-width: 768px) 96px, 96px"
                       className="object-cover"
                     />
                   ) : (
-                    <User className="size-10 text-[#30D878]" />
+                    <User className="size-10 text-[var(--accent-green)]" />
                   )}
                 </div>
-                <h2 className="text-xl font-extrabold text-white">{player1.name}</h2>
-                <span className="text-sm font-extrabold text-[#30D878]">
+                <h2 className="text-xl font-extrabold text-[var(--text-primary)]">{player1.name}</h2>
+                <span className="text-sm font-extrabold text-[var(--accent-green)]">
                   {p1Prob}% Chance
                 </span>
               </div>
 
               {/* Central VS */}
               <div className="flex items-center justify-center">
-                <span className="text-3xl font-black text-[#FFC91F] tracking-widest">
+                <span className="text-3xl font-black text-[var(--accent-yellow)] tracking-widest">
                   VS
                 </span>
               </div>
 
               {/* Player 2 Avatar & Name */}
               <div className="flex flex-col items-center space-y-2.5">
-                <div className="relative size-24 overflow-hidden bg-[#0B0E14] flex items-center justify-center">
+                <div className="relative size-24 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center">
                   {player2.avatarUrl ? (
                     <Image
                       src={player2.avatarUrl}
                       alt={player2.name}
                       fill
+                      sizes="(max-width: 768px) 96px, 96px"
                       className="object-cover"
                     />
                   ) : (
-                    <User className="size-10 text-[#FFC91F]" />
+                    <User className="size-10 text-[var(--accent-yellow)]" />
                   )}
                 </div>
-                <h2 className="text-xl font-extrabold text-white">{player2.name}</h2>
-                <span className="text-sm font-extrabold text-[#FFC91F]">
+                <h2 className="text-xl font-extrabold text-[var(--text-primary)]">{player2.name}</h2>
+                <span className="text-sm font-extrabold text-[var(--accent-yellow)]">
                   {p2Prob}% Chance
                 </span>
               </div>
@@ -264,7 +268,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
           {/* Desktop Dual Player Odds Rows */}
           <div className="grid grid-cols-2 gap-4">
             {/* Player 1 Odds Pair */}
-            <div className="grid grid-cols-2 gap-2.5 p-1.5 rounded-2xl bg-[#0B0E14] border border-[#1E2A44]">
+            <div className="grid grid-cols-2 gap-2.5 p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
               <button
                 type="button"
                 onClick={() => handleOpenTradeDialog(player1, "yes")}
@@ -282,7 +286,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
             </div>
 
             {/* Player 2 Odds Pair */}
-            <div className="grid grid-cols-2 gap-2.5 p-1.5 rounded-2xl bg-[#0B0E14] border border-[#1E2A44]">
+            <div className="grid grid-cols-2 gap-2.5 p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
               <button
                 type="button"
                 onClick={() => handleOpenTradeDialog(player2, "yes")}
@@ -302,7 +306,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
         </div>
 
         {/* Market Rules Section */}
-        <div className="py-5 border-y border-[#1F2937] space-y-2">
+        <div className="py-5 border-y border-[var(--border-default)] space-y-2">
           <h2 className="text-base sm:text-lg font-bold text-[var(--text-primary)]">
             Market Rules
           </h2>
@@ -317,7 +321,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
             Trade History
           </h2>
 
-          <div className="rounded-2xl border border-[#1E2A44] bg-[#0F1727] p-4 sm:p-5 divide-y divide-[#1F2937]/50">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 sm:p-5 divide-y divide-[var(--border-default)]/50">
             {historyItems.map((item, idx) => (
               <div
                 key={item.id || idx}
@@ -325,7 +329,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
               >
                 <div className="text-[var(--text-primary)]">
                   Bought {item.shares}{" "}
-                  <span className={cn(item.outcome === "yes" ? "text-[#30D878]" : "text-[#FFC91F]")}>
+                  <span className={cn(item.outcome === "yes" ? "text-[var(--market-yes)]" : "text-[var(--accent-yellow)]")}>
                     {item.outcome.toUpperCase()}
                   </span>{" "}
                   Shares {item.playerName && `from ${item.playerName}`}
@@ -342,7 +346,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
         <div className="pt-2 pb-4 text-center">
           <Link
             href="/markets"
-            className="inline-flex items-center justify-center w-full px-8 py-3.5 rounded-2xl bg-[#0F1727] border border-[#1E2A44] hover:bg-[#162238] hover:border-[#FFC91F]/50 font-extrabold text-sm text-[var(--text-primary)] transition-all shadow-md active:scale-[0.99]"
+            className="inline-flex items-center justify-center w-full px-8 py-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] hover:bg-[var(--bg-hover)] hover:border-[var(--accent-yellow)]/50 font-extrabold text-sm text-[var(--text-primary)] transition-all shadow-md active:scale-[0.99]"
           >
             see more ...
           </Link>

@@ -156,15 +156,15 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
 
       <div className="mt-4 flex flex-col gap-4">
         {/* Mode Selector (BUY / SELL) */}
-        <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[#0B0E14] border border-[#1E2A44]">
+        <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[var(--bg-base)] border border-[var(--border-default)]">
           <button
             type="button"
             onClick={() => setMode("buy")}
             className={cn(
               "py-2.5 rounded-lg font-bold text-sm transition-all",
               mode === "buy"
-                ? "bg-[#161F33] text-white shadow-sm border border-[#2B3240]"
-                : "text-[var(--text-muted)] hover:text-white"
+                ? "bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm border border-[var(--border-default)]"
+                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
             )}
           >
             BUY
@@ -175,8 +175,8 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             className={cn(
               "py-2.5 rounded-lg font-bold text-sm transition-all",
               mode === "sell"
-                ? "bg-[#161F33] text-white shadow-sm border border-[#2B3240]"
-                : "text-[var(--text-muted)] hover:text-white"
+                ? "bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm border border-[var(--border-default)]"
+                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
             )}
           >
             SELL
@@ -191,12 +191,12 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             className={cn(
               "flex flex-col items-center justify-center p-3 rounded-xl border transition-all",
               outcome === "yes"
-                ? "bg-[#30D878]/10 border-[#30D878] ring-1 ring-[#30D878]"
-                : "bg-[#0B0E14] border-[#1E2A44] opacity-70 hover:opacity-100"
+                ? "bg-[var(--market-yes)]/10 border-[var(--market-yes)] ring-1 ring-[var(--market-yes)]"
+                : "bg-[var(--bg-base)] border-[var(--border-default)] opacity-70 hover:opacity-100"
             )}
           >
             <span className="text-xs text-[var(--text-muted)] font-medium">Predict</span>
-            <span className="text-lg font-black text-[#30D878] mt-0.5">YES</span>
+            <span className="text-lg font-black text-[var(--market-yes)] mt-0.5">YES</span>
           </button>
 
           <button
@@ -205,12 +205,12 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             className={cn(
               "flex flex-col items-center justify-center p-3 rounded-xl border transition-all",
               outcome === "no"
-                ? "bg-[#FFC91F]/10 border-[#FFC91F] ring-1 ring-[#FFC91F]"
-                : "bg-[#0B0E14] border-[#1E2A44] opacity-70 hover:opacity-100"
+                ? "bg-[var(--accent-yellow)]/10 border-[var(--accent-yellow)] ring-1 ring-[var(--accent-yellow)]"
+                : "bg-[var(--bg-base)] border-[var(--border-default)] opacity-70 hover:opacity-100"
             )}
           >
             <span className="text-xs text-[var(--text-muted)] font-medium">Predict</span>
-            <span className="text-lg font-black text-[#FFC91F] mt-0.5">NO</span>
+            <span className="text-lg font-black text-[var(--accent-yellow)] mt-0.5">NO</span>
           </button>
         </div>
 
@@ -251,7 +251,7 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full h-12 pl-8 pr-4 rounded-xl border border-[#1E2A44] bg-[#0B0E14] font-mono text-lg font-bold text-white focus:outline-none focus:border-[#30D878]"
+                className="w-full h-12 pl-8 pr-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] font-mono text-lg font-bold text-[var(--text-primary)] focus:outline-none focus:border-[var(--market-yes)]"
               />
             </div>
 
@@ -265,8 +265,8 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
                   className={cn(
                     "flex-1 py-1.5 rounded-lg text-xs font-bold font-mono transition-colors border",
                     amount === preset
-                      ? "bg-[#30D878]/20 border-[#30D878] text-[#30D878]"
-                      : "bg-[#0B0E14] border-[#1E2A44] text-[var(--text-muted)] hover:text-white"
+                      ? "bg-[var(--market-yes)]/20 border-[var(--market-yes)] text-[var(--market-yes)]"
+                      : "bg-[var(--bg-base)] border-[var(--border-default)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                   )}
                 >
                   ₦{preset}
@@ -275,20 +275,20 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             </div>
 
             {/* Human-First Win Projection (Zero Jargon) */}
-            <div className="p-4 rounded-xl border border-[#1E2A44] bg-[#0B0E14] space-y-2">
+            <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] space-y-2">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-[var(--text-muted)] font-medium">Your Stake</span>
-                <span className="font-mono font-bold text-white">₦{numericAmount.toLocaleString()}</span>
+                <span className="font-mono font-bold text-[var(--text-primary)]">₦{numericAmount.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between items-center text-sm border-t border-[#1E2A44] pt-2">
+              <div className="flex justify-between items-center text-sm border-t border-[var(--border-default)] pt-2">
                 <span className="text-[var(--text-muted)] font-medium">If You Win</span>
-                <span className="font-mono font-black text-lg text-[#30D878]">
+                <span className="font-mono font-black text-lg text-[var(--market-yes)]">
                   ₦{potentialWin.toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-[var(--text-muted)]">Net Profit Potential</span>
-                <span className="font-mono font-bold text-[#30D878]">
+                <span className="font-mono font-bold text-[var(--market-yes)]">
                   +₦{potentialProfit.toLocaleString()}
                 </span>
               </div>
@@ -300,9 +300,9 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
         {mode === "sell" && (
           <div className="space-y-3">
             {availableSharesToSell === 0 ? (
-              <div className="p-4 rounded-xl border border-dashed border-[#1E2A44] bg-[#0B0E14] text-center">
+              <div className="p-4 rounded-xl border border-dashed border-[var(--border-default)] bg-[var(--bg-base)] text-center">
                 <p className="text-sm text-[var(--text-muted)]">
-                  You don't hold any <strong className="text-white">{outcome.toUpperCase()}</strong> shares in this market to sell.
+                  You don't hold any <strong className="text-[var(--text-primary)]">{outcome.toUpperCase()}</strong> shares in this market to sell.
                 </p>
               </div>
             ) : (
@@ -321,8 +321,8 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
                       className={cn(
                         "flex-1 py-2 rounded-lg text-xs font-bold transition-colors border",
                         sellPercentage === pct
-                          ? "bg-[#FFC91F]/20 border-[#FFC91F] text-[#FFC91F]"
-                          : "bg-[#0B0E14] border-[#1E2A44] text-[var(--text-muted)] hover:text-white"
+                          ? "bg-[var(--accent-yellow)]/20 border-[var(--accent-yellow)] text-[var(--accent-yellow)]"
+                          : "bg-[var(--bg-base)] border-[var(--border-default)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                       )}
                     >
                       {pct}% {pct === 100 && "(ALL)"}
@@ -331,14 +331,14 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
                 </div>
 
                 {/* Sell Return Summary */}
-                <div className="p-4 rounded-xl border border-[#1E2A44] bg-[#0B0E14] space-y-2">
+                <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] space-y-2">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-[var(--text-muted)] font-medium">Shares to Sell</span>
-                    <span className="font-mono font-bold text-white">{sharesBeingSold} Shares</span>
+                    <span className="font-mono font-bold text-[var(--text-primary)]">{sharesBeingSold} Shares</span>
                   </div>
-                  <div className="flex justify-between items-center text-sm border-t border-[#1E2A44] pt-2">
+                  <div className="flex justify-between items-center text-sm border-t border-[var(--border-default)] pt-2">
                     <span className="text-[var(--text-muted)] font-medium">Cash Returned to Wallet</span>
-                    <span className="font-mono font-black text-lg text-[#FFC91F]">
+                    <span className="font-mono font-black text-lg text-[var(--accent-yellow)]">
                       ₦{cashReturn}
                     </span>
                   </div>
@@ -362,10 +362,10 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             (mode === "sell" && sharesBeingSold <= 0)
           }
           className={cn(
-            "w-full h-12 rounded-xl text-base font-extrabold text-[#0B0E14] mt-1 shadow-md transition-all",
+            "w-full h-12 rounded-xl text-base font-extrabold text-[var(--text-inverse)] mt-1 shadow-md transition-all",
             outcome === "yes"
-              ? "bg-[#30D878] hover:bg-[#28B865]"
-              : "bg-[#FFC91F] hover:bg-[#E0B01B]"
+              ? "bg-[var(--market-yes)] hover:opacity-90"
+              : "bg-[var(--accent-yellow)] hover:opacity-90"
           )}
         >
           {isSubmitting ? (

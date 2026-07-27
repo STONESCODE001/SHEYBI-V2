@@ -211,6 +211,7 @@ function MarketCard({
                     src={contestants[0]?.avatarUrl || defaultTestImg}
                     alt={contestants[0]?.name || "Contestant 1"}
                     fill
+                    sizes="(max-width: 768px) 64px, 64px"
                     className="object-contain"
                   />
                 </div>
@@ -226,6 +227,7 @@ function MarketCard({
                     src={contestants[1]?.avatarUrl || defaultTestImg}
                     alt={contestants[1]?.name || "Contestant 2"}
                     fill
+                    sizes="(max-width: 768px) 64px, 64px"
                     className="object-contain"
                   />
                 </div>
@@ -303,6 +305,7 @@ function MarketCard({
                           src={c.avatarUrl || defaultTestImg}
                           alt={c.name}
                           fill
+                          sizes="(max-width: 768px) 32px, 32px"
                           className="object-contain"
                         />
                       </div>

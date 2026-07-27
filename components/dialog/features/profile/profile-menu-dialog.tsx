@@ -43,9 +43,11 @@ export function ProfileMenuDialog({ isOpen, onClose, payload, status }: ProfileM
     router.push("/profile")
   }
 
-  const handleSettings = () => {
-    onClose()
-    router.push("/settings")
+  const handleSettings = async () => {
+    await dialog.alert({
+      title: "Feature Paused",
+      description: "Account settings is currently paused for this phase of Sheybi."
+    })
   }
 
   const handleLogout = async () => {
@@ -102,10 +104,15 @@ export function ProfileMenuDialog({ isOpen, onClose, payload, status }: ProfileM
 
         <button
           onClick={handleSettings}
-          className="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-[var(--bg-hover)] text-sm font-medium text-[var(--text-primary)] transition-colors text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
+          className="flex items-center justify-between w-full p-3 rounded-xl hover:bg-[var(--bg-hover)] text-sm font-medium text-[var(--text-primary)] transition-colors text-left outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
         >
-          <Settings className="size-4.5 text-[var(--text-muted)]" />
-          <span>Account Settings</span>
+          <div className="flex items-center gap-3">
+            <Settings className="size-4.5 text-[var(--text-muted)]" />
+            <span>Account Settings</span>
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[var(--bg-surface-secondary)] text-[var(--text-muted)] border border-[var(--border-default)]">
+            Paused
+          </span>
         </button>
 
         <button

@@ -125,24 +125,25 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
           {visibleCandidates.map((candidate) => (
             <div
               key={candidate.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-2xl bg-[#0B0E14] border border-[#1E2A44] gap-3 transition-all hover:border-[#2A3B5E]"
+              className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)] gap-3 transition-all hover:border-[var(--border-hover)]"
             >
               {/* Left Side: Avatar + Name + Volume Metric */}
               <div className="flex items-center gap-3">
-                <div className="relative size-12 sm:size-14 overflow-hidden bg-[#0F1727] flex-shrink-0 flex items-center justify-center">
+                <div className="relative size-12 sm:size-14 overflow-hidden rounded-xl bg-[var(--bg-surface)] flex-shrink-0 flex items-center justify-center">
                   {candidate.avatarUrl ? (
                     <Image
                       src={candidate.avatarUrl}
                       alt={candidate.name}
                       fill
+                      sizes="(max-width: 768px) 56px, 56px"
                       className="object-cover"
                     />
                   ) : (
-                    <User className="size-6 text-[#30D878]" />
+                    <User className="size-6 text-[var(--accent-green)]" />
                   )}
                 </div>
                 <div className="flex flex-col">
-                  <h3 className="text-base sm:text-lg font-bold text-white leading-tight">
+                  <h3 className="text-base sm:text-lg font-bold text-[var(--text-primary)] leading-tight">
                     {candidate.name}
                   </h3>
                   <span className="text-xs text-[var(--text-muted)] font-normal">
@@ -195,7 +196,7 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
               <button
                 type="button"
                 onClick={() => setShowAllCandidates(true)}
-                className="w-full py-3 rounded-2xl bg-[#0F1727]/80 border border-[#1E2A44] hover:bg-[#162238] hover:border-[#30D878]/50 font-bold text-xs uppercase tracking-wider text-[#30D878] transition-all active:scale-[0.99]"
+                className="w-full py-3 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] hover:bg-[var(--bg-hover)] font-bold text-xs uppercase tracking-wider text-[var(--accent-green)] transition-all active:scale-[0.99]"
               >
                 show more housemates...
               </button>
@@ -204,7 +205,7 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
         </div>
 
         {/* Market Rules Section */}
-        <div className="py-5 border-y border-[#1F2937] space-y-2">
+        <div className="py-5 border-y border-[var(--border-default)] space-y-2">
           <h2 className="text-base sm:text-lg font-bold text-[var(--text-primary)]">
             Market Rules
           </h2>
@@ -219,7 +220,7 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
             Trade History
           </h2>
 
-          <div className="rounded-2xl border border-[#1E2A44] bg-[#0F1727] p-4 sm:p-5 divide-y divide-[#1F2937]/50">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 sm:p-5 divide-y divide-[var(--border-default)]/50">
             {visibleHistory.map((item, idx) => (
               <div
                 key={item.id || idx}
@@ -227,7 +228,7 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
               >
                 <div className="text-[var(--text-primary)]">
                   Bought {item.shares}{" "}
-                  <span className={cn(item.outcome === "yes" ? "text-[#30D878]" : "text-[#FFC91F]")}>
+                  <span className={cn(item.outcome === "yes" ? "text-[var(--market-yes)]" : "text-[var(--accent-yellow)]")}>
                     {item.outcome.toUpperCase()}
                   </span>{" "}
                   Shares {item.candidateName && `from ${item.candidateName}`}
@@ -245,7 +246,7 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
               <button
                 type="button"
                 onClick={() => setShowAllHistory(true)}
-                className="w-full py-3 rounded-2xl bg-[#0B0E14] border border-[#1E2A44] hover:bg-[#0F1727] hover:border-[#2A3B5E] font-semibold text-xs text-slate-400 hover:text-white transition-all active:scale-[0.99]"
+                className="w-full py-3 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)] hover:bg-[var(--bg-hover)] font-semibold text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all active:scale-[0.99]"
               >
                 show full trade history...
               </button>
@@ -257,7 +258,7 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
         <div className="pt-2 pb-4 text-center">
           <Link
             href="/markets"
-            className="inline-flex items-center justify-center w-full px-8 py-3.5 rounded-2xl bg-[#0F1727] border border-[#1E2A44] hover:bg-[#162238] hover:border-[#FFC91F]/50 font-extrabold text-sm text-[var(--text-primary)] transition-all shadow-md active:scale-[0.99]"
+            className="inline-flex items-center justify-center w-full px-8 py-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] hover:bg-[var(--bg-hover)] hover:border-[var(--accent-yellow)]/50 font-extrabold text-sm text-[var(--text-primary)] transition-all shadow-md active:scale-[0.99]"
           >
             see more ...
           </Link>
