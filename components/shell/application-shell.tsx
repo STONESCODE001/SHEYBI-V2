@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useAuth } from "@clerk/nextjs"
 import { PanelLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ActionIcon } from "@/components/child/action-icon"
@@ -36,11 +37,18 @@ function ApplicationShell({
   className,
 }: ApplicationShellProps) {
   const [tabletSidebarOpen, setTabletSidebarOpen] = React.useState(false)
+  const { isSignedIn, isLoaded } = useAuth()
+
+  const effectiveVariant = React.useMemo(() => {
+    if (variant === "admin") return "admin"
+    if (!isLoaded) return variant
+    return isSignedIn ? "authenticated" : "guest"
+  }, [variant, isLoaded, isSignedIn])
 
   return (
     <div
       data-slot="application-root"
-      data-variant={variant}
+      data-variant={effectiveVariant}
       className={cn(
         "relative flex h-[100dvh] w-screen overflow-hidden bg-[var(--bg-base)] font-sans",
         className
@@ -48,7 +56,7 @@ function ApplicationShell({
     >
       {/* Desktop / Tablet Sidebar */}
       <DesktopSidebar
-        variant={variant}
+        variant={effectiveVariant}
         availableBalance={availableBalance}
         userName={userName}
         userAvatarUrl={userAvatarUrl}
@@ -72,18 +80,18 @@ function ApplicationShell({
           className={cn(
             "absolute top-3 left-3 z-[25] hidden",
             "md:inline-flex lg:hidden",
-            variant !== "guest" && "top-[4.5rem]"
+            effectiveVariant !== "guest" && "top-[4.5rem]"
           )}
         />
 
         <DesktopHeader
-          variant={variant}
+          variant={effectiveVariant}
           availableBalance={availableBalance}
           unreadCount={unreadCount}
         />
 
         <MobileHeader
-          variant={variant}
+          variant={effectiveVariant}
           availableBalance={availableBalance}
         />
 
@@ -108,7 +116,7 @@ function ApplicationShell({
           <FooterRegion />
         </main>
 
-        <BottomNavigation variant={variant} />
+        <BottomNavigation variant={effectiveVariant} />
       </div>
 
       {/* Overlay regions */}

@@ -34,7 +34,7 @@ function MobileHeader({
 
         <div className="flex items-center gap-2">
           <Link
-            href="/sign-in"
+            href="/auth/sign-in"
             className={cn(
               "flex h-9 items-center rounded-xl px-3 text-xs font-semibold",
               "bg-[var(--bg-surface-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]",
@@ -44,7 +44,7 @@ function MobileHeader({
             Log In
           </Link>
           <Link
-            href="/sign-in"
+            href="/auth/sign-up"
             className={cn(
               "flex h-9 items-center rounded-xl px-3 text-xs font-semibold",
               "bg-[var(--accent-yellow)] text-[var(--text-inverse)] hover:bg-[var(--accent-yellow-hover)]",

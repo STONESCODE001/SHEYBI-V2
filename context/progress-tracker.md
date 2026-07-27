@@ -4,7 +4,7 @@ Update this document immediately after every completed implementation unit. This
 
 ---
 
-### Current Phase: Phase 2: Core UI (Completed)
+## Current Phase: Phase 2: Core UI (Completed)
 
 ### Current Implementation Target
 - None (Phase Complete)
@@ -37,6 +37,7 @@ Implement Markets feature specification.
 * Application Shell (`context/feature-specs/04-application-shell.md`)
 * Pages (`context/feature-specs/06-pages.md`)
 * Dialog Framework (`context/feature-specs/07-dialog.md`)
+* Real-Time User Authentication Specification (`context/feature-specs/08-realtime-authentication-spec.md`)
 * Design System Foundation & `globals.css` rewrite in v2 (`app/globals.css`).
 * Shell Background & Sidebar Card Layout Alignment (`components/shell/*`).
 * Notification Pause, Yellow Wallet Chip & Desktop Sidebar Figma Alignment (`components/shell/*`).
@@ -47,6 +48,7 @@ Implement Markets feature specification.
 * Homepage Figma Design Alignment documentation (`ui-context.md`, `wireframe.md`, `design-system.md`, `progress-tracker.md`) detailing 3D Mascot graphic (`/sheybi-mascot.png`), "Predict The Outcome. Win Bigger." Hero Banner typography, Category Filter tabs (`Trending`, `Weekly`, `HOH`), Market Grid layout, and Footer Region.
 * Homepage Hero Header UI & Category Tabs Implementation (`components/parent/hero-banner.tsx`, `components/parent/category-tabs.tsx`, `app/page.tsx`, `app/dashboard/page.tsx`) rendering 3-line stacked typography ("Predict", "The Outcome.", "Win Bigger.") with bold font-black styling, left-aligned mobile text, mascot graphic hidden on mobile and enlarged on desktop (`/sheybi-mascot.png`), consistent wording across auth/guest states, and category filter pills (`Trending`, `Weekly`, `HOH`).
 * MarketFeed Expander Button (`components/parent/market-feed.tsx`) adding a full-width `see more ...` dark pill button below market grids for mobile/desktop and auth/unauth users linking directly to `/markets`.
+* Real-Time User Authentication (`context/feature-specs/08-realtime-authentication-spec.md`) integrating Clerk (`@clerk/nextjs`, `@clerk/themes`), `ClerkProvider` inside `<body>` in `app/layout.tsx`, `middleware.ts` route protection & admin metadata role guard (`await auth()`), catch-all auth pages (`/auth/sign-in/[[...sign-in]]`, `/auth/sign-up/[[...sign-up]]`), `<UserButton />` in `UserProfileRegion`, and embedded `<UserProfile />` in `app/profile/page.tsx`.
 
 ---
 
@@ -238,6 +240,12 @@ Make sure you update this section after every meaningful implementation unit.
   * **Feature Completed:** Multi-Option Market Details Page Redesign & Expander Button Differentiation (`/markets/[id]`) (Figma Single Source of Truth).
   * **Files Modified/Created:** `components/parent/market-details/multi-option-market-view.tsx` [NEW], `components/parent/market-details/versus-market-view.tsx`, `components/parent/market-details/binary-market-view.tsx`, `components/parent/market-details/index.ts`, `app/markets/[id]/page.tsx`, `context/ui-context.md`, `context/wireframe.md`, `context/feature-specs/06-pages.md`, `context/feature-specs/03-parent-components.md`, `context/progress-tracker.md`.
   * **Decisions:** Built `MultiOptionMarketView` component strictly aligned with Figma renders (*"Who would be Evicted First ??"*); differentiated expander buttons with distinct names and visual hierarchy: 1) `show more housemates...` (green outline pill button for candidates list expander), 2) `show full trade history...` (slate card pill button for trade log expander), 3) `see more ...` (prominent gold-accented elevated CTA button linking to `/markets` feed page); integrated with responsive `TradeDialog` sheet; updated context specs via targeted line-by-line diffs.
+
+* **2026-07-27**
+  * **Feature Specification Completed:** Real-Time User Authentication (`context/feature-specs/08-realtime-authentication-spec.md`).
+  * **Files Created/Modified:** `context/feature-specs/08-realtime-authentication-spec.md` [NEW], `context/progress-tracker.md`.
+  * **Decisions:** Documented goal, auth-state route protection design, 7-step implementation workflow, detailed comparison of top 2 admin authorization approaches (Clerk public metadata vs DB-backed webhook sync), local npm dependency requirements (`@clerk/nextjs`), and comprehensive verification checklist.
+  * **Verification:** Specification complete and cross-referenced with Next.js App Router & Sheybi frontend shell components.
 
 * **2026-07-27**
   * **Audit & Alignment Completed:** Project-Wide Context & Codebase Conflict Resolution & Phase 4 DB Plan.

@@ -31,7 +31,7 @@ function WalletDisplayRegion({
         </p>
         <div className="mt-4 flex flex-col gap-2">
           <Link
-            href="/sign-in"
+            href="/auth/sign-in"
             className={cn(
               "inline-flex min-h-11 w-full items-center justify-center rounded-xl",
               "bg-[var(--accent-primary)] px-4 text-sm font-medium text-[var(--text-inverse)]",
@@ -42,7 +42,7 @@ function WalletDisplayRegion({
             Login
           </Link>
           <Link
-            href="/sign-up"
+            href="/auth/sign-up"
             className={cn(
               "inline-flex min-h-11 w-full items-center justify-center rounded-xl",
               "border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 text-sm font-medium text-[var(--text-primary)]",

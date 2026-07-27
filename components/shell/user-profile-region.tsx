@@ -1,11 +1,9 @@
 "use client"
 
 import Link from "next/link"
+import { useAuth, UserButton } from "@clerk/nextjs"
 import { cn } from "@/lib/utils"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { ShellVariant } from "./types"
-import { PLACEHOLDER_USER_NAME } from "./constants"
-import { useDialog } from "@/components/dialog"
 
 interface UserProfileRegionProps {
   readonly variant: ShellVariant
@@ -14,15 +12,13 @@ interface UserProfileRegionProps {
   readonly className?: string
 }
 
-function UserProfileRegion({
+export function UserProfileRegion({
   variant,
-  userName = PLACEHOLDER_USER_NAME,
-  userAvatarUrl,
   className,
 }: UserProfileRegionProps) {
-  const dialog = useDialog()
+  const { isSignedIn } = useAuth()
 
-  if (variant === "guest") {
+  if (variant === "guest" || !isSignedIn) {
     return (
       <div
         data-slot="user-profile-region"
@@ -32,7 +28,7 @@ function UserProfileRegion({
         )}
       >
         <Link
-          href="/sign-in"
+          href="/auth/sign-in"
           className={cn(
             "flex h-11 w-full items-center justify-center rounded-xl font-semibold text-sm",
             "bg-[var(--bg-base)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]",
@@ -42,7 +38,7 @@ function UserProfileRegion({
           Log In
         </Link>
         <Link
-          href="/sign-in"
+          href="/auth/sign-up"
           className={cn(
             "flex h-11 w-full items-center justify-center rounded-xl font-semibold text-sm",
             "bg-[var(--accent-yellow)] text-[var(--text-inverse)] hover:bg-[var(--accent-yellow-hover)]",
@@ -55,50 +51,31 @@ function UserProfileRegion({
     )
   }
 
-  const initials = userName
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2)
-
   return (
     <div
       data-slot="user-profile-region"
       className={cn(
-        "flex w-full shrink-0 items-center p-4 pt-2",
+        "flex w-full shrink-0 items-center justify-between p-4 pt-2",
         className
       )}
     >
-      <Link
-        href={variant === "admin" ? "/admin/settings" : "/profile"}
-        onClick={(e) => {
-          if (variant !== "admin") {
-            e.preventDefault()
-            dialog.open("profile/menu", { userName, userAvatarUrl })
-          }
-        }}
-        className={cn(
-          "flex h-11 w-full items-center gap-3 rounded-xl bg-[var(--bg-base)] px-3.5 outline-none transition-colors hover:bg-[var(--bg-hover)]",
-          "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
-        )}
-        aria-label="Open profile menu"
-      >
-        <Avatar className="size-6">
-          {userAvatarUrl ? (
-            <AvatarImage src={userAvatarUrl} alt={`${userName} avatar`} />
-          ) : null}
-          <AvatarFallback className="bg-[var(--bg-surface-secondary)] text-[10px] text-[var(--text-primary)] font-bold">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
-        <span className="truncate text-sm font-semibold text-[var(--text-primary)]">
-          {userName}
-        </span>
-      </Link>
+      <div className="flex w-full items-center gap-3 rounded-xl bg-[var(--bg-base)] px-3.5 py-2">
+        <UserButton
+          showName
+          userProfileMode="navigation"
+          userProfileUrl="/profile"
+          appearance={{
+            elements: {
+              userButtonBox: "flex flex-row-reverse justify-between w-full items-center gap-2",
+              userButtonOuterIdentifier: "text-sm font-semibold text-[var(--text-primary)] truncate max-w-[120px]",
+              avatarBox: "size-7 rounded-full",
+            },
+          }}
+        />
+      </div>
     </div>
   )
 }
 
-export { UserProfileRegion }
+export default UserProfileRegion
 export type { UserProfileRegionProps }

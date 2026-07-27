@@ -61,7 +61,7 @@ function PrimaryNavigationRegion({
                   onClick={() => {
                     onNavigate?.()
                     if (variant === "guest") {
-                      window.location.href = "/sign-in"
+                      window.location.href = "/auth/sign-in"
                     } else {
                       dialog.open("market/suggestion")
                     }

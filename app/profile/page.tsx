@@ -1,17 +1,11 @@
 "use client"
 
 import * as React from "react"
+import { UserProfile } from "@clerk/nextjs"
 import { AuthenticatedLayout } from "@/components/layouts"
-import { ProfileSummaryCard, StatisticCard } from "@/components/parent"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { useDialog } from "@/components/dialog"
-import { User, ShieldCheck, Settings as SettingsIcon } from "lucide-react"
+import { User } from "lucide-react"
 
 export default function ProfilePage() {
-  const dialog = useDialog()
-
   return (
     <AuthenticatedLayout>
       <div className="mx-auto max-w-4xl flex flex-col gap-8 py-2">
@@ -28,59 +22,17 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Mobile View: Profile Summary Card with Edit Button Trigger */}
-        <div className="block md:hidden">
-          <ProfileSummaryCard
-            username="Jane Doe"
-            verified={true}
-            marketsTraded="156"
-            winRate="64.5%"
-            memberSince="Jan 2026"
-            onEditProfile={() => dialog.open("profile/edit", { currentUsername: "Jane Doe" })}
+        {/* Embedded Clerk User Profile Component */}
+        <div className="flex justify-center w-full rounded-2xl overflow-hidden">
+          <UserProfile
+            routing="hash"
+            appearance={{
+              elements: {
+                rootBox: "w-full",
+                cardBox: "w-full shadow-none border-none",
+              },
+            }}
           />
-        </div>
-
-        {/* Desktop View: Inline Clerk User Profile Container Layout */}
-        <div className="hidden md:flex flex-col gap-6">
-          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-sm flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Avatar className="size-16 border-2 border-primary/20">
-                  <AvatarFallback className="font-bold text-primary">JD</AvatarFallback>
-                </Avatar>
-                <div className="absolute -bottom-1 -right-1 bg-success text-white p-0.5 rounded-full">
-                  <ShieldCheck className="size-4" />
-                </div>
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">Jane Doe</h2>
-                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 font-bold text-xs">
-                    Verified Trader
-                  </Badge>
-                </div>
-                <p className="text-sm text-[var(--text-muted)] mt-0.5">jane.doe@example.com • Member since Jan 2026</p>
-              </div>
-            </div>
-
-            <Button
-              onClick={() => dialog.open("profile/edit", { currentUsername: "Jane Doe" })}
-              className="bg-primary text-white hover:bg-primary-hover rounded-xl font-semibold gap-2"
-            >
-              <SettingsIcon className="size-4" />
-              <span>Edit Profile</span>
-            </Button>
-          </div>
-
-          {/* Integration Note: On desktop viewports, the native Clerk <UserProfile /> component renders inline within this container when connected */}
-        </div>
-
-        {/* User Stats Summary Grid */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatisticCard label="Leaderboard Rank" value="#1,204" />
-          <StatisticCard label="Win Rate" value="64.5%" />
-          <StatisticCard label="Markets Traded" value="156" />
-          <StatisticCard label="Total Net Profit" value="+₦450,000" />
         </div>
       </div>
     </AuthenticatedLayout>

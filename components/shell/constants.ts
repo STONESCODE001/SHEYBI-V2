@@ -36,9 +36,9 @@ export const PRIMARY_NAV_ADMIN: readonly NavItem[] = [
 export const PRIMARY_NAV_GUEST: readonly NavItem[] = [
   { label: "Home", href: "/", icon: "home" },
   { label: "Market", href: "/markets", icon: "markets" },
-  { label: "Trades", href: "/sign-in", icon: "portfolio" },
-  { label: "Wallet", href: "/sign-in", icon: "wallet" },
-  { label: "Create", href: "/sign-in", icon: "plus" },
+  { label: "Trades", href: "/auth/sign-in", icon: "portfolio" },
+  { label: "Wallet", href: "/auth/sign-in", icon: "wallet" },
+  { label: "Create", href: "/auth/sign-in", icon: "plus" },
 ] as const
 
 export const BOTTOM_NAV_AUTHENTICATED: readonly NavItem[] = [
@@ -52,9 +52,9 @@ export const BOTTOM_NAV_AUTHENTICATED: readonly NavItem[] = [
 export const BOTTOM_NAV_GUEST: readonly NavItem[] = [
   { label: "Home", href: "/", icon: "home" },
   { label: "Markets", href: "/markets", icon: "markets" },
-  { label: "Create", href: "/sign-in", icon: "plus" },
-  { label: "Trades", href: "/sign-in", icon: "portfolio" },
-  { label: "Profile", href: "/sign-in", icon: "profile" },
+  { label: "Create", href: "/auth/sign-in", icon: "plus" },
+  { label: "Trades", href: "/auth/sign-in", icon: "portfolio" },
+  { label: "Profile", href: "/auth/sign-in", icon: "profile" },
 ] as const
 
 export const BOTTOM_NAV_ADMIN: readonly NavItem[] = [

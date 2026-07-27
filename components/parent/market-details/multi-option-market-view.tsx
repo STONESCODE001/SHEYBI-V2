@@ -3,6 +3,8 @@
 import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@clerk/nextjs"
 import { ArrowLeft, User } from "lucide-react"
 import { OddsButton } from "@/components/child/odds-button"
 import { useDialog } from "@/components/dialog"
@@ -58,6 +60,8 @@ interface MultiOptionMarketViewProps {
  */
 export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): React.ReactElement {
   const dialog = useDialog()
+  const router = useRouter()
+  const { isSignedIn } = useAuth()
   const [showAllCandidates, setShowAllCandidates] = React.useState(false)
   const [showAllHistory, setShowAllHistory] = React.useState(false)
 
@@ -80,6 +84,10 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
   const visibleHistory = showAllHistory ? historyItems : historyItems.slice(0, 4)
 
   const handleOpenTradeDialog = (candidate: CandidateData, outcome: "yes" | "no") => {
+    if (!isSignedIn) {
+      router.push("/auth/sign-in")
+      return
+    }
     if (!hasRules) return
     dialog.open("trade/dialog", {
       marketId: market.id,

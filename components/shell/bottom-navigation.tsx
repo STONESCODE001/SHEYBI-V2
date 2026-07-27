@@ -25,7 +25,7 @@ function resolveItems(variant: ShellVariant): readonly NavItem[] {
 }
 
 function isActivePath(pathname: string, href: string): boolean {
-  if (href === "/" || href === "/admin" || href === "/sign-in") {
+  if (href === "/" || href === "/admin" || href === "/auth/sign-in" || href === "/sign-in") {
     return pathname === href
   }
   return pathname === href || pathname.startsWith(`${href}/`)
@@ -39,7 +39,7 @@ function BottomNavigation({ variant, className }: BottomNavigationProps) {
 
   const handlePlusClick = () => {
     if (variant === "guest") {
-      router.push("/sign-in")
+      router.push("/auth/sign-in")
     } else {
       dialog.open("market/suggestion")
     }

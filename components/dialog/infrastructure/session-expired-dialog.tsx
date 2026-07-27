@@ -33,7 +33,7 @@ export function SessionExpiredDialog({ isOpen, onClose, status }: SessionExpired
       <DialogFooter>
         <Button onClick={() => {
           onClose();
-          window.location.href = "/sign-in";
+          window.location.href = "/auth/sign-in";
         }} className="w-full bg-primary text-white hover:bg-primary-hover">
           Sign In
         </Button>

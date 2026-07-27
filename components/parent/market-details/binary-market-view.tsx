@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@clerk/nextjs"
 import { ArrowLeft } from "lucide-react"
 import { RatioBar } from "@/components/child/ratio-bar"
 import { OddsButton } from "@/components/child/odds-button"
@@ -54,6 +56,8 @@ interface BinaryMarketViewProps {
  */
 export function BinaryMarketView({ market }: BinaryMarketViewProps): React.ReactElement {
   const dialog = useDialog()
+  const router = useRouter()
+  const { isSignedIn } = useAuth()
 
   const yesProbability = market.yesProbability ?? 50
   const noProbability = market.noProbability ?? (100 - yesProbability)
@@ -73,6 +77,10 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
   ]
 
   const handleOpenTradeDialog = (outcome: "yes" | "no") => {
+    if (!isSignedIn) {
+      router.push("/auth/sign-in")
+      return
+    }
     if (!hasRules) return
     dialog.open("trade/dialog", {
       marketId: market.id,

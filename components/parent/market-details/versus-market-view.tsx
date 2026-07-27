@@ -3,6 +3,8 @@
 import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@clerk/nextjs"
 import { ArrowLeft, User } from "lucide-react"
 import { RatioBar } from "@/components/child/ratio-bar"
 import { OddsButton } from "@/components/child/odds-button"
@@ -60,6 +62,8 @@ interface VersusMarketViewProps {
  */
 export function VersusMarketView({ market }: VersusMarketViewProps): React.ReactElement {
   const dialog = useDialog()
+  const router = useRouter()
+  const { isSignedIn } = useAuth()
 
   const player1 = market.player1
   const player2 = market.player2
@@ -78,6 +82,10 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
   ]
 
   const handleOpenTradeDialog = (player: PlayerData, outcome: "yes" | "no") => {
+    if (!isSignedIn) {
+      router.push("/auth/sign-in")
+      return
+    }
     if (!hasRules) return
     dialog.open("trade/dialog", {
       marketId: market.id,
