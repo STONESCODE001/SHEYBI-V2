@@ -78,7 +78,7 @@ Before implementing code, modifying architecture, changing documentation, or mak
    * Dependency rules
    * Code review rules
 
-8. `context/api-contract.md`
+8. `context/api-contracts.md`
 
    * Application contracts
    * Validation contracts
