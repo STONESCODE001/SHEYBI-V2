@@ -3,30 +3,50 @@
 import * as React from "react"
 import { AuthenticatedLayout } from "@/components/layouts"
 import { CategoryTabs, MarketFeed } from "@/components/parent"
-import { MOCK_8_MARKETS } from "@/lib/mock-markets"
+import { useMarkets } from "@/lib/hooks/use-markets"
+import { useCategories } from "@/lib/hooks/use-categories"
+import { adaptMarketToCardProps } from "@/lib/market-adapter"
 
 export default function MarketsPage() {
   const [activeTab, setActiveTab] = React.useState("all")
+
+  const { categories: dbCategories } = useCategories()
+  const { markets: dbMarkets, isLoading } = useMarkets({
+    state: activeTab === "all" ? undefined : "open",
+    categorySlug: activeTab,
+  })
+
+  const categoriesTabs = React.useMemo(() => {
+    const defaultTabs = [
+      { value: "all", label: "All Markets" },
+      { value: "trending", label: "Trending" },
+    ]
+    const dbTabs = (dbCategories || []).map((c) => ({
+      value: c.slug,
+      label: c.name,
+    }))
+    const seen = new Set<string>()
+    return [...defaultTabs, ...dbTabs].filter((t) => {
+      if (seen.has(t.value)) return false
+      seen.add(t.value)
+      return true
+    })
+  }, [dbCategories])
+
+  const displayedMarkets = React.useMemo(() => {
+    if (!dbMarkets || dbMarkets.length === 0) return []
+    return dbMarkets.map(adaptMarketToCardProps)
+  }, [dbMarkets])
 
   return (
     <AuthenticatedLayout>
       <div className="flex flex-col gap-6">
         <CategoryTabs
-          categories={[
-            { value: "all", label: "All Markets" },
-            { value: "trending", label: "Trending", count: 12 },
-            { value: "new", label: "New", count: 8 },
-            { value: "sports", label: "Sports" },
-            { value: "entertainment", label: "Entertainment" },
-            { value: "politics", label: "Politics" },
-          ]}
+          categories={categoriesTabs}
           activeCategory={activeTab}
           onCategoryChange={setActiveTab}
         />
-
-        <MarketFeed
-          markets={MOCK_8_MARKETS}
-        />
+        <MarketFeed markets={displayedMarkets} activeCategory={activeTab} loading={isLoading} />
       </div>
     </AuthenticatedLayout>
   )

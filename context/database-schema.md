@@ -584,15 +584,20 @@ Users may submit Market Suggestions, which administrators may approve and conver
 | title | String | Yes | Market title | None |
 | description | Text | Yes | Market description | None |
 | marketType | Enum | Yes | Binary or Multi-option | Binary |
-| state | Enum | Yes | Draft, Scheduled, Open, Closed, Resolved, Cancelled | Draft |
+| displayVariant | Enum | Yes | UI layout variant (binary, 1v1, standard) | binary |
+| state | Enum | Yes | Draft, Scheduled, Open, Paused, Closed, Resolved, Cancelled | Draft |
 | openingTime | DateTime | Yes | Trading start time | None |
 | closingTime | DateTime | Yes | Trading end time | None |
 | resolutionTime | DateTime | Optional | Resolution timestamp | Null |
-| liquidity | Decimal(18,4) | Yes | Fixed initial liquidity | None |
+| liquidity | Decimal(18,4) | Yes | Fixed initial liquidity L | None |
+| liquidityParam | Decimal(18,4) | Yes | LMSR b parameter (L / (N * ln N)) | Calculated |
 | tradingVolume | Decimal(18,4) | Yes | Total traded amount | 0.0000 |
 | totalTrades | Integer | Yes | Total completed trades | 0 |
 | winningOptionId | UUID | Optional | Final outcome | Null |
 | createdBy | UUID | Yes | Administrator | None |
+| imageUrl | String | Optional | Market thumbnail image URL | Null |
+| slug | String | Yes | Unique URL routing slug | None |
+| isFeatured | Boolean | Yes | Featured market flag for homepage | False |
 | createdAt | DateTime | Yes | Creation time | Current Time |
 | updatedAt | DateTime | Yes | Last modification | Current Time |
 
@@ -642,6 +647,7 @@ Owned by one Market.
 | sharePrice | Decimal(18,4) | Yes | Current price per share | Initial distribution |
 | sharesOutstanding | Decimal(18,4) | Yes | Total active shares | 0.0000 |
 | isWinningOption | Boolean | Yes | Winning outcome flag | False |
+| imageUrl | String | Optional | Contestant avatar image URL | Null |
 | createdAt | DateTime | Yes | Creation timestamp | Current Time |
 
 ### Relationships

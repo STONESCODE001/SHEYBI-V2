@@ -56,12 +56,18 @@ Implement Markets feature specification.
 * Market Action Validation & Dialog Components (`lib/actions/market-actions.ts`, `components/dialog/features/market/*`, `components/dialog/register-dialogs.ts`) implementing `ResolveMarketDialog` (with ALL CAPS market title match safeguard), `ReopenMarketDialog` (reopening `closed` markets), and `PauseMarketDialog` (emergency situational pausing).
 * Prediction Algorithm Specification & Implementation (`context/feature-specs/10-prediction-algorithm.md`, `lib/prediction-engine/lmsr.ts`, `lib/prediction-engine/types.ts`, `lib/prediction-engine/lmsr.test.ts`, `lib/prediction-engine/run-tests.ts`) — Verified LMSR mathematical pricing engine, $b$ parameter calculation, closed-form buy/sell share formulas, probability normalization to 100%, single-outcome exposure invariant, numerical log-sum-exp stabilization, and automated test suite passing 100%.
 * Markets Feature Real-Time Specification & Implementation (`context/feature-specs/11-markets-feature.md`, `lib/instant.ts`, `lib/instant-admin.ts`, `lib/hooks/use-markets.ts`, `lib/hooks/use-categories.ts`, `lib/market-adapter.ts`, `app/page.tsx`, `app/dashboard/page.tsx`) — InstantDB graph schema initialization, client and server admin configuration, real-time reactive query hooks (`useMarkets`, `useCategories`), data adapter (`adaptMarketToCardProps`), and real-time feed integration across guest and authenticated pages.
+* InstantDB Full System Integration (`lib/repositories/index.ts`, `lib/repositories/instantdb-repository.ts`, `components/auth/instant-clerk-bridge.tsx`, `lib/storage.ts`, `app/layout.tsx`, `context/instantDBagentfile.md`) — Swapped primary repository export to `instantDbRepository` for live server action mutations, implemented Instant Storage helper `lib/storage.ts` using `db.storage.uploadFile`, mounted `<InstantClerkBridge />` in `app/layout.tsx` for automatic Clerk session token sync via `db.auth.signInWithIdToken`, and verified 100% architectural and API contract compliance.
+* InstantDB Remote Schema & CEL Permissions Cloud Deployment (`npx instant-cli push schema`, `npx instant-cli push perms`) — Pushed 15 graph entity namespaces (`$users`, `markets`, `market_options`, `wallets`, `positions`, `ledger`, `deposits`, `withdrawal_requests`, etc.) and CEL permission rules to InstantDB cloud app `5979c681-39cb-4421-9181-05786260e9bd`.
+* InstantDB Live Database Seed Script (`lib/seed/seed-instantdb.ts`) — Created and executed `seed-instantdb.ts` populating 3 categories (*BBNaija Season 9*, *Head of House*, *Eviction Predictions*) and 3 live prediction markets (Binary, 1v1, Multi-option) with initial probabilities and LMSR liquidity parameters ($L=₦50,000$, $b=36067$).
+* Clerk Auth & InstantDB User Profile / Wallet Auto-Sync (`lib/actions/wallet-provisioning.ts`, `components/auth/instant-clerk-bridge.tsx`) — Auto-syncs Clerk user profile metadata (`email`, `displayName`, `avatarUrl`) into InstantDB `$users` entity and provisions linked `wallets` entity upon login/signup.
+* Full InstantDB & Prediction Engine Integration Specification (`context/feature-specs/13-full-instantdb-prediction-engine-integration.md`).
+* Cycle A — Markets Feed & Detail Page Live (`context/feature-specs/14-cycle-a-markets-live.md`) — Removed all mock market data from homepage (`app/page.tsx`), markets feed (`app/markets/page.tsx`), dashboard (`app/dashboard/page.tsx`), and market details (`app/markets/[id]/page.tsx`). Wired live InstantDB reactive queries (`useMarkets`, `db.useQuery`), expanded `lib/market-adapter.ts` with detail view adapters (`adaptToBinaryMarketData`, `adaptToVersusMarketData`, `adaptToMultiOptionMarketData`), and permanently deleted `lib/mock-markets.ts` and `lib/repositories/mock-repository.ts`.
 
 ---
 
 # In Progress
 
-- None (Phase Complete)
+- Full InstantDB & Prediction Engine Live UI & Action Binding (`context/feature-specs/13-full-instantdb-prediction-engine-integration.md`).
 
 # Next Up
 
@@ -260,11 +266,25 @@ Make sure you update this section after every meaningful implementation unit.
   * **Decisions:** Confirmed permanent Dark theme (`#0B0E14` base background, `#0F1727` surface); set `app/globals.css` as canonical design system source of truth; confirmed Notifications & Settings as strictly PAUSED project-wide; confirmed permanent removal of `<CategoryNavigationRegion />`; confirmed dummy auth and mock dataset UI status until Phase 4 Real Database & Prediction Engine build; structured Phase 4 Database Build blueprint.
   * **Verification:** `npx tsc --noEmit` and documentation links verified with zero errors across all modules.
 
-* **2026-07-27**
-  * **Feature Completed:** Prediction Engine Integration Layer & Repository Pattern (`12-prediction-engine-integration.md`).
-  * **Files Created/Modified:** `lib/repositories/types.ts` [NEW], `lib/repositories/mock-repository.ts` [NEW], `lib/repositories/index.ts` [NEW], `lib/actions/trade-actions.ts` [NEW], `lib/actions/wallet-actions.ts` [NEW], `lib/actions/market-actions.ts`, `context/feature-specs/12-prediction-engine-integration.md` [NEW], `context/progress-tracker.md`.
-  * **Decisions:** Implemented a Repository Pattern abstracting data persistence so the engine connects to an in-memory mock repository now and can be swapped to InstantDB later via a single-line import change; 1v1 markets are represented as 4-option multi-option markets (A YES, A NO, B YES, B NO) with 25% initial split; wallet balance model uses `availableBalance` (ready funds) and `lockedBalance` (position funds); trade Server Actions use real Clerk `auth()` and delegate math to `lmsr.ts`; withdrawals deduct `availableBalance` immediately and never touch `lockedBalance`.
-  * **Verification:** `npx tsc --noEmit` passes cleanly with zero errors; automated invariant tests pass 100%.
+* **2026-07-28**
+  * **Feature Completed:** InstantDB & Clerk Auth Integration & Architectural Standardization.
+  * **Files Created/Modified:** `lib/actions/wallet-provisioning.ts` [NEW], `components/auth/instant-clerk-bridge.tsx`, `lib/instant.ts`, `lib/instant-admin.ts`, `lib/market-adapter.ts`, `context/progress-tracker.md`.
+  * **Decisions:** Enforced strict zero-custom-auth-UI policy per `context/feature-specs/clerk-instantdbauth.md` (Clerk handles 100% of auth UI via `<SignIn />`, `<SignUp />`, `<UserButton />`, `<UserProfile />`); InstantDB receives Clerk session JWT via `db.auth.signInWithIdToken` background sync in `InstantClerkBridge`; added auto-provisioning Server Action (`ensureUserWalletAction()`) creating `$wallets` entity upon user login/signup; added explicit architectural headers clarifying client React SDK (`lib/instant.ts`), server Admin SDK (`lib/instant-admin.ts`), and Data Mapper (`lib/market-adapter.ts`).
+  * **Verification:** `npx tsc --noEmit` and prediction engine invariant test suite (`run-tests.ts`) verified 100% green.
+
+* **2026-07-28**
+  * **Feature Completed:** Remote InstantDB Cloud Schema, Perms Push & Database Seed Script Execution.
+  * **Files Created/Modified:** `.env`, `.env.local`, `lib/seed/seed-instantdb.ts` [NEW], `context/feature-specs/13-full-instantdb-prediction-engine-integration.md` [NEW], `context/progress-tracker.md`.
+  * **Decisions:** Registered Clerk OAuth client (`SHEYBI`) on InstantDB App ID `5979c681-39cb-4421-9181-05786260e9bd`; pushed 15 schema namespaces and relational links via `npx instant-cli push schema`; pushed CEL access rules via `npx instant-cli push perms`; executed seed script `seed-instantdb.ts` using `@instantdb/admin` populating 3 categories (*BBNaija Season 9*, *Head of House*, *Eviction Predictions*) and 3 live prediction markets (Binary, 1v1, Multi-option) with initial probabilities and LMSR liquidity parameters ($L=₦50,000$, $b=36067$).
+  * **Verification:** `npx tsx lib/seed/seed-instantdb.ts` executed cleanly (3 categories, 3 markets, 8 options created); `npx instant-cli push schema` and `push perms` output `✓ Done`; prediction engine tests passed 100%.
+
+* **2026-07-28**
+  * **Feature Completed:** Cycle A — Markets Feed & Detail Page Live (`14-cycle-a-markets-live.md`).
+  * **Files Modified/Deleted:** `app/page.tsx`, `app/markets/page.tsx`, `app/dashboard/page.tsx`, `app/markets/[id]/page.tsx`, `lib/market-adapter.ts`, `lib/mock-markets.ts` [DELETED], `lib/repositories/mock-repository.ts` [DELETED], `context/progress-tracker.md`.
+  * **Decisions:** Connected all market feed and detail surfaces directly to live InstantDB graph database via `useMarkets` and `db.useQuery`; transformed database entities to card and detail view props using `lib/market-adapter.ts`; eliminated all mock market data fallbacks and deleted dead mock dataset files.
+  * **Verification:** Checked 100% against Spec 14 checklist. All mock data eliminated; live InstantDB data reactive across all market surfaces.
+
+
 
 
 

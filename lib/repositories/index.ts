@@ -16,7 +16,7 @@
  * @see context/feature-specs/12-prediction-engine-integration.md §"How to Swap"
  */
 
-export { mockRepository as repository } from './mock-repository';
+export { instantDbRepository as repository } from './instantdb-repository';
 
 // Re-export all types so consumers only need one import path
 export type {

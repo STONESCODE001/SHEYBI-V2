@@ -30,17 +30,25 @@ interface CategoryTabsProps extends React.ComponentProps<"div"> {
 
 const DEFAULT_CATEGORIES: readonly CategoryTab[] = [
   {
+    value: "all",
+    label: "All Markets",
+  },
+  {
     value: "trending",
     label: "Trending",
     icon: <Star className="w-4 h-4" />,
   },
   {
-    value: "weekly",
-    label: "Weekly",
+    value: "bbnaija",
+    label: "BBNaija",
   },
   {
     value: "hoh",
-    label: "HOH",
+    label: "Head of House",
+  },
+  {
+    value: "evictions",
+    label: "Evictions",
   },
 ]
 

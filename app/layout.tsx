@@ -6,6 +6,8 @@ import { DialogProvider } from "@/components/dialog";
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 
+import { InstantClerkBridge } from "@/components/auth/instant-clerk-bridge";
+
 export const metadata: Metadata = {
   title: "Sheybi",
   description: "Premium prediction market platform",
@@ -33,6 +35,7 @@ export default function RootLayout({
             theme: dark,
           }}
         >
+          <InstantClerkBridge />
           <DialogProvider>
             <TooltipProvider>{children}</TooltipProvider>
           </DialogProvider>

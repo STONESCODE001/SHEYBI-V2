@@ -211,6 +211,7 @@ function MarketCard({
                     src={contestants[0]?.avatarUrl || defaultTestImg}
                     alt={contestants[0]?.name || "Contestant 1"}
                     fill
+                    unoptimized
                     sizes="(max-width: 768px) 64px, 64px"
                     className="object-contain"
                   />
@@ -227,6 +228,7 @@ function MarketCard({
                     src={contestants[1]?.avatarUrl || defaultTestImg}
                     alt={contestants[1]?.name || "Contestant 2"}
                     fill
+                    unoptimized
                     sizes="(max-width: 768px) 64px, 64px"
                     className="object-contain"
                   />
@@ -291,9 +293,9 @@ function MarketCard({
             </div>
 
             <div className="space-y-3 pt-1">
-              {/* Stacked Contestant / Outcome Rows in Housing Container */}
+              {/* Stacked Contestant / Outcome Rows in Housing Container (Top 3 Max) */}
               <div className="space-y-2 rounded-2xl border border-white/5 bg-[#080D19] p-2">
-                {contestants.map((c, i) => (
+                {contestants.slice(0, 3).map((c, i) => (
                   <div
                     key={c.id || i}
                     className="flex items-center justify-between rounded-xl bg-[#0D1424] p-2 sm:p-2.5 transition-colors group-hover/market-card:bg-[#121B30]"
@@ -305,6 +307,7 @@ function MarketCard({
                           src={c.avatarUrl || defaultTestImg}
                           alt={c.name}
                           fill
+                          unoptimized
                           sizes="(max-width: 768px) 32px, 32px"
                           className="object-contain"
                         />
@@ -332,7 +335,9 @@ function MarketCard({
               {/* Footer Expander Link housed in Main Base BG Container */}
               <div className="rounded-xl border border-white/5 bg-[#080D19] p-2 text-center">
                 <span className="text-xs font-medium text-slate-400 hover:text-white transition-colors">
-                  see more ...
+                  {contestants.length > 3
+                    ? `see more ... (+${contestants.length - 3} more)`
+                    : "see more ..."}
                 </span>
               </div>
             </div>

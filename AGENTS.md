@@ -149,6 +149,17 @@ Before implementing code, modifying architecture, changing documentation, or mak
     * Verification Phases
     * Backlog Management
 
+14. `context/instantdb-reference.md`
+
+    * InstantDB SDK overview (client vs admin)
+    * Query `where` operators — full supported set
+    * Ordering and indexing rules
+    * Pagination placement rules (top-level only)
+    * Permission CEL syntax (`data.ref`, `auth.ref`)
+    * Transaction patterns (`adminDb.transact`)
+    * Entity linking/unlinking
+    * Project-specific overrides (imageUrl as string, Clerk-only auth)
+
 ---
 
 # Required Workflow

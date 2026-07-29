@@ -29,8 +29,8 @@ function ShellLogo({
           alt="Sheybi Logo"
           width={compact ? 100 : 130}
           height={compact ? 28 : 36}
-          style={{ width: "auto", height: "auto" }}
-          className="h-auto w-auto max-h-9 object-contain"
+          style={{ height: "auto" }}
+          className="max-h-9 w-auto object-contain"
           priority
         />
       </div>

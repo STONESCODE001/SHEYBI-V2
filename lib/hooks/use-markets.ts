@@ -27,9 +27,12 @@ export function useMarkets(options: UseMarketsOptions = {}) {
 
   let markets = ((data as any)?.markets as any[]) || [];
 
-  // Filter by State
-  if (state !== 'all') {
-    markets = markets.filter((m) => m.state === state);
+  // Filter by State (only filter if explicitly specified and not 'all')
+  if (state && state !== 'all') {
+    const filteredByState = markets.filter((m) => m.state === state);
+    if (filteredByState.length > 0) {
+      markets = filteredByState;
+    }
   }
 
   // Filter by Featured

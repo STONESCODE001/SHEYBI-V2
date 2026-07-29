@@ -44,13 +44,28 @@ function MarketFeed({
   ...props
 }: MarketFeedProps): React.ReactElement {
   const displayedMarkets = React.useMemo(() => {
-    if (!activeCategory || activeCategory === "trending") return markets
-    return markets.filter((m) => {
-      const cat = m.categoryLabel?.toLowerCase() || ""
-      const selected = activeCategory.toLowerCase()
-      if (selected === "hoh") return cat.includes("hoh") || cat.includes("bbnaija")
-      if (selected === "weekly") return cat.includes("weekly") || cat.includes("eviction") || cat.includes("bbnaija")
-      return cat.includes(selected)
+    let filtered = markets
+    if (activeCategory && activeCategory !== "trending" && activeCategory !== "all") {
+      filtered = markets.filter((m) => {
+        const cat = m.categoryLabel?.toLowerCase() || ""
+        const selected = activeCategory.toLowerCase()
+        if (selected === "hoh") return cat.includes("hoh") || cat.includes("bbnaija")
+        if (selected === "weekly") return cat.includes("weekly") || cat.includes("eviction") || cat.includes("bbnaija")
+        return cat.includes(selected)
+      })
+    }
+
+    // Sort/group by card variant so matching card types (1v1, binary, multi_option) sit together in grid rows
+    const variantPriority: Record<string, number> = {
+      "1v1": 1,
+      "binary": 2,
+      "multi_option": 3,
+    }
+
+    return [...filtered].sort((a, b) => {
+      const pA = variantPriority[a.variant || "binary"] || 99
+      const pB = variantPriority[b.variant || "binary"] || 99
+      return pA - pB
     })
   }, [markets, activeCategory])
   if (loading) {
