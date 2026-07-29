@@ -10,6 +10,8 @@ import { DialogStatus } from "../../types"
 import { useDialog } from "../../dialog-context"
 import { cn } from "@/lib/utils"
 
+import { requestWithdrawalAction } from "@/lib/actions/wallet-actions"
+
 interface WithdrawDialogProps {
   isOpen: boolean
   onClose: () => void
@@ -49,30 +51,32 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
   }
 
   const handleConfirm = async () => {
-    // Financial flow: Confirm -> Loading (Locked) -> Success
+    const amountNum = parseFloat(amount)
     setStep("input") // reset step for next time
     onClose()
 
     const loader = dialog.loading({
       title: "Processing Withdrawal",
-      description: "Submitting withdrawal request to bank..."
+      description: "Submitting withdrawal request..."
     })
 
-    // Simulate transaction processing
-    await new Promise((r) => setTimeout(r, 1500))
-    loader.update("Updating account ledger...")
-    await new Promise((r) => setTimeout(r, 1000))
+    const result = await requestWithdrawalAction(amountNum)
 
     loader.close()
+
+    if (!result.success) {
+      await dialog.error({
+        title: "Withdrawal Failed",
+        description: result.error ?? "Failed to request withdrawal."
+      })
+      return
+    }
 
     // Show success dialog
     await dialog.success({
       title: "Withdrawal Requested",
-      description: `₦${parseFloat(amount).toLocaleString()} withdrawal request submitted. Funds will reflect in your account shortly.`
+      description: `₦${amountNum.toLocaleString()} withdrawal request submitted. Net amount ₦${result.data?.netAmount.toLocaleString()} will reflect in your bank account shortly.`
     })
-
-    // Trigger state refresh (simulation / event dispatch)
-    console.log("[Dialog Framework] Refreshing application wallet balance state.")
   }
 
   return (

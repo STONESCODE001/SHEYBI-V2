@@ -15,6 +15,8 @@ export interface BinaryMarketData {
   title: string
   category?: string
   rules?: string
+  yesOptionId?: string
+  noOptionId?: string
   yesProbability?: number // e.g. 50
   noProbability?: number  // e.g. 50
   yesOddsText?: string    // e.g. "1k → 3k"
@@ -82,8 +84,10 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
       return
     }
     if (!hasRules) return
+    const selectedOptionId = outcome === "yes" ? market.yesOptionId : market.noOptionId
     dialog.open("trade/dialog", {
       marketId: market.id,
+      optionId: selectedOptionId,
       marketTitle: market.title,
       initialOutcome: outcome,
       initialMode: "buy",

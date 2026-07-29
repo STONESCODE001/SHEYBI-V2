@@ -11,6 +11,9 @@ import { useDialog } from "../../dialog-context"
 import { CreditCard, Landmark, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+import { useUser } from "@clerk/nextjs"
+import { processDepositAction } from "@/lib/actions/wallet-actions"
+
 interface DepositDialogProps {
   isOpen: boolean
   onClose: () => void
@@ -22,6 +25,7 @@ type DepositStep = "input" | "review"
 
 export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDialogProps) {
   const dialog = useDialog()
+  const { user } = useUser()
   const [step, setStep] = React.useState<DepositStep>("input")
   const [amount, setAmount] = React.useState("")
   const [method, setMethod] = React.useState<"card" | "bank">("card")
@@ -33,30 +37,41 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
   }
 
   const handleConfirm = async () => {
-    // Financial flow: Confirm -> Loading (Locked) -> Success
+    const amountNum = parseFloat(amount)
     setStep("input") // reset step for next time
     onClose()
 
+    if (!user?.id) {
+      await dialog.error({
+        title: "Authentication Required",
+        description: "Please sign in to deposit funds."
+      })
+      return
+    }
+
     const loader = dialog.loading({
       title: "Processing Deposit",
-      description: "Securely connecting to payment provider..."
+      description: "Finalizing ledger entries..."
     })
 
-    // Simulate Payment Provider transaction
-    await new Promise((r) => setTimeout(r, 1500))
-    loader.update("Finalizing ledger ledger entries...")
-    await new Promise((r) => setTimeout(r, 1000))
+    const ref = `dep_${Date.now()}_${crypto.randomUUID().slice(0, 6)}`
+    const result = await processDepositAction(user.id, amountNum, ref)
 
     loader.close()
+
+    if (!result.success) {
+      await dialog.error({
+        title: "Deposit Failed",
+        description: result.error ?? "Failed to process deposit."
+      })
+      return
+    }
 
     // Show success dialog
     await dialog.success({
       title: "Deposit Successful",
-      description: `₦${parseFloat(amount).toLocaleString()} has been added to your wallet balance.`
+      description: `₦${amountNum.toLocaleString()} has been added to your wallet balance.`
     })
-
-    // Trigger state refresh (simulation / event dispatch)
-    console.log("[Dialog Framework] Refreshing application wallet balance state.")
   }
 
   return (

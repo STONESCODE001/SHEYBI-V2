@@ -9,6 +9,8 @@ import { useDialog } from "../../dialog-context"
 import { cn } from "@/lib/utils"
 import { AlertTriangle } from "lucide-react"
 
+import { buyPositionAction } from "@/lib/actions/trade-actions"
+
 export interface UserPosition {
   outcome: "yes" | "no"
   shares: number
@@ -110,6 +112,12 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
     try {
       if (onExecuteTrade) {
         await onExecuteTrade(orderPayload)
+      } else if (payload.marketId && payload.optionId && mode === "buy") {
+        const idempotencyKey = `trade_${payload.marketId}_${payload.optionId}_${Date.now()}`
+        const res = await buyPositionAction(payload.marketId, payload.optionId, numericAmount, idempotencyKey)
+        if (!res.success) {
+          throw new Error(res.error ?? "Trade execution failed")
+        }
       }
 
       onClose(true)

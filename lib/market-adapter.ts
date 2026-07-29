@@ -77,6 +77,8 @@ export function adaptToBinaryMarketData(market: any): BinaryMarketData {
     title: market.title,
     category: market.category?.name,
     rules: market.description,
+    yesOptionId: yesOption?.id,
+    noOptionId: noOption?.id,
     yesProbability,
     noProbability,
     yesOddsText: formatOddsFromProbability(yesProbability),

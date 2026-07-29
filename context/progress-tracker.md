@@ -13,7 +13,7 @@ Update this document immediately after every completed implementation unit. This
    
 # Current Goal
 
-Implement Markets feature specification.
+Implement Cycle C — Admin Live feature specification.
 
 ---
 
@@ -62,12 +62,13 @@ Implement Markets feature specification.
 * Clerk Auth & InstantDB User Profile / Wallet Auto-Sync (`lib/actions/wallet-provisioning.ts`, `components/auth/instant-clerk-bridge.tsx`) — Auto-syncs Clerk user profile metadata (`email`, `displayName`, `avatarUrl`) into InstantDB `$users` entity and provisions linked `wallets` entity upon login/signup.
 * Full InstantDB & Prediction Engine Integration Specification (`context/feature-specs/13-full-instantdb-prediction-engine-integration.md`).
 * Cycle A — Markets Feed & Detail Page Live (`context/feature-specs/14-cycle-a-markets-live.md`) — Removed all mock market data from homepage (`app/page.tsx`), markets feed (`app/markets/page.tsx`), dashboard (`app/dashboard/page.tsx`), and market details (`app/markets/[id]/page.tsx`). Wired live InstantDB reactive queries (`useMarkets`, `db.useQuery`), expanded `lib/market-adapter.ts` with detail view adapters (`adaptToBinaryMarketData`, `adaptToVersusMarketData`, `adaptToMultiOptionMarketData`), and permanently deleted `lib/mock-markets.ts` and `lib/repositories/mock-repository.ts`.
+* Cycle B — Trading, Wallet & Portfolio Live (`context/feature-specs/15-cycle-b-trading-wallet-portfolio-live.md`, `context/feature-specs/15a-payment-state-and-wallet-seeding.md`) — Created real-time reactive hooks (`useWallet`, `useLedger`, `usePositions`), auto-seeded ₦50,000 demo funds for new wallets in `ensureUserWalletAction()`, wired `app/wallet/page.tsx` and `app/portfolio/page.tsx` directly to InstantDB live query hooks, connected `TradeDialog` to `buyPositionAction` (LMSR engine recalculation & InstantDB probability sync), connected `sellPositionAction` to portfolio cards, and wired `DepositDialog` and `WithdrawDialog` to server actions.
 
 ---
 
 # In Progress
 
-- Full InstantDB & Prediction Engine Live UI & Action Binding (`context/feature-specs/13-full-instantdb-prediction-engine-integration.md`).
+- None.
 
 # Next Up
 
