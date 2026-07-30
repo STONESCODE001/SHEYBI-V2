@@ -19,8 +19,10 @@ export interface CreateMarketInput {
   closingTime: number; // ms
   liquidity: number;   // Naira amount L
   optionNames: string[];
+  optionImageUrls?: string[];
   imageUrl?: string;
   createdBy: string;
+  state?: 'open' | 'draft' | 'scheduled';
 }
 
 /**
@@ -36,8 +38,10 @@ export function prepareMarketCreationData(input: CreateMarketInput) {
     closingTime,
     liquidity,
     optionNames,
+    optionImageUrls = [],
     createdBy,
     imageUrl,
+    state = 'open',
   } = input;
 
   if (!title || title.trim().length < 5) {
@@ -57,6 +61,7 @@ export function prepareMarketCreationData(input: CreateMarketInput) {
   }
 
   let finalOptionNames: string[];
+  let finalOptionImageUrls: (string | undefined)[];
   let finalMarketType: 'binary' | 'multi_option';
 
   if (displayVariant === '1v1') {
@@ -69,18 +74,26 @@ export function prepareMarketCreationData(input: CreateMarketInput) {
       `${optionNames[1]} YES`,
       `${optionNames[1]} NO`,
     ];
+    finalOptionImageUrls = [
+      optionImageUrls[0],
+      optionImageUrls[0],
+      optionImageUrls[1],
+      optionImageUrls[1],
+    ];
     finalMarketType = 'multi_option';
   } else if (displayVariant === 'binary') {
     if (optionNames.length !== 2) {
       throw new Error('Binary markets must have exactly 2 options (e.g. YES / NO)');
     }
     finalOptionNames = optionNames;
+    finalOptionImageUrls = optionImageUrls;
     finalMarketType = 'binary';
   } else {
     if (optionNames.length < 3) {
       throw new Error('Multi-option markets must have at least 3 options');
     }
     finalOptionNames = optionNames;
+    finalOptionImageUrls = optionImageUrls;
     finalMarketType = 'multi_option';
   }
 
@@ -101,6 +114,7 @@ export function prepareMarketCreationData(input: CreateMarketInput) {
     sharePrice: initialSharePrice,
     sharesOutstanding: 0,
     isWinningOption: false,
+    imageUrl: finalOptionImageUrls[index] || undefined,
     createdAt: Date.now(),
   }));
 
@@ -110,7 +124,7 @@ export function prepareMarketCreationData(input: CreateMarketInput) {
       description,
       marketType: finalMarketType,
       displayVariant,
-      state: 'draft' as const,
+      state: state as any,
       openingTime,
       closingTime,
       liquidity,

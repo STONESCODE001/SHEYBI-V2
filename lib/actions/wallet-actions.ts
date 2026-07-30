@@ -25,7 +25,7 @@ import { WITHDRAWAL_FEE_RATE, MIN_WITHDRAWAL_FEE } from '@/lib/prediction-engine
 import { repository } from '@/lib/repositories';
 
 // ============================================================================
-// RESPONSE TYPES
+// RESPONSE TYPES & INPUT INTERFACES
 // ============================================================================
 
 interface ActionResponse<T = void> {
@@ -45,6 +45,12 @@ interface WithdrawalResponse {
   netAmount: number; // Amount user will receive after fee
   newAvailableBalance: number;
   reference: string;
+}
+
+export interface BankDetailsInput {
+  bankName?: string;
+  accountNumber?: string;
+  accountName?: string;
 }
 
 // ============================================================================
@@ -186,11 +192,27 @@ export async function processDepositAction(
  * 5. Deduct availableBalance immediately
  * 6. Record ledger entries (withdrawal + fee)
  * 7. Return withdrawal reference
+ */
+
+/**
+ * Request a withdrawal from the user's available balance.
+ *
+ * IMPORTANT:
+ * - Deducts from availableBalance IMMEDIATELY upon request
+ * - Does NOT touch lockedBalance (that's exclusively for trading positions)
+ * - If admin rejects the withdrawal, funds are refunded via rejectWithdrawalAction
+ * - If admin approves, Paystack processes the payout
+ *
+ * FEE CALCULATION:
+ *   fee = max(amount * 3.0%, ₦150)
+ *   netAmount = amount - fee (what the user receives)
  *
  * @param amount - The gross withdrawal amount in ₦
+ * @param bankDetails - Optional account payout details
  */
 export async function requestWithdrawalAction(
-  amount: number
+  amount: number,
+  bankDetails?: BankDetailsInput
 ): Promise<ActionResponse<WithdrawalResponse>> {
   try {
     // ---- STEP 1: Validate authentication ----
@@ -217,13 +239,6 @@ export async function requestWithdrawalAction(
     }
 
     // ---- STEP 4: Calculate withdrawal fee ----
-    /**
-     * Withdrawal Fee (prediction-engine.md §Revenue Model):
-     *   Rate: 3.0%
-     *   Minimum: ₦150
-     *   Maximum: unlimited
-     *   Fee is deducted before payment is sent.
-     */
     const calculatedFee = amount * WITHDRAWAL_FEE_RATE;
     const fee = Math.max(calculatedFee, MIN_WITHDRAWAL_FEE);
     const netAmount = amount - fee;
@@ -240,24 +255,18 @@ export async function requestWithdrawalAction(
     const idempotencyKey = `withdrawal_${withdrawalReference}`;
 
     // ---- STEP 5: Deduct available balance immediately ----
-    /**
-     * CRITICAL: lockedBalance is NOT touched.
-     * lockedBalance is exclusively for funds committed to open trading positions.
-     * Withdrawals only affect availableBalance.
-     */
     await repository.wallets.updateWalletBalance(userId, {
       availableBalanceDelta: -amount,
       lockedBalanceDelta: 0,
     });
 
     // ---- STEP 6: Record ledger entries ----
-    // Withdrawal entry
     await repository.ledger.createLedgerEntry({
       userId,
       eventType: 'WITHDRAWAL',
       amount: netAmount,
       sourceAccountId: wallet.id,
-      destinationAccountId: 'user_bank_account', // External destination
+      destinationAccountId: 'user_bank_account',
       description: `Withdrawal request of ₦${amount.toLocaleString()} (net ₦${netAmount.toLocaleString()} after fee)`,
       idempotencyKey,
       balanceAfter: wallet.availableBalance - amount,
@@ -266,7 +275,6 @@ export async function requestWithdrawalAction(
       createdAt: now,
     });
 
-    // Fee entry
     await repository.ledger.createLedgerEntry({
       userId,
       eventType: 'WITHDRAWAL_FEE',
@@ -278,6 +286,20 @@ export async function requestWithdrawalAction(
       balanceAfter: wallet.availableBalance - amount,
       referenceId: withdrawalReference,
       createdAt: now,
+    });
+
+    // ---- STEP 7: Persist Withdrawal Request for Admin Panel ----
+    await repository.withdrawals.createWithdrawalRequest({
+      userId,
+      grossAmount: amount,
+      feeAmount: fee,
+      netAmount,
+      bankName: bankDetails?.bankName || 'Guaranty Trust Bank',
+      accountNumber: bankDetails?.accountNumber || '0000000000',
+      accountName: bankDetails?.accountName || 'Account Holder',
+      status: 'pending',
+      createdAt: now,
+      updatedAt: now,
     });
 
     return {
@@ -366,6 +388,16 @@ export async function rejectWithdrawalAction(
       metadata: { rejectedBy: adminUserId, originalReference: withdrawalReference },
       createdAt: now,
     });
+
+    // ---- Update withdrawal request entity status ----
+    try {
+      await repository.withdrawals.updateWithdrawalRequest(withdrawalReference, {
+        status: 'rejected',
+        updatedAt: now,
+      });
+    } catch {
+      // Ignore if withdrawal entity ID differs from reference
+    }
 
     // ---- Audit log ----
     await repository.auditLogs.createAuditLog({

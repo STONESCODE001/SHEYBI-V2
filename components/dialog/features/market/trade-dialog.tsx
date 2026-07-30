@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils"
 import { AlertTriangle } from "lucide-react"
 
 import { buyPositionAction } from "@/lib/actions/trade-actions"
+import { useWallet } from "@/lib/hooks/use-wallet"
+import { TrendingUp, TrendingDown } from "lucide-react"
 
 export interface UserPosition {
   outcome: "yes" | "no"
@@ -56,6 +58,8 @@ interface TradeDialogProps {
  */
 export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }: TradeDialogProps) {
   const dialog = useDialog()
+  const { wallet } = useWallet()
+  const userAvailableBalance = wallet?.availableBalance ?? 0
 
   const [mode, setMode] = React.useState<"buy" | "sell">(payload.initialMode || "buy")
   const [outcome, setOutcome] = React.useState<"yes" | "no">(payload.initialOutcome || "yes")
@@ -197,13 +201,16 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             type="button"
             onClick={() => setOutcome("yes")}
             className={cn(
-              "flex flex-col items-center justify-center p-3 rounded-xl border transition-all",
+              "flex flex-col items-center justify-center p-3 rounded-xl border transition-all relative overflow-hidden",
               outcome === "yes"
                 ? "bg-[var(--market-yes)]/10 border-[var(--market-yes)] ring-1 ring-[var(--market-yes)]"
                 : "bg-[var(--bg-base)] border-[var(--border-default)] opacity-70 hover:opacity-100"
             )}
           >
-            <span className="text-xs text-[var(--text-muted)] font-medium">Predict</span>
+            <div className="flex items-center gap-1 text-xs font-semibold text-emerald-400">
+              <TrendingUp className="size-3.5 text-emerald-400" />
+              <span>Upward ↑</span>
+            </div>
             <span className="text-lg font-black text-[var(--market-yes)] mt-0.5">YES</span>
           </button>
 
@@ -211,14 +218,17 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             type="button"
             onClick={() => setOutcome("no")}
             className={cn(
-              "flex flex-col items-center justify-center p-3 rounded-xl border transition-all",
+              "flex flex-col items-center justify-center p-3 rounded-xl border transition-all relative overflow-hidden",
               outcome === "no"
-                ? "bg-[var(--accent-yellow)]/10 border-[var(--accent-yellow)] ring-1 ring-[var(--accent-yellow)]"
+                ? "bg-rose-500/10 border-rose-500 ring-1 ring-rose-500"
                 : "bg-[var(--bg-base)] border-[var(--border-default)] opacity-70 hover:opacity-100"
             )}
           >
-            <span className="text-xs text-[var(--text-muted)] font-medium">Predict</span>
-            <span className="text-lg font-black text-[var(--accent-yellow)] mt-0.5">NO</span>
+            <div className="flex items-center gap-1 text-xs font-semibold text-rose-400">
+              <TrendingDown className="size-3.5 text-rose-400" />
+              <span>Downward ↓</span>
+            </div>
+            <span className="text-lg font-black text-rose-400 mt-0.5">NO</span>
           </button>
         </div>
 
@@ -246,9 +256,14 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
         {/* Buy Mode Input & Presets */}
         {mode === "buy" && !hasCollision && (
           <div className="space-y-3">
-            <label className="text-xs text-[var(--text-muted)] font-medium block">
-              Enter Amount (₦)
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="text-xs text-[var(--text-muted)] font-medium block">
+                Enter Amount (₦)
+              </label>
+              <span className="text-xs font-medium text-[var(--text-muted)]">
+                Available: <strong className="text-[var(--text-primary)] font-bold">₦{userAvailableBalance.toLocaleString()}</strong>
+              </span>
+            </div>
 
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono font-bold text-[var(--text-muted)]">
@@ -285,18 +300,29 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             {/* Human-First Win Projection (Zero Jargon) */}
             <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] space-y-2">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-[var(--text-muted)] font-medium">Your Stake</span>
+                <span className="text-[var(--text-muted)] font-medium flex items-center gap-1.5">
+                  Predicted Trend:
+                  {outcome === "yes" ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      <TrendingUp className="size-3" /> Upward ↑
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                      <TrendingDown className="size-3" /> Downward ↓
+                    </span>
+                  )}
+                </span>
                 <span className="font-mono font-bold text-[var(--text-primary)]">₦{numericAmount.toLocaleString()}</span>
               </div>
               <div className="flex justify-between items-center text-sm border-t border-[var(--border-default)] pt-2">
                 <span className="text-[var(--text-muted)] font-medium">If You Win</span>
-                <span className="font-mono font-black text-lg text-[var(--market-yes)]">
+                <span className={cn("font-mono font-black text-lg", outcome === "yes" ? "text-emerald-400" : "text-rose-400")}>
                   ₦{potentialWin.toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs">
                 <span className="text-[var(--text-muted)]">Net Profit Potential</span>
-                <span className="font-mono font-bold text-[var(--market-yes)]">
+                <span className={cn("font-mono font-bold", outcome === "yes" ? "text-emerald-400" : "text-rose-400")}>
                   +₦{potentialProfit.toLocaleString()}
                 </span>
               </div>

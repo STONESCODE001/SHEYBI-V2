@@ -199,8 +199,8 @@ export async function buyPositionAction(
     const optionUpdates: OptionBatchUpdate[] = market.options.map((opt, i) => ({
       optionId: opt.id,
       sharesOutstanding: tradeResult.updatedSharesVector[i],
-      probability: tradeResult.updatedProbabilities[i],
-      sharePrice: tradeResult.updatedProbabilities[i], // sharePrice === probability in LMSR
+      probability: tradeResult.updatedProbabilities[i] * 100, // Percentage scale (0 - 100)
+      sharePrice: tradeResult.updatedProbabilities[i], // sharePrice === probability in LMSR (0 < price < 1)
     }));
     await repository.markets.updateMarketOptions(marketId, optionUpdates);
 
@@ -292,7 +292,12 @@ export async function buyPositionAction(
       activityType: 'trade',
       description: `User bought ${tradeResult.sharesReceived.toFixed(2)} shares of "${market.options[optionIndex].name}"`,
       relatedUserId: userId,
-      metadata: { tradeAmount, sharesReceived: tradeResult.sharesReceived, side: 'buy' },
+      metadata: {
+        tradeAmount,
+        sharesReceived: tradeResult.sharesReceived,
+        side: 'buy',
+        optionName: market.options[optionIndex].name,
+      },
       createdAt: now,
     });
 
@@ -413,7 +418,7 @@ export async function sellPositionAction(
     const optionUpdates: OptionBatchUpdate[] = market.options.map((opt, i) => ({
       optionId: opt.id,
       sharesOutstanding: sellResult.updatedSharesVector[i],
-      probability: sellResult.updatedProbabilities[i],
+      probability: sellResult.updatedProbabilities[i] * 100, // Percentage scale (0 - 100)
       sharePrice: sellResult.updatedProbabilities[i],
     }));
     await repository.markets.updateMarketOptions(marketId, optionUpdates);
@@ -497,7 +502,12 @@ export async function sellPositionAction(
       activityType: 'trade',
       description: `User sold ${sharesToSell.toFixed(2)} shares of "${optionName}"`,
       relatedUserId: userId,
-      metadata: { grossProceeds: sellResult.grossProceeds, sharesSold: sharesToSell, side: 'sell' },
+      metadata: {
+        grossProceeds: sellResult.grossProceeds,
+        sharesSold: sharesToSell,
+        side: 'sell',
+        optionName,
+      },
       createdAt: now,
     });
 

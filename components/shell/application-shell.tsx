@@ -15,6 +15,7 @@ import { DialogLayer } from "./dialog-layer"
 import { ToastLayer } from "./toast-layer"
 import { LoadingLayer } from "./loading-layer"
 import { DialogViewport } from "@/components/dialog"
+import { useWallet } from "@/lib/hooks/use-wallet"
 import type { ApplicationShellProps } from "./types"
 import {
   DEFAULT_CATEGORIES,
@@ -38,6 +39,11 @@ function ApplicationShell({
 }: ApplicationShellProps) {
   const [tabletSidebarOpen, setTabletSidebarOpen] = React.useState(false)
   const { isSignedIn, isLoaded } = useAuth()
+  const { wallet } = useWallet()
+
+  const displayBalance = wallet
+    ? `₦${(wallet.availableBalance ?? 0).toLocaleString()}`
+    : availableBalance
 
   const effectiveVariant = React.useMemo(() => {
     if (variant === "admin") return "admin"
@@ -57,7 +63,7 @@ function ApplicationShell({
       {/* Desktop / Tablet Sidebar */}
       <DesktopSidebar
         variant={effectiveVariant}
-        availableBalance={availableBalance}
+        availableBalance={displayBalance}
         userName={userName}
         userAvatarUrl={userAvatarUrl}
         expanded={tabletSidebarOpen}
@@ -86,13 +92,13 @@ function ApplicationShell({
 
         <DesktopHeader
           variant={effectiveVariant}
-          availableBalance={availableBalance}
+          availableBalance={displayBalance}
           unreadCount={unreadCount}
         />
 
         <MobileHeader
           variant={effectiveVariant}
-          availableBalance={availableBalance}
+          availableBalance={displayBalance}
         />
 
         {/* LiveMarketTicker implementation paused: <LiveMarketTicker items={tickerItems} /> */}

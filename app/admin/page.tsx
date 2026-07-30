@@ -4,6 +4,32 @@ import * as React from "react"
 import { AdminLayout } from "@/components/layouts"
 import { SectionHeader } from "@/components/parent"
 import { Store, Lightbulb, Wallet, Tags, ScrollText } from "lucide-react"
+import { toast } from "sonner"
+import { useAuth } from "@clerk/nextjs"
+
+// Import Admin Data Hooks
+import {
+  useAdminMarkets,
+  useAdminWithdrawals,
+  useAdminSuggestions,
+  useAdminAuditLogs,
+  useAdminCategories,
+  useAdminLedger,
+} from "@/lib/hooks/use-admin-data"
+
+// Import Server Actions
+import {
+  createMarketAction,
+  resolveMarketAction,
+  pauseMarketAction,
+  unpauseMarketAction,
+} from "@/lib/actions/market-actions"
+import { rejectWithdrawalAction } from "@/lib/actions/wallet-actions"
+import {
+  updateSuggestionStatusAction,
+  approveWithdrawalAction,
+  createCategoryAction,
+} from "@/lib/actions/admin-actions"
 
 // Import Admin Sub-components
 import { AdminSummaryCards } from "@/components/admin/admin-summary-cards"
@@ -15,20 +41,18 @@ import { AdminAuditLogsTab, type AuditLogRecord } from "@/components/admin/admin
 
 // Import Admin Dialogs
 import { CreateMarketDialog } from "@/components/admin/create-market-dialog"
-import { ResolveMarketDialog } from "@/components/admin/resolve-market-dialog"
+import { ResolveMarketDialog } from "@/components/dialog/features/market/resolve-market-dialog"
+import { PauseMarketDialog } from "@/components/dialog/features/market/pause-market-dialog"
 import { WithdrawalActionDialog } from "@/components/admin/withdrawal-action-dialog"
 
 /**
- * Explanatory Page Component: AdminDashboardPage
+ * AdminDashboardPage Component
  * Main entry point for platform operators (`/admin`).
- * Combines Platform Financial Summary cards with a unified 5-tab workspace:
- * 1. Markets Management (Create, Edit, Resolve)
- * 2. Market Suggestions Queue (Accept & Pre-fill Create Market)
- * 3. Withdrawal Requests Review (Approve/Reject payouts)
- * 4. Category Taxonomy Manager (Add categories)
- * 5. Immutable Audit Logs (Track who did what and when)
+ * Reads live data from InstantDB via reactive hooks and executes real Server Actions.
  */
 export default function AdminDashboardPage() {
+  const { userId } = useAuth()
+
   // Active Workspace Tab Selection State:
   const [activeTab, setActiveTab] = React.useState<
     "markets" | "suggestions" | "withdrawals" | "categories" | "audit"
@@ -41,159 +65,202 @@ export default function AdminDashboardPage() {
   const [isResolveMarketOpen, setIsResolveMarketOpen] = React.useState(false)
   const [selectedResolveMarket, setSelectedResolveMarket] = React.useState<AdminMarketItem | null>(null)
 
+  const [isPauseMarketOpen, setIsPauseMarketOpen] = React.useState(false)
+  const [selectedPauseMarket, setSelectedPauseMarket] = React.useState<AdminMarketItem | null>(null)
+
   const [isWithdrawalActionOpen, setIsWithdrawalActionOpen] = React.useState(false)
   const [selectedWithdrawal, setSelectedWithdrawal] = React.useState<WithdrawalItem | null>(null)
 
   // --------------------------------------------------------------------------
-  // Mock Data & State Stores (Represents instant DB connection)
+  // Reactive InstantDB Queries
   // --------------------------------------------------------------------------
-
-  // Categories State
-  const [categories, setCategories] = React.useState<CategoryItem[]>([
-    { id: "bbnaija", label: "BBNaija", marketCount: 12 },
-    { id: "sports", label: "Sports", marketCount: 4 },
-    { id: "entertainment", label: "Entertainment", marketCount: 2 },
-    { id: "politics", label: "Politics", marketCount: 0 },
-    { id: "crypto", label: "Crypto", marketCount: 0 },
-  ])
-
-  // Markets State
-  const [markets, setMarkets] = React.useState<AdminMarketItem[]>([
-    {
-      id: "m-1",
-      title: "Who will win BBNaija Season 9 Head of House in Week 4?",
-      category: "bbnaija",
-      status: "Open",
-      closeDate: "2026-08-01 18:00",
-      totalVolume: 4250000,
-      format: "multi",
-      options: [
-        { id: "opt-1", title: "Anita" },
-        { id: "opt-2", title: "Ozee" },
-        { id: "opt-3", title: "Wanni" },
-      ],
-    },
-    {
-      id: "m-2",
-      title: "Will there be a surprise fake eviction on Sunday?",
-      category: "bbnaija",
-      status: "Closed",
-      closeDate: "2026-07-26 20:00",
-      totalVolume: 1890000,
-      format: "binary",
-      options: [
-        { id: "opt-yes", title: "Yes" },
-        { id: "opt-no", title: "No" },
-      ],
-    },
-  ])
-
-  // User Market Suggestions State
-  const [suggestions, setSuggestions] = React.useState<MarketSuggestionItem[]>([
-    {
-      id: "sugg-101",
-      title: "Will the Veto Power game be re-introduced next week?",
-      description: "With tension high in the house, Biggie might bring back Veto Power twist.",
-      category: "bbnaija",
-      submittedBy: "Tunde_Naija",
-      submittedDate: "2026-07-26",
-      status: "Pending",
-    },
-    {
-      id: "sugg-102",
-      title: "Will Arsenal win their opening pre-season friendly by 2+ goals?",
-      description: "Friendly match predictions for sports fans.",
-      category: "sports",
-      submittedBy: "Gunner_99",
-      submittedDate: "2026-07-27",
-      status: "Pending",
-    },
-  ])
-
-  // Withdrawal Requests State
-  const [withdrawals, setWithdrawals] = React.useState<WithdrawalItem[]>([
-    {
-      id: "w-1",
-      userName: "Chidi Okonkwo",
-      userEmail: "chidi@example.com",
-      bankName: "Guaranty Trust Bank (GTB)",
-      accountNumber: "0123456789",
-      accountName: "Chidi Okonkwo",
-      amount: 150000,
-      requestDate: "2026-07-27 09:30",
-      status: "Pending",
-    },
-    {
-      id: "w-2",
-      userName: "Aisha Bello",
-      userEmail: "aisha@example.com",
-      bankName: "Zenith Bank",
-      accountNumber: "9876543210",
-      accountName: "Aisha Bello",
-      amount: 45000,
-      requestDate: "2026-07-27 10:15",
-      status: "Pending",
-    },
-  ])
-
-  // Immutable Audit Logs State
-  const [auditLogs, setAuditLogs] = React.useState<AuditLogRecord[]>([
-    {
-      id: "log-1",
-      action: "MARKET_CREATED",
-      performedBy: "admin@sheybi.com",
-      targetId: "m-1",
-      details: "Created market 'Who will win BBNaija Season 9 Head of House...'",
-      timestamp: "2026-07-25 14:20:00",
-    },
-  ])
+  const { markets: dbMarkets, isLoading: marketsLoading } = useAdminMarkets()
+  const { withdrawals: dbWithdrawals } = useAdminWithdrawals()
+  const { suggestions: dbSuggestions } = useAdminSuggestions()
+  const { logs: dbLogs } = useAdminAuditLogs()
+  const { categories: dbCategories } = useAdminCategories()
+  const { ledgerEntries } = useAdminLedger()
 
   // --------------------------------------------------------------------------
-  // Helper Handlers for Logging Audit Events
+  // Data Transformations for Tab Components
   // --------------------------------------------------------------------------
-  const recordAuditLog = (action: string, targetId: string, details: string) => {
-    const newLog: AuditLogRecord = {
-      id: `log-${Date.now()}`,
-      action,
-      performedBy: "admin@sheybi.com", // Authenticated admin user email
-      targetId,
-      details,
-      timestamp: new Date().toISOString().replace("T", " ").substring(0, 19),
-    }
-    setAuditLogs((prev) => [newLog, ...prev])
-  }
+  const markets: AdminMarketItem[] = React.useMemo(() => {
+    return dbMarkets.map((m: any) => ({
+      id: m.id,
+      title: m.title,
+      category: m.category?.slug ?? '',
+      status: (m.state.charAt(0).toUpperCase() + m.state.slice(1)) as any,
+      closeDate: new Date(m.closingTime).toLocaleString(),
+      totalVolume: m.tradingVolume ?? 0,
+      format: m.marketType === 'multi_option' ? 'multi' : 'binary',
+      options: (m.options ?? []).map((o: any) => ({ id: o.id, title: o.name })),
+    }))
+  }, [dbMarkets])
+
+  const suggestions: MarketSuggestionItem[] = React.useMemo(() => {
+    return dbSuggestions.map((s: any) => ({
+      id: s.id,
+      title: s.title,
+      description: s.description,
+      category: s.categorySlug ?? '',
+      submittedBy: s.submitterName || s.submittedBy,
+      submittedDate: new Date(s.createdAt).toLocaleDateString(),
+      status: (s.status.charAt(0).toUpperCase() + s.status.slice(1)) as any,
+    }))
+  }, [dbSuggestions])
+
+  const withdrawals: WithdrawalItem[] = React.useMemo(() => {
+    return dbWithdrawals.map((w: any) => ({
+      id: w.id,
+      userName: w.accountName,
+      userEmail: '',
+      bankName: w.bankName,
+      accountNumber: w.accountNumber,
+      accountName: w.accountName,
+      amount: w.grossAmount,
+      requestDate: new Date(w.createdAt).toLocaleString(),
+      status: (w.status.charAt(0).toUpperCase() + w.status.slice(1)) as any,
+    }))
+  }, [dbWithdrawals])
+
+  const categories: CategoryItem[] = React.useMemo(() => {
+    return dbCategories.map((c: any) => ({
+      id: c.slug,
+      label: c.name,
+      marketCount: dbMarkets.filter((m: any) => m.category?.slug === c.slug).length,
+    }))
+  }, [dbCategories, dbMarkets])
+
+  const auditLogs: AuditLogRecord[] = React.useMemo(() => {
+    return dbLogs.map((log: any) => ({
+      id: log.id,
+      action: log.actionType,
+      performedBy: log.adminUserId,
+      targetId: log.targetEntityId,
+      details: typeof log.details === 'string' ? log.details : JSON.stringify(log.details),
+      timestamp: new Date(log.createdAt).toLocaleString(),
+    }))
+  }, [dbLogs])
+
+  // KPI summary metrics derived from live DB state
+  const totalVolumeAllMarkets = React.useMemo(() => {
+    return dbMarkets.reduce((sum: number, m: any) => sum + (m.tradingVolume || 0), 0)
+  }, [dbMarkets])
+
+  const pendingWithdrawalsCount = React.useMemo(() => {
+    return dbWithdrawals.filter((w: any) => w.status?.toLowerCase() === 'pending').length
+  }, [dbWithdrawals])
+
+  const pendingWithdrawalsAmount = React.useMemo(() => {
+    return dbWithdrawals
+      .filter((w: any) => w.status?.toLowerCase() === 'pending')
+      .reduce((sum: number, w: any) => sum + (w.grossAmount || 0), 0)
+  }, [dbWithdrawals])
+
+  const pendingSuggestionsCount = React.useMemo(() => {
+    return dbSuggestions.filter((s: any) => s.status?.toLowerCase() === 'pending').length
+  }, [dbSuggestions])
+
+  const totalSeedLiquidity = React.useMemo(() => {
+    return dbMarkets.reduce((sum: number, m: any) => sum + (m.liquidity || 50000), 0)
+  }, [dbMarkets])
+
+  const platformRevenue = React.useMemo(() => {
+    // 1. Sum feeAmount / fee from all withdrawal requests
+    const withdrawalFees = dbWithdrawals.reduce(
+      (sum: number, w: any) => sum + (w.feeAmount || w.fee || 0),
+      0
+    )
+    // 2. Sum WITHDRAWAL_FEE, TRADE_FEE, or PLATFORM_FEE from ledger entries
+    const ledgerFees = (ledgerEntries || [])
+      .filter(
+        (e: any) =>
+          e.eventType === "WITHDRAWAL_FEE" ||
+          e.eventType === "TRADE_FEE" ||
+          e.eventType === "PLATFORM_FEE"
+      )
+      .reduce((sum: number, e: any) => sum + Math.abs(e.amount || 0), 0)
+
+    return Math.max(withdrawalFees, ledgerFees)
+  }, [dbWithdrawals, ledgerEntries])
 
   // --------------------------------------------------------------------------
   // Action Handlers
   // --------------------------------------------------------------------------
 
   /** Triggered when admin submits the Create Market dialog */
-  const handleCreateMarketSubmit = (marketData: any) => {
-    const newMarket: AdminMarketItem = {
-      id: `m-${Date.now()}`,
-      title: marketData.title,
-      category: marketData.category,
-      status: marketData.status as any,
-      closeDate: marketData.closeDate.replace("T", " "),
-      totalVolume: 0,
-      format: marketData.format,
-      options: marketData.options,
+  const handleCreateMarketSubmit = async (marketData: any) => {
+    try {
+      const closeTimeMs = new Date(marketData.closeDate).getTime() || Date.now() + 86400000
+      const displayVariant = marketData.format === '1v1' ? '1v1' : marketData.format === 'multi' ? 'standard' : 'binary'
+      const marketType = (marketData.format === 'multi' || marketData.format === '1v1') ? 'multi_option' : 'binary'
+      const targetState = marketData.status === 'Draft' ? 'draft' : 'open'
+
+      const result = await createMarketAction({
+        title: marketData.title,
+        description: marketData.description || marketData.title,
+        categorySlug: marketData.category,
+        marketType,
+        displayVariant,
+        openingTime: Date.now(),
+        closingTime: closeTimeMs,
+        liquidity: Number(marketData.liquidity) || 50000,
+        optionNames: (marketData.options || []).map((o: any) => o.title),
+        optionImageUrls: (marketData.options || []).map((o: any) => o.imageUrl || undefined),
+        createdBy: userId || 'admin',
+        state: targetState,
+      })
+
+      if (!result.success) {
+        toast.error(result.error || 'Failed to create market.')
+        return
+      }
+
+      if (marketData.suggestionId) {
+        await updateSuggestionStatusAction({
+          suggestionId: marketData.suggestionId,
+          status: 'approved',
+          convertedMarketId: result.data?.marketId,
+        })
+      }
+
+      toast.success('Market published live!')
+      setIsCreateMarketOpen(false)
+    } catch (err: any) {
+      toast.error(err.message || 'Error creating market')
+    }
+  }
+
+  /** Triggered when admin confirms market resolution with ALL CAPS safeguard */
+  const handleResolveMarket = async (winningOptionId: string, confirmedTitleAllCaps: string) => {
+    if (!selectedResolveMarket) return
+    const result = await resolveMarketAction({
+      marketId: selectedResolveMarket.id,
+      winningOptionId,
+      confirmedTitleAllCaps,
+      adminUserId: userId || 'admin',
+    })
+
+    if (!result.success) {
+      throw new Error(result.error)
     }
 
-    setMarkets((prev) => [newMarket, ...prev])
+    toast.success('Market resolved and payouts distributed!')
+  }
 
-    // If created from a suggestion, update suggestion status
-    if (marketData.suggestionId) {
-      setSuggestions((prev) =>
-        prev.map((s) => (s.id === marketData.suggestionId ? { ...s, status: "Accepted" } : s))
-      )
+  /** Triggered when admin confirms pause or unpause */
+  const handleConfirmPauseStateChange = async () => {
+    if (!selectedPauseMarket) return
+    const isCurrentlyPaused = selectedPauseMarket.status.toLowerCase() === 'paused'
+    const result = isCurrentlyPaused
+      ? await unpauseMarketAction(selectedPauseMarket.id)
+      : await pauseMarketAction(selectedPauseMarket.id)
+
+    if (!result.success) {
+      throw new Error(result.error)
     }
 
-    recordAuditLog(
-      "MARKET_CREATED",
-      newMarket.id,
-      `Created market "${newMarket.title}" (${newMarket.format} format, status: ${newMarket.status})`
-    )
+    toast.success(`Market ${isCurrentlyPaused ? 'unpaused' : 'paused'} successfully!`)
   }
 
   /** Triggered when admin accepts a market suggestion */
@@ -205,62 +272,71 @@ export default function AdminDashboardPage() {
       category: suggestion.category,
     })
     setIsCreateMarketOpen(true)
-    recordAuditLog(
-      "SUGGESTION_ACCEPTED",
-      suggestion.id,
-      `Accepted market suggestion "${suggestion.title}" and opened pre-filled creation form`
-    )
   }
 
   /** Triggered when admin rejects a market suggestion */
-  const handleRejectSuggestion = (suggestionId: string) => {
-    setSuggestions((prev) =>
-      prev.map((s) => (s.id === suggestionId ? { ...s, status: "Rejected" } : s))
-    )
-    recordAuditLog("SUGGESTION_REJECTED", suggestionId, `Rejected market suggestion ID: ${suggestionId}`)
-  }
-
-  /** Triggered when admin resolves a closed market */
-  const handleResolveMarket = (marketId: string, winningOptionId: string) => {
-    setMarkets((prev) =>
-      prev.map((m) => (m.id === marketId ? { ...m, status: "Resolved" } : m))
-    )
-    recordAuditLog(
-      "MARKET_RESOLVED",
-      marketId,
-      `Resolved market ID ${marketId} declaring winning option ID ${winningOptionId}`
-    )
+  const handleRejectSuggestion = async (suggestionId: string) => {
+    try {
+      const result = await updateSuggestionStatusAction({
+        suggestionId,
+        status: 'rejected',
+        rejectionReason: 'Admin rejected suggestion',
+      })
+      if (!result.success) {
+        toast.error(result.error || 'Failed to reject suggestion.')
+        return
+      }
+      toast.success('Market suggestion rejected.')
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to reject suggestion.')
+    }
   }
 
   /** Triggered when admin approves or rejects a withdrawal */
-  const handleWithdrawalAction = (
+  const handleWithdrawalAction = async (
     withdrawalId: string,
-    action: "approve" | "reject",
+    action: 'approve' | 'reject',
     reason?: string
   ) => {
-    const newStatus = action === "approve" ? "Approved" : "Rejected"
-    setWithdrawals((prev) =>
-      prev.map((w) => (w.id === withdrawalId ? { ...w, status: newStatus } : w))
-    )
+    const target = dbWithdrawals.find((w: any) => w.id === withdrawalId)
+    if (!target) return
 
-    recordAuditLog(
-      action === "approve" ? "WITHDRAWAL_APPROVED" : "WITHDRAWAL_REJECTED",
-      withdrawalId,
-      action === "approve"
-        ? `Approved payout for withdrawal ID ${withdrawalId}`
-        : `Rejected withdrawal ID ${withdrawalId}. Reason: ${reason || "None provided"}`
-    )
+    if (action === 'reject') {
+      const result = await rejectWithdrawalAction(
+        target.userId,
+        target.grossAmount,
+        target.id,
+        userId || 'admin'
+      )
+      if (!result.success) {
+        toast.error(result.error || 'Failed to reject withdrawal.')
+        return
+      }
+
+      toast.success('Withdrawal request rejected and funds refunded to user available balance.')
+    } else {
+      const result = await approveWithdrawalAction({ withdrawalId })
+      if (!result.success) {
+        toast.error(result.error || 'Failed to approve withdrawal.')
+        return
+      }
+
+      toast.success('Withdrawal request approved.')
+    }
   }
 
   /** Triggered when admin adds a new category */
-  const handleAddCategory = (label: string) => {
-    const newCat: CategoryItem = {
-      id: label.toLowerCase().replace(/\s+/g, "-"),
-      label,
-      marketCount: 0,
+  const handleAddCategory = async (label: string) => {
+    try {
+      const result = await createCategoryAction(label)
+      if (!result.success) {
+        toast.error(result.error || 'Failed to add category.')
+        return
+      }
+      toast.success(`Category "${label}" added successfully!`)
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to add category.')
     }
-    setCategories((prev) => [...prev, newCat])
-    recordAuditLog("CATEGORY_ADDED", newCat.id, `Added new category taxonomy "${label}"`)
   }
 
   return (
@@ -274,13 +350,13 @@ export default function AdminDashboardPage() {
 
         {/* Top KPI Summary Cards */}
         <AdminSummaryCards
-          totalPlatformBalance={14850000}
+          totalPlatformBalance={totalVolumeAllMarkets}
           activeMarketsCount={markets.filter((m) => m.status === "Open").length}
-          pendingWithdrawalsCount={withdrawals.filter((w) => w.status === "Pending").length}
-          pendingWithdrawalsAmount={withdrawals
-            .filter((w) => w.status === "Pending")
-            .reduce((sum, w) => sum + w.amount, 0)}
-          pendingSuggestionsCount={suggestions.filter((s) => s.status === "Pending").length}
+          pendingWithdrawalsCount={pendingWithdrawalsCount}
+          pendingWithdrawalsAmount={pendingWithdrawalsAmount}
+          pendingSuggestionsCount={pendingSuggestionsCount}
+          platformRevenue={platformRevenue}
+          totalSeedLiquidity={totalSeedLiquidity}
         />
 
         {/* Tabbed Workspace Navigation Bar */}
@@ -304,7 +380,7 @@ export default function AdminDashboardPage() {
                 : "border-transparent text-text-muted hover:text-text-primary"
             }`}
           >
-            <Lightbulb className="h-4 w-4" /> Suggestions ({suggestions.filter((s) => s.status === "Pending").length})
+            <Lightbulb className="h-4 w-4" /> Suggestions ({pendingSuggestionsCount})
           </button>
 
           <button
@@ -315,7 +391,7 @@ export default function AdminDashboardPage() {
                 : "border-transparent text-text-muted hover:text-text-primary"
             }`}
           >
-            <Wallet className="h-4 w-4" /> Withdrawals ({withdrawals.filter((w) => w.status === "Pending").length})
+            <Wallet className="h-4 w-4" /> Withdrawals ({pendingWithdrawalsCount})
           </button>
 
           <button
@@ -353,6 +429,10 @@ export default function AdminDashboardPage() {
               onOpenResolveDialog={(market) => {
                 setSelectedResolveMarket(market)
                 setIsResolveMarketOpen(true)
+              }}
+              onOpenPauseDialog={(market) => {
+                setSelectedPauseMarket(market)
+                setIsPauseMarketOpen(true)
               }}
             />
           )}
@@ -395,8 +475,17 @@ export default function AdminDashboardPage() {
       <ResolveMarketDialog
         isOpen={isResolveMarketOpen}
         onClose={() => setIsResolveMarketOpen(false)}
-        market={selectedResolveMarket}
-        onResolveMarket={handleResolveMarket}
+        marketTitle={selectedResolveMarket?.title ?? ""}
+        options={(selectedResolveMarket?.options ?? []).map((o) => ({ id: o.id, name: o.title }))}
+        onConfirmResolve={handleResolveMarket}
+      />
+
+      <PauseMarketDialog
+        isOpen={isPauseMarketOpen}
+        onClose={() => setIsPauseMarketOpen(false)}
+        marketTitle={selectedPauseMarket?.title ?? ""}
+        currentState={selectedPauseMarket?.status?.toLowerCase() ?? "open"}
+        onConfirmPauseStateChange={handleConfirmPauseStateChange}
       />
 
       <WithdrawalActionDialog

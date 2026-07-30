@@ -21,13 +21,25 @@ export function formatOddsFromProbability(
   baseStake = 1000
 ): string {
   if (!probabilityPercent || probabilityPercent <= 0) return "₦1k -> ₦1k"
-  const p = probabilityPercent / 100
+  
+  // Normalize probability if passed as fraction (0.45 -> 45)
+  const prob = probabilityPercent <= 1 && probabilityPercent > 0 
+    ? probabilityPercent * 100 
+    : probabilityPercent
+  
+  const p = Math.max(0.01, Math.min(100, prob)) / 100
   const potentialPayout = baseStake / p
   const stakeK = `₦${baseStake / 1000}k`
   let payoutK: string
+
   if (potentialPayout >= 1000) {
     const kVal = potentialPayout / 1000
-    const formatted = Number.isInteger(kVal) ? kVal.toString() : kVal.toFixed(1).replace(/\.0$/, "")
+    let formatted: string
+    if (kVal < 10) {
+      formatted = kVal.toFixed(1).replace(/\.0$/, "") // e.g. 1.7k
+    } else {
+      formatted = Math.round(kVal).toString() // e.g. 20k, 123k, 178k
+    }
     payoutK = `₦${formatted}k`
   } else {
     payoutK = `₦${Math.round(potentialPayout)}`

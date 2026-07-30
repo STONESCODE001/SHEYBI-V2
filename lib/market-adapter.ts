@@ -17,6 +17,54 @@ import type { VersusMarketData, PlayerData } from '@/components/parent/market-de
 import type { MultiOptionMarketData, CandidateData } from '@/components/parent/market-details/multi-option-market-view';
 
 /**
+ * Normalizes probability input values. If value is between 0 and 1, scales to percentage (0 - 100).
+ */
+export function normalizeProbability(prob?: number, defaultVal = 50): number {
+  if (prob === undefined || prob === null) return defaultVal;
+  if (prob > 0 && prob <= 1) return prob * 100;
+  return prob;
+}
+
+/**
+ * Helper to extract and format live trade history from InstantDB market_activity items.
+ */
+function extractTradeHistory(market: any): Array<{
+  id: string;
+  shares: number;
+  outcome: "yes" | "no";
+  timestamp: string;
+}> {
+  const activities = market.activity || [];
+  const tradeActivities = activities.filter(
+    (a: any) => a.activityType === 'trade' || a.activityType === 'TRADE'
+  );
+
+  return tradeActivities
+    .sort((a: any, b: any) => (b.createdAt || 0) - (a.createdAt || 0))
+    .map((a: any, idx: number) => {
+      const shares = a.metadata?.sharesReceived || a.metadata?.sharesSold || 0;
+      const side = a.metadata?.side === 'sell' ? 'sell' : 'buy';
+      const outcome = (a.metadata?.outcome || a.metadata?.optionName || (side === 'sell' ? 'no' : 'yes')).toLowerCase();
+
+      let timestamp = 'Recently';
+      if (a.createdAt) {
+        const diffSec = Math.floor((Date.now() - a.createdAt) / 1000);
+        if (diffSec < 60) timestamp = 'Just now';
+        else if (diffSec < 3600) timestamp = `${Math.floor(diffSec / 60)} mins ago`;
+        else if (diffSec < 86400) timestamp = `${Math.floor(diffSec / 3600)} hours ago`;
+        else timestamp = `${Math.floor(diffSec / 86400)} days ago`;
+      }
+
+      return {
+        id: a.id || `trade_${idx}`,
+        shares: Number((shares || 0).toFixed(2)),
+        outcome: outcome === 'no' ? 'no' : 'yes',
+        timestamp,
+      };
+    });
+}
+
+/**
  * Transforms InstantDB market entity objects into MarketCardProps for UI rendering.
  */
 export function adaptMarketToCardProps(market: any): MarketCardProps {
@@ -29,19 +77,22 @@ export function adaptMarketToCardProps(market: any): MarketCardProps {
     variant = '1v1';
   }
 
-  const contestants: ContestantOption[] = options.map((opt: any) => ({
-    id: opt.id || opt.name,
-    name: opt.name,
-    avatarUrl: opt.imageUrl,
-    probability: opt.probability,
-    odds: formatOddsFromProbability(opt.probability),
-  }));
+  const contestants: ContestantOption[] = options.map((opt: any) => {
+    const prob = normalizeProbability(opt.probability, 50);
+    return {
+      id: opt.id || opt.name,
+      name: opt.name,
+      avatarUrl: opt.imageUrl,
+      probability: prob,
+      odds: formatOddsFromProbability(prob),
+    };
+  });
 
   const yesOption = options.find((o: any) => o.name.toUpperCase() === 'YES') || options[0];
   const noOption = options.find((o: any) => o.name.toUpperCase() === 'NO') || options[1];
 
-  const yesProbability = yesOption?.probability ?? 50;
-  const noProbability = noOption?.probability ?? (100 - yesProbability);
+  const yesProbability = normalizeProbability(yesOption?.probability, 50);
+  const noProbability = normalizeProbability(noOption?.probability, 100 - yesProbability);
 
   return {
     id: market.id || market.slug,
@@ -69,8 +120,8 @@ export function adaptToBinaryMarketData(market: any): BinaryMarketData {
   const yesOption = options.find((o: any) => o.name.toUpperCase() === 'YES') || options[0];
   const noOption = options.find((o: any) => o.name.toUpperCase() === 'NO') || options[1];
 
-  const yesProbability = yesOption?.probability ?? 50;
-  const noProbability = noOption?.probability ?? (100 - yesProbability);
+  const yesProbability = normalizeProbability(yesOption?.probability, 50);
+  const noProbability = normalizeProbability(noOption?.probability, 100 - yesProbability);
 
   return {
     id: market.id,
@@ -85,7 +136,7 @@ export function adaptToBinaryMarketData(market: any): BinaryMarketData {
     noOddsText: formatOddsFromProbability(noProbability),
     yesPrice: yesOption?.sharePrice ?? yesProbability / 100,
     noPrice: noOption?.sharePrice ?? noProbability / 100,
-    tradeHistory: [],
+    tradeHistory: extractTradeHistory(market),
     userPosition: null,
   };
 }
@@ -100,7 +151,7 @@ export function adaptToVersusMarketData(market: any): VersusMarketData {
   const p2 = sorted[1];
 
   function toPlayer(opt: any): PlayerData {
-    const prob = opt?.probability ?? 50;
+    const prob = normalizeProbability(opt?.probability, 50);
     return {
       id: opt?.id ?? 'unknown',
       name: opt?.name ?? 'Unknown',
@@ -120,7 +171,7 @@ export function adaptToVersusMarketData(market: any): VersusMarketData {
     rules: market.description,
     player1: toPlayer(p1),
     player2: toPlayer(p2),
-    tradeHistory: [],
+    tradeHistory: extractTradeHistory(market),
     userPosition: null,
   };
 }
@@ -133,7 +184,7 @@ export function adaptToMultiOptionMarketData(market: any): MultiOptionMarketData
   const sorted = [...options].sort((a: any, b: any) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
   const candidates: CandidateData[] = sorted.map((opt: any) => {
-    const prob = opt.probability ?? 0;
+    const prob = normalizeProbability(opt.probability, 0);
     return {
       id: opt.id,
       name: opt.name,
@@ -154,7 +205,7 @@ export function adaptToMultiOptionMarketData(market: any): MultiOptionMarketData
     totalTradesVolume: `₦ ${(market.tradingVolume || 0).toLocaleString()}`,
     rules: market.description,
     candidates,
-    tradeHistory: [],
+    tradeHistory: extractTradeHistory(market),
     userPosition: null,
   };
 }
@@ -179,4 +230,3 @@ export function adaptMarketToDetailData(market: any): {
       return { variant: 'binary', data: adaptToBinaryMarketData(market) };
   }
 }
-

@@ -70,13 +70,7 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
   const hasRules = Boolean(market.rules && market.rules.trim())
   const marketRules = hasRules ? market.rules : "Rules unavailable for this market. Trading is currently disabled."
 
-  const historyItems = market.tradeHistory || [
-    { id: "1", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-    { id: "2", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-    { id: "3", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-    { id: "4", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-    { id: "5", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-  ]
+  const historyItems = market.tradeHistory || []
 
   const handleOpenTradeDialog = (outcome: "yes" | "no") => {
     if (!isSignedIn) {
@@ -121,8 +115,8 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
         {/* Probability Header & Ratio Split Bar */}
         <div className="space-y-2.5">
           <div className="flex justify-between items-center text-sm sm:text-base font-extrabold">
-            <span className="text-[#30D878]">Yes ( {yesProbability}% Chance )</span>
-            <span className="text-[#FFC91F]">No ( {noProbability}% Chance )</span>
+            <span className="text-[#30D878]">Yes ( {Number(yesProbability.toFixed(1))}% Chance )</span>
+            <span className="text-[#FFC91F]">No ( {Number(noProbability.toFixed(1))}% Chance )</span>
           </div>
 
           {/* Dual-Color Split Ratio Bar */}
@@ -177,23 +171,29 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
           </h2>
 
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 sm:p-5 divide-y divide-[var(--border-default)]/50">
-            {historyItems.map((item, idx) => (
-              <div
-                key={item.id || idx}
-                className="flex justify-between items-center py-3 first:pt-0 last:pb-0 text-sm font-semibold"
-              >
-                <div className="text-[var(--text-primary)]">
-                  Bought {item.shares}{" "}
-                  <span className={cn(item.outcome === "yes" ? "text-[var(--market-yes)]" : "text-[var(--accent-yellow)]")}>
-                    {item.outcome.toUpperCase()}
-                  </span>{" "}
-                  Shares
-                </div>
-                <div className="text-xs text-[var(--text-muted)] font-normal">
-                  {item.timestamp}
-                </div>
+            {historyItems.length === 0 ? (
+              <div className="text-center py-4 text-xs sm:text-sm text-[var(--text-muted)] font-medium">
+                No trades placed on this market yet. Be the first to trade!
               </div>
-            ))}
+            ) : (
+              historyItems.map((item, idx) => (
+                <div
+                  key={item.id || idx}
+                  className="flex justify-between items-center py-3 first:pt-0 last:pb-0 text-sm font-semibold"
+                >
+                  <div className="text-[var(--text-primary)]">
+                    Trade {item.shares}{" "}
+                    <span className={cn(item.outcome === "yes" ? "text-[var(--market-yes)] font-bold" : "text-[var(--accent-yellow)] font-bold")}>
+                      {item.outcome.toUpperCase()}
+                    </span>{" "}
+                    Shares
+                  </div>
+                  <div className="text-xs text-[var(--text-muted)] font-normal">
+                    {item.timestamp}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

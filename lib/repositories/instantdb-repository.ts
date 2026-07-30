@@ -40,6 +40,14 @@ import type {
   SettlementStatus,
   Wallet,
   WalletBalanceDeltas,
+  ISuggestionRepository,
+  IWithdrawalRepository,
+  MarketSuggestion,
+  MarketSuggestionCreateData,
+  MarketSuggestionUpdateData,
+  WithdrawalRequest,
+  WithdrawalRequestCreateData,
+  WithdrawalRequestUpdateData,
 } from "./types";
 
 // ============================================================================
@@ -538,6 +546,134 @@ class InstantDbAuditLogRepository implements IAuditLogRepository {
 }
 
 // ============================================================================
+// WITHDRAWAL REPOSITORY
+// ============================================================================
+
+class InstantDbWithdrawalRepository implements IWithdrawalRepository {
+  async createWithdrawalRequest(data: WithdrawalRequestCreateData): Promise<string> {
+    const newWithdrawalId = id();
+
+    await adminDb.transact([
+      adminDb.tx.withdrawal_requests[newWithdrawalId].update({
+        userId: data.userId,
+        grossAmount: data.grossAmount,
+        feeAmount: data.feeAmount,
+        netAmount: data.netAmount,
+        bankName: data.bankName,
+        accountName: data.accountName,
+        accountNumber: data.accountNumber,
+        status: data.status,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+      }),
+    ]);
+
+    return newWithdrawalId;
+  }
+
+  async getWithdrawalRequests(filter?: { status?: string }): Promise<WithdrawalRequest[]> {
+    try {
+      let result: any;
+      if (filter?.status) {
+        result = await adminDb.query({
+          withdrawal_requests: {
+            $: { where: { status: filter.status } },
+          },
+        });
+      } else {
+        result = await adminDb.query({
+          withdrawal_requests: {},
+        });
+      }
+
+      return (result.withdrawal_requests || []).map((w: any) => ({
+        id: w.id,
+        userId: w.userId,
+        grossAmount: w.grossAmount,
+        feeAmount: w.feeAmount,
+        netAmount: w.netAmount,
+        bankName: w.bankName,
+        accountName: w.accountName,
+        accountNumber: w.accountNumber,
+        status: w.status,
+        rejectionReason: w.rejectionReason,
+        approvedBy: w.approvedBy,
+        createdAt: w.createdAt,
+        updatedAt: w.updatedAt,
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  async updateWithdrawalRequest(idParam: string, updates: Partial<WithdrawalRequestUpdateData>): Promise<void> {
+    await adminDb.transact([adminDb.tx.withdrawal_requests[idParam].update(updates)]);
+  }
+}
+
+// ============================================================================
+// MARKET SUGGESTIONS REPOSITORY
+// ============================================================================
+
+class InstantDbSuggestionRepository implements ISuggestionRepository {
+  async createMarketSuggestion(data: MarketSuggestionCreateData): Promise<string> {
+    const newSuggestionId = id();
+
+    await adminDb.transact([
+      adminDb.tx.market_suggestions[newSuggestionId].update({
+        submittedBy: data.submittedBy,
+        submitterName: data.submitterName,
+        title: data.title,
+        description: data.description,
+        categorySlug: data.categorySlug,
+        status: data.status,
+        createdAt: data.createdAt,
+      }),
+    ]);
+
+    return newSuggestionId;
+  }
+
+  async getMarketSuggestions(filter?: { status?: string }): Promise<MarketSuggestion[]> {
+    try {
+      let result: any;
+      if (filter?.status) {
+        result = await adminDb.query({
+          market_suggestions: {
+            $: { where: { status: filter.status } },
+          },
+        });
+      } else {
+        result = await adminDb.query({
+          market_suggestions: {},
+        });
+      }
+
+      return (result.market_suggestions || []).map((s: any) => ({
+        id: s.id,
+        submittedBy: s.submittedBy,
+        submitterName: s.submitterName,
+        title: s.title,
+        description: s.description,
+        categorySlug: s.categorySlug,
+        status: s.status,
+        reviewedBy: s.reviewedBy,
+        reviewedAt: s.reviewedAt,
+        rejectionReason: s.rejectionReason,
+        convertedMarketId: s.convertedMarketId,
+        createdAt: s.createdAt,
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  async updateMarketSuggestion(idParam: string, updates: Partial<MarketSuggestionUpdateData>): Promise<void> {
+    await adminDb.transact([adminDb.tx.market_suggestions[idParam].update(updates)]);
+  }
+}
+
+// ============================================================================
 // COMBINED REPOSITORY EXPORT
 // ============================================================================
 
@@ -547,4 +683,6 @@ export const instantDbRepository: IRepository = {
   positions: new InstantDbPositionRepository(),
   ledger: new InstantDbLedgerRepository(),
   auditLogs: new InstantDbAuditLogRepository(),
+  withdrawals: new InstantDbWithdrawalRepository(),
+  suggestions: new InstantDbSuggestionRepository(),
 };

@@ -57,8 +57,10 @@ export interface CreateMarketInput {
    * - Multi-option: ["Seyi", "Venita", "Adekunle", ...]
    */
   optionNames: string[];
+  optionImageUrls?: string[];
   imageUrl?: string;
   createdBy: string;
+  state?: 'open' | 'draft' | 'scheduled';
 }
 
 export interface ResolveMarketInput {

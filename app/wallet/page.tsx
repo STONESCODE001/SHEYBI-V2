@@ -8,6 +8,8 @@ import { useWallet } from "@/lib/hooks/use-wallet"
 import { useLedger } from "@/lib/hooks/use-ledger"
 import { History } from "lucide-react"
 
+import { db } from "@/lib/instant"
+
 // Maps ledger eventType → ActivityCard activityType
 function ledgerEventToActivityType(eventType: string): "deposit" | "withdrawal" | "trade" | "market_event" {
   if (eventType === "DEPOSIT") return "deposit"
@@ -20,6 +22,13 @@ export default function WalletPage() {
   const dialog = useDialog()
   const { wallet, availableBalance, isLoading: walletLoading } = useWallet()
   const { entries, isLoading: ledgerLoading } = useLedger(20)
+
+  const { data: withdrawalData } = db.useQuery({
+    withdrawal_requests: {
+      $: { order: { createdAt: "desc" } },
+    },
+  })
+  const userWithdrawals = (withdrawalData as any)?.withdrawal_requests || []
 
   const formattedBalance = walletLoading
     ? "Loading..."
@@ -51,16 +60,42 @@ export default function WalletPage() {
             ) : entries.length === 0 ? (
               <p className="text-sm text-[var(--text-muted)] text-center py-4">No transactions yet.</p>
             ) : (
-              entries.map((entry: any) => (
-                <ActivityCard
-                  key={entry.id}
-                  activityType={ledgerEventToActivityType(entry.eventType)}
-                  username={entry.eventType}
-                  description={entry.description}
-                  timestamp={new Date(entry.createdAt).toLocaleString("en-NG")}
-                  amount={`${entry.amount >= 0 ? "+" : ""}₦${Math.abs(entry.amount).toLocaleString()}`}
-                />
-              ))
+              entries.map((entry: any) => {
+                let statusLabel = ""
+                if (entry.eventType === "WITHDRAWAL") {
+                  const matched = userWithdrawals.find((w: any) => w.userId === entry.userId)
+                  const status = matched?.status?.toLowerCase()
+                  if (status === "approved" || status === "sent") {
+                    statusLabel = " (Money Sent)"
+                  } else if (status === "rejected") {
+                    statusLabel = " (Rejected & Refunded)"
+                  } else {
+                    statusLabel = " (Pending Review)"
+                  }
+                }
+
+                // Determine whether transaction is a reduction (-) or addition (+)
+                const isOutflow =
+                  entry.eventType === "WITHDRAWAL" ||
+                  entry.eventType === "WITHDRAWAL_FEE" ||
+                  entry.eventType === "BUY_POSITION" ||
+                  (entry.eventType === "TRADE" &&
+                    (entry.description?.toLowerCase().includes("buy") || entry.amount < 0))
+
+                const sign = isOutflow ? "-" : "+"
+                const formattedAmount = `${sign}₦${Math.abs(entry.amount).toLocaleString("en-NG")}`
+
+                return (
+                  <ActivityCard
+                    key={entry.id}
+                    activityType={ledgerEventToActivityType(entry.eventType)}
+                    username={entry.eventType === "WITHDRAWAL_FEE" ? "FEE" : entry.eventType}
+                    description={`${entry.description}${statusLabel}`}
+                    timestamp={new Date(entry.createdAt).toLocaleString("en-NG")}
+                    amount={formattedAmount}
+                  />
+                )
+              })
             )}
           </div>
         </div>

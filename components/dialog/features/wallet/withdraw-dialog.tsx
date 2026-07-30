@@ -60,7 +60,18 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
       description: "Submitting withdrawal request..."
     })
 
-    const result = await requestWithdrawalAction(amountNum)
+    const bankLabels: Record<string, string> = {
+      gtb: "Guaranty Trust Bank",
+      access: "Access Bank",
+      zenith: "Zenith Bank",
+      uba: "United Bank for Africa",
+    }
+
+    const result = await requestWithdrawalAction(amountNum, {
+      bankName: bankLabels[bank] || bank,
+      accountNumber,
+      accountName,
+    })
 
     loader.close()
 

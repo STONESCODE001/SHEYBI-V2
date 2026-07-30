@@ -19,11 +19,12 @@ export default function MarketDetailPage() {
   const params = useParams()
   const marketId = params?.id as string
 
-  // Live query — fetches markets with options & category in real-time
+  // Live query — fetches markets with options, category & activity in real-time
   const { isLoading, error, data } = db.useQuery({
     markets: {
       options: {},
       category: {},
+      activity: {},
     },
   })
 

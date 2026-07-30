@@ -73,13 +73,7 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
     ? market.candidates
     : market.candidates.slice(0, 6)
 
-  const historyItems = market.tradeHistory || [
-    { id: "1", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-    { id: "2", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-    { id: "3", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-    { id: "4", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-    { id: "5", shares: 200, outcome: "yes", timestamp: "5 Mins ago" },
-  ]
+  const historyItems = market.tradeHistory || []
 
   const visibleHistory = showAllHistory ? historyItems : historyItems.slice(0, 4)
 
@@ -229,23 +223,29 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
           </h2>
 
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 sm:p-5 divide-y divide-[var(--border-default)]/50">
-            {visibleHistory.map((item, idx) => (
-              <div
-                key={item.id || idx}
-                className="flex justify-between items-center py-3 first:pt-0 last:pb-0 text-sm font-semibold"
-              >
-                <div className="text-[var(--text-primary)]">
-                  Bought {item.shares}{" "}
-                  <span className={cn(item.outcome === "yes" ? "text-[var(--market-yes)]" : "text-[var(--accent-yellow)]")}>
-                    {item.outcome.toUpperCase()}
-                  </span>{" "}
-                  Shares {item.candidateName && `from ${item.candidateName}`}
-                </div>
-                <div className="text-xs text-[var(--text-muted)] font-normal">
-                  {item.timestamp}
-                </div>
+            {visibleHistory.length === 0 ? (
+              <div className="text-center py-4 text-xs sm:text-sm text-[var(--text-muted)] font-medium">
+                No trades placed on this market yet. Be the first to trade!
               </div>
-            ))}
+            ) : (
+              visibleHistory.map((item, idx) => (
+                <div
+                  key={item.id || idx}
+                  className="flex justify-between items-center py-3 first:pt-0 last:pb-0 text-sm font-semibold"
+                >
+                  <div className="text-[var(--text-primary)]">
+                    Trade {item.shares}{" "}
+                    <span className={cn(item.outcome === "yes" ? "text-[var(--market-yes)] font-bold" : "text-[var(--accent-yellow)] font-bold")}>
+                      {item.outcome.toUpperCase()}
+                    </span>{" "}
+                    Shares {item.candidateName && `from ${item.candidateName}`}
+                  </div>
+                  <div className="text-xs text-[var(--text-muted)] font-normal">
+                    {item.timestamp}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           {/* Trade History Expander Button ("show full trade history...") */}

@@ -6,18 +6,18 @@
  *
  * SECURITY & PRIVILEGE BOUNDARY:
  * - Bypasses client-side security rules (`instant.perms.ts`).
- * - Allows atomic multi-entity transaction batches (e.g. updating buyer wallet + seller wallet + positions + ledger entries).
+ * - Allows atomic multi-entity transaction batches.
  * - MUST NEVER be imported in client components or browser code to prevent token exposure.
  */
 
 import { init } from "@instantdb/admin";
 import schema from "@/instant.schema";
-import fs from "fs";
-import path from "path";
 
-// Ensure environment variables are loaded if running standalone scripts
-if (!process.env.INSTANT_APP_ADMIN_TOKEN) {
+// Ensure environment variables are loaded if running standalone scripts in Node environment
+if (typeof window === "undefined" && !process.env.INSTANT_APP_ADMIN_TOKEN) {
   try {
+    const fs = require("fs");
+    const path = require("path");
     const envLocalPath = path.join(process.cwd(), ".env.local");
     if (fs.existsSync(envLocalPath)) {
       const envContent = fs.readFileSync(envLocalPath, "utf-8");
@@ -47,5 +47,3 @@ export const adminDb = init({
   adminToken: ADMIN_TOKEN,
   schema,
 });
-
-

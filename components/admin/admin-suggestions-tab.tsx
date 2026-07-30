@@ -43,51 +43,51 @@ export function AdminSuggestionsTab({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold text-text-primary">
+        <h3 className="text-base font-semibold text-white">
           Pending User Market Suggestions ({pendingSuggestions.length})
         </h3>
-        <span className="text-xs text-text-muted">
+        <span className="text-xs text-gray-400">
           Accepting a suggestion opens the Create Market Dialog pre-filled.
         </span>
       </div>
 
       {pendingSuggestions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-surface-subtle p-8 text-center">
-          <Lightbulb className="h-10 w-10 text-text-muted mb-2" />
-          <p className="text-sm font-medium text-text-secondary">No pending market suggestions</p>
-          <p className="text-xs text-text-muted">Community suggestions submitted by users will appear here.</p>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-[#1E2A3F] bg-[#0F1727] p-8 text-center">
+          <Lightbulb className="h-10 w-10 text-gray-400 mb-2" />
+          <p className="text-sm font-medium text-gray-300">No pending market suggestions</p>
+          <p className="text-xs text-gray-400">Community suggestions submitted by users will appear here.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {pendingSuggestions.map((suggestion) => (
             <div
               key={suggestion.id}
-              className="flex flex-col justify-between rounded-xl border border-border bg-surface-subtle p-5 shadow-sm space-y-4 transition-all hover:border-primary/40"
+              className="flex flex-col justify-between rounded-xl border border-[#1E2A3F] bg-[#0F1727] p-5 shadow-sm space-y-4 transition-all hover:border-[#FFC107]/40"
             >
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="inline-flex rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary capitalize">
+                  <span className="inline-flex rounded-full bg-[#FFC107]/10 px-2.5 py-0.5 text-xs font-semibold text-[#FFC107] capitalize">
                     {suggestion.category}
                   </span>
-                  <div className="flex items-center gap-1 text-xs text-text-muted">
+                  <div className="flex items-center gap-1 text-xs text-gray-400">
                     <Calendar className="h-3.5 w-3.5" />
                     <span>{suggestion.submittedDate}</span>
                   </div>
                 </div>
 
-                <h4 className="text-base font-bold text-text-primary mb-1">{suggestion.title}</h4>
-                <p className="text-xs text-text-secondary leading-relaxed line-clamp-3">
+                <h4 className="text-base font-bold text-white mb-1">{suggestion.title}</h4>
+                <p className="text-xs text-gray-300 leading-relaxed line-clamp-3">
                   {suggestion.description}
                 </p>
 
-                <div className="mt-3 flex items-center gap-1.5 text-xs text-text-muted">
-                  <User className="h-3.5 w-3.5 text-primary" />
-                  <span>Submitted by: <strong>{suggestion.submittedBy}</strong></span>
+                <div className="mt-3 flex items-center gap-1.5 text-xs text-gray-400">
+                  <User className="h-3.5 w-3.5 text-[#FFC107]" />
+                  <span>Submitted by: <strong className="text-white">{suggestion.submittedBy}</strong></span>
                 </div>
               </div>
 
               {/* Action Buttons: Accept vs Reject */}
-              <div className="flex items-center gap-2 border-t border-border pt-3">
+              <div className="flex items-center gap-2 border-t border-[#1E2A3F] pt-3">
                 <button
                   type="button"
                   onClick={() => onAcceptSuggestion(suggestion)}

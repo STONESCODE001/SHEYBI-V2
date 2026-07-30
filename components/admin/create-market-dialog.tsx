@@ -12,6 +12,7 @@ export interface MarketOptionInput {
   id: string
   title: string
   initialProbability: number // Initial probability percentage (e.g., 60 for 60%)
+  imageUrl?: string // Optional contestant / option image URL (self-hosted link)
 }
 
 /**
@@ -39,8 +40,8 @@ export interface CreateMarketDialogProps {
 /**
  * Explanatory Component: CreateMarketDialog
  * Modal dialog for platform administrators to configure and launch new prediction markets.
- * Features binary & multi-option modes, probability checksum validation (must sum to 100%),
- * and pre-fill support from community suggestions.
+ * Features binary, 1v1 matchup, & multi-option modes, probability checksum validation (must sum to 100%),
+ * configurable seed liquidity (₦), contestant image URLs, and pre-fill support from community suggestions.
  */
 export function CreateMarketDialog({
   isOpen,
@@ -55,7 +56,8 @@ export function CreateMarketDialog({
   const [category, setCategory] = React.useState("")
   const [resolutionSource, setResolutionSource] = React.useState("")
   const [closeDate, setCloseDate] = React.useState("")
-  const [format, setFormat] = React.useState<"binary" | "multi">("binary")
+  const [liquidity, setLiquidity] = React.useState<number>(50000)
+  const [format, setFormat] = React.useState<"binary" | "1v1" | "multi">("binary")
   const [options, setOptions] = React.useState<MarketOptionInput[]>([
     { id: "1", title: "Yes", initialProbability: 50 },
     { id: "2", title: "No", initialProbability: 50 },
@@ -77,14 +79,19 @@ export function CreateMarketDialog({
   const isProbabilityValid = Math.abs(totalProbability - 100) < 0.01
 
   /**
-   * Switches format between Binary (Yes/No) and Multi-Option
+   * Switches format between Binary (Yes/No), 1v1 Matchup, and Multi-Option
    */
-  const handleFormatChange = (newFormat: "binary" | "multi") => {
+  const handleFormatChange = (newFormat: "binary" | "1v1" | "multi") => {
     setFormat(newFormat)
     if (newFormat === "binary") {
       setOptions([
         { id: "1", title: "Yes", initialProbability: 50 },
         { id: "2", title: "No", initialProbability: 50 },
+      ])
+    } else if (newFormat === "1v1") {
+      setOptions([
+        { id: "1", title: "Contestant A", initialProbability: 50, imageUrl: "" },
+        { id: "2", title: "Contestant B", initialProbability: 50, imageUrl: "" },
       ])
     } else {
       setOptions([
@@ -118,9 +125,13 @@ export function CreateMarketDialog({
   }
 
   /**
-   * Updates an option's title or probability
+   * Updates an option's title, probability, or imageUrl
    */
-  const handleOptionChange = (id: string, field: "title" | "initialProbability", value: string | number) => {
+  const handleOptionChange = (
+    id: string,
+    field: "title" | "initialProbability" | "imageUrl",
+    value: string | number
+  ) => {
     setOptions((prev) =>
       prev.map((opt) => (opt.id === id ? { ...opt, [field]: value } : opt))
     )
@@ -150,10 +161,11 @@ export function CreateMarketDialog({
 
     const payload = {
       title,
-      description,
+      description: description || title,
       category,
       resolutionSource,
       closeDate,
+      liquidity: Number(liquidity) || 50000,
       format,
       options,
       status: isDraft ? "Draft" : "Open",
@@ -166,19 +178,19 @@ export function CreateMarketDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border border-border bg-surface-subtle shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border border-[#1E2A3F] bg-[#0F1727] shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border p-5">
+        <div className="flex items-center justify-between border-b border-[#1E2A3F] p-5">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold text-text-primary">
+            <Sparkles className="h-5 w-5 text-[#FFC107]" />
+            <h2 className="text-lg font-bold text-white">
               {initialData?.suggestionId ? "Create Market from Suggestion" : "Create New Prediction Market"}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-text-muted hover:bg-surface-container hover:text-text-primary"
+            className="rounded-lg p-1.5 text-gray-400 hover:bg-[#141E30] hover:text-white transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -188,7 +200,7 @@ export function CreateMarketDialog({
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           {/* Market Title */}
           <div>
-            <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
               Market Title *
             </label>
             <input
@@ -196,13 +208,13 @@ export function CreateMarketDialog({
               placeholder="e.g. Will Team A win the BBNaija Task on Friday?"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-bright px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
+              className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
               Description & Context
             </label>
             <textarea
@@ -210,20 +222,20 @@ export function CreateMarketDialog({
               placeholder="Provide background info and rules for how users should evaluate this prediction..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-bright px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
+              className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
             />
           </div>
 
           {/* Grid: Category & Close Date */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
                 Category *
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-xl border border-border bg-surface-bright px-4 py-2.5 text-sm text-text-primary focus:border-primary focus:outline-none"
+                className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white focus:border-[#FFC107] focus:outline-none"
               >
                 <option value="">Select Category...</option>
                 {categories.map((cat) => (
@@ -235,112 +247,151 @@ export function CreateMarketDialog({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
                 Trading Close Date & Time *
               </label>
               <input
                 type="datetime-local"
                 value={closeDate}
                 onChange={(e) => setCloseDate(e.target.value)}
-                className="w-full rounded-xl border border-border bg-surface-bright px-4 py-2.5 text-sm text-text-primary focus:border-primary focus:outline-none"
+                className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white focus:border-[#FFC107] focus:outline-none"
               />
             </div>
           </div>
 
-          {/* Resolution Source URL / Rule */}
-          <div>
-            <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-              Resolution Source (Source of Truth)
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. Official Twitter/X Broadcast handle or DSTV live show announcement"
-              value={resolutionSource}
-              onChange={(e) => setResolutionSource(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-bright px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
-            />
+          {/* Resolution Source & Initial Seed Liquidity */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                Resolution Source (Source of Truth)
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Official Twitter/X Broadcast or DSTV show"
+                value={resolutionSource}
+                onChange={(e) => setResolutionSource(e.target.value)}
+                className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                Initial Seed Liquidity (₦)
+              </label>
+              <input
+                type="number"
+                step="5000"
+                min="10000"
+                placeholder="50000"
+                value={liquidity}
+                onChange={(e) => setLiquidity(parseInt(e.target.value) || 50000)}
+                className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
+              />
+            </div>
           </div>
 
           {/* Market Format Selector */}
           <div>
-            <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
               Market Format
             </label>
-            <div className="flex gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => handleFormatChange("binary")}
-                className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all ${
+                className={`rounded-xl border px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all ${
                   format === "binary"
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-surface-bright text-text-secondary hover:border-primary/40"
+                    ? "border-[#FFC107] bg-[#FFC107]/10 text-[#FFC107]"
+                    : "border-[#1E2A3F] bg-[#0B0E14] text-gray-400 hover:border-[#FFC107]/40"
                 }`}
               >
                 Binary (Yes / No)
               </button>
               <button
                 type="button"
-                onClick={() => handleFormatChange("multi")}
-                className={`flex-1 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all ${
-                  format === "multi"
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-surface-bright text-text-secondary hover:border-primary/40"
+                onClick={() => handleFormatChange("1v1")}
+                className={`rounded-xl border px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all ${
+                  format === "1v1"
+                    ? "border-[#FFC107] bg-[#FFC107]/10 text-[#FFC107]"
+                    : "border-[#1E2A3F] bg-[#0B0E14] text-gray-400 hover:border-[#FFC107]/40"
                 }`}
               >
-                Multi-Option (Multiple Outcomes)
+                1v1 Matchup
+              </button>
+              <button
+                type="button"
+                onClick={() => handleFormatChange("multi")}
+                className={`rounded-xl border px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all ${
+                  format === "multi"
+                    ? "border-[#FFC107] bg-[#FFC107]/10 text-[#FFC107]"
+                    : "border-[#1E2A3F] bg-[#0B0E14] text-gray-400 hover:border-[#FFC107]/40"
+                }`}
+              >
+                Multi-Option
               </button>
             </div>
           </div>
 
-          {/* Outcome Options Editor & Initial Probabilities */}
-          <div className="rounded-xl border border-border bg-surface-bright p-4">
+          {/* Outcome Options Editor, Initial Probabilities & Image URLs */}
+          <div className="rounded-xl border border-[#1E2A3F] bg-[#141E30] p-4">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
-                Outcomes & Initial Probabilities (%)
+              <span className="text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                {format === "1v1" ? "1v1 Contestants & Avatar Links" : "Outcomes & Initial Probabilities (%)"}
               </span>
               <div className="flex items-center gap-1.5 text-xs font-medium">
                 {isProbabilityValid ? (
-                  <span className="flex items-center gap-1 text-success">
+                  <span className="flex items-center gap-1 text-emerald-400">
                     <CheckCircle2 className="h-4 w-4" /> Total: 100%
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1 text-danger">
+                  <span className="flex items-center gap-1 text-rose-400">
                     <AlertCircle className="h-4 w-4" /> Total: {totalProbability}% (Must equal 100%)
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="space-y-2.5">
-              {options.map((opt) => (
-                <div key={opt.id} className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    placeholder="Outcome Title"
-                    value={opt.title}
-                    onChange={(e) => handleOptionChange(opt.id, "title", e.target.value)}
-                    className="flex-1 rounded-lg border border-border bg-surface-subtle px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none"
-                  />
-                  <div className="flex items-center gap-1 w-28">
+            <div className="space-y-3">
+              {options.map((opt, idx) => (
+                <div key={opt.id} className="flex flex-col gap-2 rounded-lg border border-[#1E2A3F]/60 bg-[#0B0E14]/60 p-2.5">
+                  <div className="flex items-center gap-2">
                     <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="100"
-                      value={opt.initialProbability}
-                      onChange={(e) => handleOptionChange(opt.id, "initialProbability", parseFloat(e.target.value) || 0)}
-                      className="w-full rounded-lg border border-border bg-surface-subtle px-3 py-2 text-sm text-text-primary text-right focus:border-primary focus:outline-none"
+                      type="text"
+                      placeholder={format === "1v1" ? `Contestant ${idx + 1} Name` : "Outcome Title"}
+                      value={opt.title}
+                      onChange={(e) => handleOptionChange(opt.id, "title", e.target.value)}
+                      className="flex-1 rounded-lg border border-[#1E2A3F] bg-[#0B0E14] px-3 py-2 text-sm text-white focus:border-[#FFC107] focus:outline-none"
                     />
-                    <span className="text-xs font-semibold text-text-muted">%</span>
+                    <div className="flex items-center gap-1 w-28">
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="100"
+                        value={opt.initialProbability}
+                        onChange={(e) => handleOptionChange(opt.id, "initialProbability", parseFloat(e.target.value) || 0)}
+                        className="w-full rounded-lg border border-[#1E2A3F] bg-[#0B0E14] px-3 py-2 text-sm text-white text-right focus:border-[#FFC107] focus:outline-none"
+                      />
+                      <span className="text-xs font-semibold text-gray-400">%</span>
+                    </div>
+                    {format === "multi" && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveOption(opt.id)}
+                        className="rounded-lg p-2 text-rose-400 hover:bg-rose-500/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
                   </div>
-                  {format === "multi" && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveOption(opt.id)}
-                      className="rounded-lg p-2 text-danger hover:bg-danger/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                  {(format === "1v1" || format === "multi") && (
+                    <input
+                      type="url"
+                      placeholder="Optional Image URL (e.g. https://images.unsplash.com/...)"
+                      value={opt.imageUrl || ""}
+                      onChange={(e) => handleOptionChange(opt.id, "imageUrl", e.target.value)}
+                      className="w-full rounded-lg border border-[#1E2A3F] bg-[#0B0E14] px-3 py-1.5 text-xs text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
+                    />
                   )}
                 </div>
               ))}
@@ -350,7 +401,7 @@ export function CreateMarketDialog({
               <button
                 type="button"
                 onClick={handleAddOption}
-                className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-[#FFC107] hover:underline"
               >
                 <Plus className="h-3.5 w-3.5" /> Add Outcome Option
               </button>
@@ -359,11 +410,11 @@ export function CreateMarketDialog({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between border-t border-border p-5 bg-surface-subtle rounded-b-2xl">
+        <div className="flex items-center justify-between border-t border-[#1E2A3F] p-5 bg-[#0F1727] rounded-b-2xl">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-text-secondary hover:bg-surface-container"
+            className="rounded-xl border border-[#1E2A3F] px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-[#141E30]"
           >
             Cancel
           </button>
@@ -372,14 +423,14 @@ export function CreateMarketDialog({
             <button
               type="button"
               onClick={() => handleSubmit(true)}
-              className="rounded-xl border border-primary text-primary px-4 py-2.5 text-sm font-medium hover:bg-primary/10 transition-all"
+              className="rounded-xl border border-[#FFC107] text-[#FFC107] px-4 py-2.5 text-sm font-semibold hover:bg-[#FFC107]/10 transition-all"
             >
               Save as Draft
             </button>
             <button
               type="button"
               onClick={() => handleSubmit(false)}
-              className="rounded-xl bg-primary text-on-primary px-5 py-2.5 text-sm font-semibold hover:bg-primary-hover shadow-md transition-all"
+              className="rounded-xl bg-[#FFC107] text-[#0B0E14] px-5 py-2.5 text-sm font-bold hover:bg-[#E5AD00] shadow-md transition-all"
             >
               Publish Live
             </button>

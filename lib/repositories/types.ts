@@ -444,6 +444,78 @@ export interface IAuditLogRepository {
 }
 
 // ============================================================================
+// WITHDRAWAL REQUEST TYPES
+// ============================================================================
+
+export interface WithdrawalRequestCreateData {
+  userId: string;
+  grossAmount: number;
+  feeAmount: number;
+  netAmount: number;
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  status: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface WithdrawalRequestUpdateData {
+  status: string;
+  rejectionReason?: string;
+  approvedBy?: string;
+  updatedAt: number;
+}
+
+export interface WithdrawalRequest extends WithdrawalRequestCreateData {
+  id: string;
+  rejectionReason?: string;
+  approvedBy?: string;
+}
+
+export interface IWithdrawalRepository {
+  createWithdrawalRequest(data: WithdrawalRequestCreateData): Promise<string>;
+  getWithdrawalRequests(filter?: { status?: string }): Promise<WithdrawalRequest[]>;
+  updateWithdrawalRequest(id: string, updates: Partial<WithdrawalRequestUpdateData>): Promise<void>;
+}
+
+// ============================================================================
+// MARKET SUGGESTION TYPES
+// ============================================================================
+
+export interface MarketSuggestionCreateData {
+  submittedBy: string;
+  submitterName: string;
+  title: string;
+  description: string;
+  categorySlug?: string;
+  status: string;
+  createdAt: number;
+}
+
+export interface MarketSuggestionUpdateData {
+  status: string;
+  reviewedBy?: string;
+  reviewedAt?: number;
+  rejectionReason?: string;
+  convertedMarketId?: string;
+}
+
+export interface MarketSuggestion extends MarketSuggestionCreateData {
+  id: string;
+  reviewedBy?: string;
+  reviewedAt?: number;
+  rejectionReason?: string;
+  convertedMarketId?: string;
+}
+
+export interface ISuggestionRepository {
+  createMarketSuggestion(data: MarketSuggestionCreateData): Promise<string>;
+  getMarketSuggestions(filter?: { status?: string }): Promise<MarketSuggestion[]>;
+  updateMarketSuggestion(id: string, updates: Partial<MarketSuggestionUpdateData>): Promise<void>;
+}
+
+// ============================================================================
 // COMBINED REPOSITORY
 // ============================================================================
 
@@ -462,4 +534,6 @@ export interface IRepository {
   positions: IPositionRepository;
   ledger: ILedgerRepository;
   auditLogs: IAuditLogRepository;
+  withdrawals: IWithdrawalRepository;
+  suggestions: ISuggestionRepository;
 }

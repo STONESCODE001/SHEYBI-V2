@@ -1,7 +1,5 @@
-"use client"
-
 import * as React from "react"
-import { Wallet, Store, ArrowUpRight, Lightbulb, ShieldCheck } from "lucide-react"
+import { Wallet, Store, ArrowUpRight, Lightbulb, ShieldCheck, Coins, Layers } from "lucide-react"
 
 /**
  * Explanatory Interface: AdminSummaryCardsProps
@@ -18,19 +16,25 @@ export interface AdminSummaryCardsProps {
   pendingWithdrawalsAmount: number
   /** Number of user-submitted market suggestions awaiting review */
   pendingSuggestionsCount: number
+  /** Total earnings/revenue collected by the platform from withdrawal fees in ₦ */
+  platformRevenue?: number
+  /** Total seed capital (liquidity) injected across all markets in ₦ */
+  totalSeedLiquidity?: number
 }
 
 /**
  * Explanatory Component: AdminSummaryCards
  * Renders sleek, high-level numerical KPI stat cards for platform operators.
- * Gives instant visibility into platform financial health and operational queues.
+ * Gives instant visibility into platform financial health, earnings, and operational queues.
  */
 export function AdminSummaryCards({
-  totalPlatformBalance = 14850000,
-  activeMarketsCount = 18,
-  pendingWithdrawalsCount = 5,
-  pendingWithdrawalsAmount = 345000,
-  pendingSuggestionsCount = 12,
+  totalPlatformBalance = 0,
+  activeMarketsCount = 0,
+  pendingWithdrawalsCount = 0,
+  pendingWithdrawalsAmount = 0,
+  pendingSuggestionsCount = 0,
+  platformRevenue = 0,
+  totalSeedLiquidity = 0,
 }: Partial<AdminSummaryCardsProps>) {
   /** Helper function to format numbers cleanly into Nigerian Naira currency strings (₦) */
   const formatNaira = (amount: number) => {
@@ -42,86 +46,106 @@ export function AdminSummaryCards({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {/* 
-        STAT CARD 1: Total Platform Funds
-        What it means: Total liquidity across user wallets and house balance.
-      */}
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-surface-subtle p-4 shadow-sm transition-all hover:border-primary/40">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      {/* STAT CARD 1: Platform Revenue / Earnings */}
+      <div className="flex flex-col gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 shadow-sm transition-all hover:border-emerald-500/40">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-text-muted">Total Platform Funds</span>
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <span className="text-xs font-medium text-[var(--text-muted)]">Platform Revenue</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500">
+            <Coins className="h-4 w-4" />
+          </div>
+        </div>
+        <div className="mt-1">
+          <span className="text-2xl font-bold tracking-tight text-emerald-400">
+            {formatNaira(platformRevenue)}
+          </span>
+        </div>
+        <span className="text-xs text-[var(--text-secondary)]">3% withdrawal fees collected</span>
+      </div>
+
+      {/* STAT CARD 2: Total Seed Capital */}
+      <div className="flex flex-col gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 shadow-sm transition-all hover:border-blue-500/40">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-[var(--text-muted)]">Total Seed Capital</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+            <Layers className="h-4 w-4" />
+          </div>
+        </div>
+        <div className="mt-1">
+          <span className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+            {formatNaira(totalSeedLiquidity)}
+          </span>
+        </div>
+        <span className="text-xs text-[var(--text-secondary)]">Injected across all markets</span>
+      </div>
+
+      {/* STAT CARD 3: Total Platform Funds */}
+      <div className="flex flex-col gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 shadow-sm transition-all hover:border-[var(--accent-yellow)]/40">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-[var(--text-muted)]">Total User Funds</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">
             <Wallet className="h-4 w-4" />
           </div>
         </div>
         <div className="mt-1">
-          <span className="text-2xl font-bold tracking-tight text-text-primary">
+          <span className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
             {formatNaira(totalPlatformBalance)}
           </span>
         </div>
-        <div className="flex items-center gap-1 text-xs text-success">
+        <div className="flex items-center gap-1 text-xs text-[var(--market-yes)]">
           <ArrowUpRight className="h-3.5 w-3.5" />
-          <span>Calculated live from active wallets</span>
+          <span>Active wallet balances</span>
         </div>
       </div>
 
-      {/* 
-        STAT CARD 2: Active Prediction Markets
-        What it means: Number of live markets currently open for user predictions.
-      */}
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-surface-subtle p-4 shadow-sm transition-all hover:border-primary/40">
+      {/* STAT CARD 4: Active Prediction Markets */}
+      <div className="flex flex-col gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 shadow-sm transition-all hover:border-[var(--accent-yellow)]/40">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-text-muted">Active Markets</span>
+          <span className="text-xs font-medium text-[var(--text-muted)]">Active Markets</span>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-info/10 text-info">
             <Store className="h-4 w-4" />
           </div>
         </div>
         <div className="mt-1">
-          <span className="text-2xl font-bold tracking-tight text-text-primary">
+          <span className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
             {activeMarketsCount}
           </span>
         </div>
-        <span className="text-xs text-text-secondary">Open & trading live</span>
+        <span className="text-xs text-[var(--text-secondary)]">Open & trading live</span>
       </div>
 
-      {/* 
-        STAT CARD 3: Pending Withdrawal Requests
-        What it means: Payout requests submitted by users that need admin approval.
-      */}
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-surface-subtle p-4 shadow-sm transition-all hover:border-primary/40">
+      {/* STAT CARD 5: Pending Withdrawal Requests */}
+      <div className="flex flex-col gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 shadow-sm transition-all hover:border-[var(--accent-yellow)]/40">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-text-muted">Pending Withdrawals</span>
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/10 text-warning">
+          <span className="text-xs font-medium text-[var(--text-muted)]">Pending Payouts</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent-yellow)]/10 text-[var(--accent-yellow)]">
             <ShieldCheck className="h-4 w-4" />
           </div>
         </div>
         <div className="mt-1">
-          <span className="text-2xl font-bold tracking-tight text-text-primary">
+          <span className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
             {pendingWithdrawalsCount}
           </span>
         </div>
-        <span className="text-xs text-warning">
-          Total: {formatNaira(pendingWithdrawalsAmount)} awaiting review
+        <span className="text-xs text-[var(--accent-yellow)]">
+          Total: {formatNaira(pendingWithdrawalsAmount)}
         </span>
       </div>
 
-      {/* 
-        STAT CARD 4: User Market Suggestions
-        What it means: Ideas submitted by platform users awaiting admin review & publishing.
-      */}
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-surface-subtle p-4 shadow-sm transition-all hover:border-primary/40">
+      {/* STAT CARD 6: User Market Suggestions */}
+      <div className="flex flex-col gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 shadow-sm transition-all hover:border-[var(--accent-yellow)]/40">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-text-muted">Pending Suggestions</span>
+          <span className="text-xs font-medium text-[var(--text-muted)]">Suggestions</span>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-trending-accent/10 text-trending-accent">
             <Lightbulb className="h-4 w-4" />
           </div>
         </div>
         <div className="mt-1">
-          <span className="text-2xl font-bold tracking-tight text-text-primary">
+          <span className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
             {pendingSuggestionsCount}
           </span>
         </div>
-        <span className="text-xs text-text-secondary">Community market ideas</span>
+        <span className="text-xs text-[var(--text-secondary)]">Community ideas</span>
       </div>
     </div>
   )
