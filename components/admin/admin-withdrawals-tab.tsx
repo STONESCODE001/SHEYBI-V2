@@ -61,18 +61,18 @@ export function AdminWithdrawalsTab({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold text-white">
+        <h3 className="text-base font-semibold text-text-primary">
           User Withdrawal Requests ({withdrawals.filter((w) => w.status === "Pending").length} Pending)
         </h3>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-text-muted">
           Manual payout approvals during MVP phase.
         </span>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-[#1E2A3F] bg-[#0F1727] shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-border bg-bg-surface shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-white">
-            <thead className="border-b border-[#1E2A3F] bg-[#141E30] text-xs uppercase text-gray-400">
+          <table className="w-full text-left text-sm text-text-primary">
+            <thead className="border-b border-border bg-bg-surface-secondary text-xs uppercase text-text-muted font-bold">
               <tr>
                 <th className="px-4 py-3 font-semibold">User</th>
                 <th className="px-4 py-3 font-semibold">Bank Details</th>
@@ -82,28 +82,28 @@ export function AdminWithdrawalsTab({
                 <th className="px-4 py-3 font-semibold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E2A3F]">
+            <tbody className="divide-y divide-border">
               {withdrawals.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-gray-400">
+                  <td colSpan={6} className="p-8 text-center text-text-muted font-medium">
                     No withdrawal requests found.
                   </td>
                 </tr>
               ) : (
                 withdrawals.map((item) => (
-                  <tr key={item.id} className="hover:bg-[#141E30]/60 transition-colors">
+                  <tr key={item.id} className="hover:bg-bg-hover transition-colors">
                     <td className="px-4 py-3 font-medium">
-                      <div className="font-semibold text-white">{item.userName}</div>
-                      <div className="text-xs text-gray-400">{item.userEmail}</div>
+                      <div className="font-bold text-text-primary">{item.userName}</div>
+                      <div className="text-xs text-text-muted font-medium">{item.userEmail}</div>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-semibold text-xs text-white">{item.bankName}</div>
-                      <div className="text-xs font-mono text-gray-300">{item.accountNumber}</div>
+                      <div className="font-bold text-xs text-text-primary">{item.bankName}</div>
+                      <div className="text-xs font-mono text-text-secondary">{item.accountNumber}</div>
                     </td>
-                    <td className="px-4 py-3 font-bold text-white">
+                    <td className="px-4 py-3 font-extrabold text-text-primary">
                       {formatNaira(item.amount)}
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-400">{item.requestDate}</td>
+                    <td className="px-4 py-3 text-xs text-text-muted font-medium">{item.requestDate}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${getStatusBadge(item.status)}`}>
                         {item.status === "Pending" && <Clock className="h-3 w-3" />}
@@ -116,12 +116,12 @@ export function AdminWithdrawalsTab({
                       {item.status === "Pending" ? (
                         <button
                           onClick={() => onOpenActionDialog(item)}
-                          className="inline-flex items-center gap-1 rounded-lg bg-[#FFC107] text-[#0B0E14] px-3 py-1.5 text-xs font-bold hover:bg-[#E5AD00] shadow-xs transition-all"
+                          className="inline-flex items-center gap-1 rounded-xl bg-primary text-on-primary px-3 py-1.5 text-xs font-bold hover:bg-primary-hover shadow-xs transition-all"
                         >
                           <ShieldCheck className="h-3.5 w-3.5" /> Review Request
                         </button>
                       ) : (
-                        <span className="text-xs text-gray-400 italic">Processed</span>
+                        <span className="text-xs text-text-muted italic">Processed</span>
                       )}
                     </td>
                   </tr>

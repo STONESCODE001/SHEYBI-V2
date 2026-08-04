@@ -85,17 +85,24 @@ export default function AdminDashboardPage() {
   // Data Transformations for Tab Components
   // --------------------------------------------------------------------------
   const markets: AdminMarketItem[] = React.useMemo(() => {
-    return dbMarkets.map((m: any) => ({
-      id: m.id,
-      title: m.title,
-      category: m.category?.slug ?? '',
-      status: (m.state.charAt(0).toUpperCase() + m.state.slice(1)) as any,
-      closeDate: new Date(m.closingTime).toLocaleString(),
-      totalVolume: m.tradingVolume ?? 0,
-      format: m.marketType === 'multi_option' ? 'multi' : 'binary',
-      options: (m.options ?? []).map((o: any) => ({ id: o.id, title: o.name })),
-    }))
-  }, [dbMarkets])
+    return dbMarkets.map((m: any) => {
+      const matchedCat = dbCategories.find(
+        (c: any) => c.slug === m.category?.slug || c.id === m.category?.id || c.name === m.category?.name
+      )
+      const catDisplay = matchedCat ? matchedCat.name : (m.category?.name || m.category?.slug || 'General')
+
+      return {
+        id: m.id,
+        title: m.title,
+        category: catDisplay,
+        status: (m.state.charAt(0).toUpperCase() + m.state.slice(1)) as any,
+        closeDate: new Date(m.closingTime).toLocaleString(),
+        totalVolume: m.tradingVolume ?? 0,
+        format: m.marketType === 'multi_option' ? 'multi' : 'binary',
+        options: (m.options ?? []).map((o: any) => ({ id: o.id, title: o.name })),
+      }
+    })
+  }, [dbMarkets, dbCategories])
 
   const suggestions: MarketSuggestionItem[] = React.useMemo(() => {
     return dbSuggestions.map((s: any) => ({
@@ -124,11 +131,19 @@ export default function AdminDashboardPage() {
   }, [dbWithdrawals])
 
   const categories: CategoryItem[] = React.useMemo(() => {
-    return dbCategories.map((c: any) => ({
-      id: c.slug,
-      label: c.name,
-      marketCount: dbMarkets.filter((m: any) => m.category?.slug === c.slug).length,
-    }))
+    return dbCategories.map((c: any) => {
+      const count = dbMarkets.filter(
+        (m: any) =>
+          m.category?.slug === c.slug ||
+          m.category?.id === c.id ||
+          m.category?.name === c.name
+      ).length
+      return {
+        id: c.slug,
+        label: c.name,
+        marketCount: count,
+      }
+    })
   }, [dbCategories, dbMarkets])
 
   const auditLogs: AuditLogRecord[] = React.useMemo(() => {
@@ -341,7 +356,7 @@ export default function AdminDashboardPage() {
 
   return (
     <AdminLayout>
-      <div className="flex flex-col gap-6">
+      <div className="dark flex flex-col gap-6 text-text-primary">
         {/* Section Header */}
         <SectionHeader
           title="Admin Control Center"

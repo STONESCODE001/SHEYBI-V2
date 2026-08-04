@@ -53,26 +53,26 @@ export function AdminAuditLogsTab({ logs }: AdminAuditLogsTabProps) {
       {/* Top Search Filter */}
       <div className="flex items-center justify-between">
         <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
           <input
             type="text"
             placeholder="Search audit trail..."
             value={filterQuery}
             onChange={(e) => setFilterQuery(e.target.value)}
-            className="w-full rounded-xl border border-[#1E2A3F] bg-[#0F1727] pl-9 pr-4 py-2 text-sm text-white placeholder:text-gray-400 focus:border-[#FFC107] focus:outline-none"
+            className="w-full rounded-xl border border-border bg-bg-surface-secondary pl-9 pr-4 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none font-medium"
           />
         </div>
 
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-text-muted font-semibold">
           Immutable System Log ({filteredLogs.length} events)
         </span>
       </div>
 
       {/* Audit Logs Table */}
-      <div className="overflow-hidden rounded-xl border border-[#1E2A3F] bg-[#0F1727] shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-border bg-bg-surface shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-white">
-            <thead className="border-b border-[#1E2A3F] bg-[#141E30] text-xs uppercase text-gray-400">
+          <table className="w-full text-left text-sm text-text-primary">
+            <thead className="border-b border-border bg-bg-surface-secondary text-xs uppercase text-text-muted font-bold">
               <tr>
                 <th className="px-4 py-3 font-semibold">Timestamp</th>
                 <th className="px-4 py-3 font-semibold">Action</th>
@@ -80,17 +80,17 @@ export function AdminAuditLogsTab({ logs }: AdminAuditLogsTabProps) {
                 <th className="px-4 py-3 font-semibold">Details</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E2A3F]">
+            <tbody className="divide-y divide-border">
               {filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="p-8 text-center text-gray-400">
+                  <td colSpan={4} className="p-8 text-center text-text-muted font-medium">
                     No audit logs recorded matching search.
                   </td>
                 </tr>
               ) : (
                 filteredLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-[#141E30]/60 transition-colors">
-                    <td className="px-4 py-3 text-xs font-mono text-gray-400 whitespace-nowrap">
+                  <tr key={log.id} className="hover:bg-bg-hover transition-colors">
+                    <td className="px-4 py-3 text-xs font-mono text-text-muted whitespace-nowrap">
                       {log.timestamp}
                     </td>
                     <td className="px-4 py-3">
@@ -98,10 +98,10 @@ export function AdminAuditLogsTab({ logs }: AdminAuditLogsTabProps) {
                         {log.action}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-medium text-xs text-white">
+                    <td className="px-4 py-3 font-bold text-xs text-text-primary">
                       {log.performedBy}
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-300">
+                    <td className="px-4 py-3 text-xs text-text-secondary">
                       {log.details}
                     </td>
                   </tr>

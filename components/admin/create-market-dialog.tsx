@@ -178,19 +178,19 @@ export function CreateMarketDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border border-[#1E2A3F] bg-[#0F1727] shadow-2xl">
+    <div className="dark fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs">
+      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border border-border bg-bg-surface text-text-primary shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#1E2A3F] p-5">
+        <div className="flex items-center justify-between border-b border-border bg-bg-surface-secondary p-5 rounded-t-2xl">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-[#FFC107]" />
-            <h2 className="text-lg font-bold text-white">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-bold text-text-primary">
               {initialData?.suggestionId ? "Create Market from Suggestion" : "Create New Prediction Market"}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-[#141E30] hover:text-white transition-colors"
+            className="rounded-lg p-1.5 text-text-muted hover:bg-bg-hover hover:text-text-primary transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -200,7 +200,7 @@ export function CreateMarketDialog({
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           {/* Market Title */}
           <div>
-            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
               Market Title *
             </label>
             <input
@@ -208,13 +208,13 @@ export function CreateMarketDialog({
               placeholder="e.g. Will Team A win the BBNaija Task on Friday?"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
+              className="w-full rounded-xl border border-border bg-bg-surface-secondary px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none font-medium"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
               Description & Context
             </label>
             <textarea
@@ -222,20 +222,20 @@ export function CreateMarketDialog({
               placeholder="Provide background info and rules for how users should evaluate this prediction..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
+              className="w-full rounded-xl border border-border bg-bg-surface-secondary px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none font-medium"
             />
           </div>
 
           {/* Grid: Category & Close Date */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                 Category *
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white focus:border-[#FFC107] focus:outline-none"
+                className="w-full rounded-xl border border-border bg-bg-surface-secondary px-4 py-2.5 text-sm text-text-primary focus:border-primary focus:outline-none font-medium"
               >
                 <option value="">Select Category...</option>
                 {categories.map((cat) => (
@@ -247,14 +247,14 @@ export function CreateMarketDialog({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                 Trading Close Date & Time *
               </label>
               <input
                 type="datetime-local"
                 value={closeDate}
                 onChange={(e) => setCloseDate(e.target.value)}
-                className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white focus:border-[#FFC107] focus:outline-none"
+                className="w-full rounded-xl border border-border bg-bg-surface-secondary px-4 py-2.5 text-sm text-text-primary focus:border-primary focus:outline-none font-medium"
               />
             </div>
           </div>
@@ -262,7 +262,7 @@ export function CreateMarketDialog({
           {/* Resolution Source & Initial Seed Liquidity */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                 Resolution Source (Source of Truth)
               </label>
               <input
@@ -270,12 +270,12 @@ export function CreateMarketDialog({
                 placeholder="e.g. Official Twitter/X Broadcast or DSTV show"
                 value={resolutionSource}
                 onChange={(e) => setResolutionSource(e.target.value)}
-                className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
+                className="w-full rounded-xl border border-border bg-bg-surface-secondary px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                 Initial Seed Liquidity (₦)
               </label>
               <input
@@ -285,24 +285,24 @@ export function CreateMarketDialog({
                 placeholder="50000"
                 value={liquidity}
                 onChange={(e) => setLiquidity(parseInt(e.target.value) || 50000)}
-                className="w-full rounded-xl border border-[#1E2A3F] bg-[#0B0E14] px-4 py-2.5 text-sm text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
+                className="w-full rounded-xl border border-border bg-bg-surface-secondary px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none font-medium"
               />
             </div>
           </div>
 
           {/* Market Format Selector */}
           <div>
-            <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
               Market Format
             </label>
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => handleFormatChange("binary")}
-                className={`rounded-xl border px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all ${
+                className={`rounded-xl border px-3 py-2.5 text-xs sm:text-sm font-bold transition-all ${
                   format === "binary"
-                    ? "border-[#FFC107] bg-[#FFC107]/10 text-[#FFC107]"
-                    : "border-[#1E2A3F] bg-[#0B0E14] text-gray-400 hover:border-[#FFC107]/40"
+                    ? "border-primary bg-primary/10 text-primary shadow-xs"
+                    : "border-border bg-bg-surface-secondary text-text-secondary hover:border-primary/40"
                 }`}
               >
                 Binary (Yes / No)
@@ -310,10 +310,10 @@ export function CreateMarketDialog({
               <button
                 type="button"
                 onClick={() => handleFormatChange("1v1")}
-                className={`rounded-xl border px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all ${
+                className={`rounded-xl border px-3 py-2.5 text-xs sm:text-sm font-bold transition-all ${
                   format === "1v1"
-                    ? "border-[#FFC107] bg-[#FFC107]/10 text-[#FFC107]"
-                    : "border-[#1E2A3F] bg-[#0B0E14] text-gray-400 hover:border-[#FFC107]/40"
+                    ? "border-primary bg-primary/10 text-primary shadow-xs"
+                    : "border-border bg-bg-surface-secondary text-text-secondary hover:border-primary/40"
                 }`}
               >
                 1v1 Matchup
@@ -321,10 +321,10 @@ export function CreateMarketDialog({
               <button
                 type="button"
                 onClick={() => handleFormatChange("multi")}
-                className={`rounded-xl border px-3 py-2.5 text-xs sm:text-sm font-semibold transition-all ${
+                className={`rounded-xl border px-3 py-2.5 text-xs sm:text-sm font-bold transition-all ${
                   format === "multi"
-                    ? "border-[#FFC107] bg-[#FFC107]/10 text-[#FFC107]"
-                    : "border-[#1E2A3F] bg-[#0B0E14] text-gray-400 hover:border-[#FFC107]/40"
+                    ? "border-primary bg-primary/10 text-primary shadow-xs"
+                    : "border-border bg-bg-surface-secondary text-text-secondary hover:border-primary/40"
                 }`}
               >
                 Multi-Option
@@ -333,18 +333,18 @@ export function CreateMarketDialog({
           </div>
 
           {/* Outcome Options Editor, Initial Probabilities & Image URLs */}
-          <div className="rounded-xl border border-[#1E2A3F] bg-[#141E30] p-4">
+          <div className="rounded-2xl border border-border bg-bg-surface-secondary p-4">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold text-gray-300 uppercase tracking-wider">
+              <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
                 {format === "1v1" ? "1v1 Contestants & Avatar Links" : "Outcomes & Initial Probabilities (%)"}
               </span>
-              <div className="flex items-center gap-1.5 text-xs font-medium">
+              <div className="flex items-center gap-1.5 text-xs font-bold">
                 {isProbabilityValid ? (
-                  <span className="flex items-center gap-1 text-emerald-400">
+                  <span className="flex items-center gap-1 text-success">
                     <CheckCircle2 className="h-4 w-4" /> Total: 100%
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1 text-rose-400">
+                  <span className="flex items-center gap-1 text-danger">
                     <AlertCircle className="h-4 w-4" /> Total: {totalProbability}% (Must equal 100%)
                   </span>
                 )}
@@ -353,14 +353,14 @@ export function CreateMarketDialog({
 
             <div className="space-y-3">
               {options.map((opt, idx) => (
-                <div key={opt.id} className="flex flex-col gap-2 rounded-lg border border-[#1E2A3F]/60 bg-[#0B0E14]/60 p-2.5">
+                <div key={opt.id} className="flex flex-col gap-2 rounded-xl border border-border bg-bg-base p-3 shadow-xs">
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
                       placeholder={format === "1v1" ? `Contestant ${idx + 1} Name` : "Outcome Title"}
                       value={opt.title}
                       onChange={(e) => handleOptionChange(opt.id, "title", e.target.value)}
-                      className="flex-1 rounded-lg border border-[#1E2A3F] bg-[#0B0E14] px-3 py-2 text-sm text-white focus:border-[#FFC107] focus:outline-none"
+                      className="flex-1 rounded-lg border border-border bg-bg-surface-secondary px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none font-medium"
                     />
                     <div className="flex items-center gap-1 w-28">
                       <input
@@ -370,29 +370,28 @@ export function CreateMarketDialog({
                         max="100"
                         value={opt.initialProbability}
                         onChange={(e) => handleOptionChange(opt.id, "initialProbability", parseFloat(e.target.value) || 0)}
-                        className="w-full rounded-lg border border-[#1E2A3F] bg-[#0B0E14] px-3 py-2 text-sm text-white text-right focus:border-[#FFC107] focus:outline-none"
+                        className="w-full rounded-lg border border-border bg-bg-surface-secondary px-3 py-2 text-sm text-text-primary text-right focus:border-primary focus:outline-none font-medium"
                       />
-                      <span className="text-xs font-semibold text-gray-400">%</span>
+                      <span className="text-xs font-bold text-text-muted">%</span>
                     </div>
                     {format === "multi" && (
                       <button
                         type="button"
                         onClick={() => handleRemoveOption(opt.id)}
-                        className="rounded-lg p-2 text-rose-400 hover:bg-rose-500/10"
+                        className="rounded-lg p-2 text-danger hover:bg-danger-soft/50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     )}
                   </div>
-                  {(format === "1v1" || format === "multi") && (
-                    <input
-                      type="url"
-                      placeholder="Optional Image URL (e.g. https://images.unsplash.com/...)"
-                      value={opt.imageUrl || ""}
-                      onChange={(e) => handleOptionChange(opt.id, "imageUrl", e.target.value)}
-                      className="w-full rounded-lg border border-[#1E2A3F] bg-[#0B0E14] px-3 py-1.5 text-xs text-white placeholder:text-gray-500 focus:border-[#FFC107] focus:outline-none"
-                    />
-                  )}
+                  {/* Image URL input for ALL options in ALL market formats */}
+                  <input
+                    type="url"
+                    placeholder="Optional Option Image URL (e.g. https://images.unsplash.com/...)"
+                    value={opt.imageUrl || ""}
+                    onChange={(e) => handleOptionChange(opt.id, "imageUrl", e.target.value)}
+                    className="w-full rounded-lg border border-border bg-bg-surface-secondary px-3 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none font-medium"
+                  />
                 </div>
               ))}
             </div>
@@ -401,7 +400,7 @@ export function CreateMarketDialog({
               <button
                 type="button"
                 onClick={handleAddOption}
-                className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-[#FFC107] hover:underline"
+                className="mt-3 flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
               >
                 <Plus className="h-3.5 w-3.5" /> Add Outcome Option
               </button>
@@ -410,11 +409,11 @@ export function CreateMarketDialog({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between border-t border-[#1E2A3F] p-5 bg-[#0F1727] rounded-b-2xl">
+        <div className="flex items-center justify-between border-t border-border p-5 bg-bg-surface-secondary rounded-b-2xl">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-[#1E2A3F] px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-[#141E30]"
+            className="rounded-xl border border-border px-4 py-2.5 text-sm font-bold text-text-secondary hover:bg-bg-hover"
           >
             Cancel
           </button>
@@ -423,14 +422,14 @@ export function CreateMarketDialog({
             <button
               type="button"
               onClick={() => handleSubmit(true)}
-              className="rounded-xl border border-[#FFC107] text-[#FFC107] px-4 py-2.5 text-sm font-semibold hover:bg-[#FFC107]/10 transition-all"
+              className="rounded-xl border border-primary text-primary px-4 py-2.5 text-sm font-bold hover:bg-primary/10 transition-all"
             >
               Save as Draft
             </button>
             <button
               type="button"
               onClick={() => handleSubmit(false)}
-              className="rounded-xl bg-[#FFC107] text-[#0B0E14] px-5 py-2.5 text-sm font-bold hover:bg-[#E5AD00] shadow-md transition-all"
+              className="rounded-xl bg-primary text-on-primary px-5 py-2.5 text-sm font-bold hover:bg-primary-hover shadow-xs transition-all"
             >
               Publish Live
             </button>

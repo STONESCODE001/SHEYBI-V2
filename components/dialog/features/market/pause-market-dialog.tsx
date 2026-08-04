@@ -50,22 +50,22 @@ export function PauseMarketDialog({
     >
       <div className="space-y-4 p-1">
         <div
-          className={`p-3 border rounded-lg flex items-start gap-2 text-sm ${
+          className={`p-3 border rounded-xl flex items-start gap-2 text-sm ${
             isCurrentlyPaused
-              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900 text-emerald-900 dark:text-emerald-200'
-              : 'bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-900 text-orange-900 dark:text-orange-200'
+              ? 'bg-success/10 border-success/30 text-success'
+              : 'bg-warning/10 border-warning/30 text-warning'
           }`}
         >
           {isCurrentlyPaused ? (
-            <PlayCircle className="w-5 h-5 shrink-0 mt-0.5 text-emerald-600" />
+            <PlayCircle className="w-5 h-5 shrink-0 mt-0.5 text-success" />
           ) : (
-            <PauseCircle className="w-5 h-5 shrink-0 mt-0.5 text-orange-600" />
+            <PauseCircle className="w-5 h-5 shrink-0 mt-0.5 text-warning" />
           )}
           <div>
             <p className="font-semibold">
               {isCurrentlyPaused ? 'Resume Trading' : 'Exceptional Situation Pause'}
             </p>
-            <p className="text-xs opacity-90">
+            <p className="text-xs text-text-secondary">
               {isCurrentlyPaused
                 ? 'Unpausing will restore trading activity on this market immediately.'
                 : 'Pausing temporarily halts all buy and sell orders on this market. User positions remain safe and untouched.'}
@@ -74,21 +74,21 @@ export function PauseMarketDialog({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+          <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-1">
             Target Market
           </label>
-          <div className="p-2.5 bg-gray-100 dark:bg-gray-800 rounded-md font-medium text-gray-900 dark:text-gray-100 text-sm">
+          <div className="p-3 bg-bg-surface-secondary border border-border rounded-xl font-bold text-text-primary text-sm">
             {marketTitle}
           </div>
         </div>
 
-        {error && <p className="text-xs text-red-600 font-semibold">{error}</p>}
+        {error && <p className="text-xs text-danger font-semibold">{error}</p>}
 
         <div className="flex justify-end gap-2 pt-2">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800"
+            className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary"
           >
             Cancel
           </button>
@@ -96,10 +96,10 @@ export function PauseMarketDialog({
             type="button"
             onClick={handleAction}
             disabled={isSubmitting}
-            className={`px-4 py-2 text-sm font-bold text-white rounded-lg disabled:opacity-50 ${
+            className={`px-4 py-2 text-sm font-bold text-white rounded-xl disabled:opacity-50 transition-all ${
               isCurrentlyPaused
-                ? 'bg-emerald-600 hover:bg-emerald-700'
-                : 'bg-orange-600 hover:bg-orange-700'
+                ? 'bg-success hover:bg-success/90'
+                : 'bg-warning hover:bg-warning/90'
             }`}
           >
             {isSubmitting

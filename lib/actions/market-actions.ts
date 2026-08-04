@@ -207,10 +207,10 @@ export async function resolveMarketAction(
     }
 
     // ---- Step 4: Validate market state ----
-    if (market.state !== 'open' && market.state !== 'closed') {
+    if (market.state !== 'open' && market.state !== 'closed' && market.state !== 'paused' && market.state !== 'draft') {
       return {
         success: false,
-        error: `Cannot resolve market in state '${market.state}'. Must be 'open' or 'closed'.`,
+        error: `Cannot resolve market in state '${market.state}'.`,
       };
     }
 

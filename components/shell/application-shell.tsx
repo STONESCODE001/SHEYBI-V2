@@ -56,7 +56,8 @@ function ApplicationShell({
       data-slot="application-root"
       data-variant={effectiveVariant}
       className={cn(
-        "relative flex h-[100dvh] w-screen overflow-hidden bg-[var(--bg-base)] font-sans",
+        "relative flex h-[100dvh] w-screen overflow-hidden bg-bg-base text-text-primary font-sans",
+        effectiveVariant === "admin" && "dark",
         className
       )}
     >

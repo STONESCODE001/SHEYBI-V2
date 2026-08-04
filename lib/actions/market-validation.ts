@@ -122,6 +122,7 @@ export function prepareMarketCreationData(input: CreateMarketInput) {
     marketData: {
       title,
       description,
+      categorySlug: input.categorySlug,
       marketType: finalMarketType,
       displayVariant,
       state: state as any,

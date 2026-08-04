@@ -58,13 +58,13 @@ export function ResponsiveWrapper({
   if (isMobile) {
     if (type === "fullscreen") {
       contentClass = cn(
-        "fixed inset-0 z-50 flex flex-col bg-background p-6 outline-none",
+        "fixed inset-0 z-50 flex flex-col bg-[var(--surface-container-low)] dark:bg-[#0B0E14] p-6 outline-none",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0"
       )
     } else {
       // Bottom sheet (modal or sheet type on mobile)
       contentClass = cn(
-        "fixed inset-x-0 bottom-0 z-50 flex flex-col gap-4 rounded-t-3xl border-t border-border bg-popover p-4 outline-none shadow-xl",
+        "fixed inset-x-0 bottom-0 z-50 flex flex-col gap-4 rounded-t-3xl border-t border-[var(--outline-variant)] bg-[var(--surface-container-low)] dark:bg-[#0F1727] p-4 outline-none shadow-xl",
         "pb-[calc(16px+env(safe-area-inset-bottom))] max-h-[90dvh] overflow-y-auto",
         "transition-transform duration-200 ease-out",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom"
@@ -75,19 +75,19 @@ export function ResponsiveWrapper({
     if (type === "sheet") {
       // Side drawer sheet (right-aligned)
       contentClass = cn(
-        "fixed top-0 right-0 z-50 h-full w-[360px] border-l border-border bg-popover p-6 shadow-xl outline-none",
+        "fixed top-0 right-0 z-50 h-full w-[360px] border-l border-[var(--outline-variant)] bg-[var(--surface-container-low)] dark:bg-[#0F1727] p-6 shadow-xl outline-none",
         "transition-transform duration-200 ease-out",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right"
       )
     } else if (type === "fullscreen") {
       contentClass = cn(
-        "fixed inset-4 z-50 flex flex-col rounded-3xl border border-border bg-popover p-6 shadow-2xl outline-none",
+        "fixed inset-4 z-50 flex flex-col rounded-3xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] dark:bg-[#0F1727] p-6 shadow-2xl outline-none",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0"
       )
     } else {
       // Standard modal
       contentClass = cn(
-        "fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-3xl border border-border bg-popover p-6 shadow-2xl outline-none",
+        "fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 rounded-3xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] dark:bg-[#0F1727] p-6 shadow-2xl outline-none",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95",
         sizeClasses[size]
       )

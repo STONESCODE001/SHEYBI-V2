@@ -61,6 +61,7 @@ export type DisplayVariant = 'binary' | '1v1' | 'standard';
 export interface MarketCreateData {
   title: string;
   description: string;
+  categorySlug?: string;
   marketType: MarketType;
   displayVariant: DisplayVariant;
   state: MarketState;
@@ -85,7 +86,7 @@ export interface MarketCreateData {
 export interface OptionCreateData {
   name: string;
   displayOrder: number;
-  probability: number;     // Initial equal split (e.g. 50 for binary, 25 for 1v1)
+  probability: number;     // Initial equal split as a fraction (e.g. 0.5 for binary, 0.25 for 1v1)
   sharePrice: number;      // Initial price = 1/N (e.g. 0.5 for binary, 0.25 for 1v1)
   sharesOutstanding: number; // Always 0 for new markets
   isWinningOption: boolean;  // Always false for new markets
@@ -138,16 +139,16 @@ export interface OptionBatchUpdate {
  */
 export interface MarketActivityData {
   activityType:
-    | 'created'
-    | 'opened'
-    | 'paused'
-    | 'unpaused'
-    | 'trade'
-    | 'closed'
-    | 'reopened'
-    | 'resolved'
-    | 'cancelled'
-    | 'extended';
+  | 'created'
+  | 'opened'
+  | 'paused'
+  | 'unpaused'
+  | 'trade'
+  | 'closed'
+  | 'reopened'
+  | 'resolved'
+  | 'cancelled'
+  | 'extended';
   description: string;
   relatedUserId?: string;
   metadata?: Record<string, unknown>;

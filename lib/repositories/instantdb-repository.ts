@@ -157,27 +157,43 @@ class InstantDbMarketRepository implements IMarketRepository {
     const newMarketId = id();
     const txOps: any[] = [];
 
-    txOps.push(
-      adminDb.tx.markets[newMarketId].update({
-        title: marketData.title,
-        description: marketData.description,
-        marketType: marketData.marketType,
-        displayVariant: marketData.displayVariant,
-        state: marketData.state,
-        openingTime: marketData.openingTime,
-        closingTime: marketData.closingTime,
-        liquidity: marketData.liquidity,
-        liquidityParam: marketData.liquidityParam,
-        tradingVolume: marketData.tradingVolume,
-        totalTrades: marketData.totalTrades,
-        createdBy: marketData.createdBy,
-        imageUrl: marketData.imageUrl,
-        slug: marketData.slug,
-        isFeatured: marketData.isFeatured,
-        createdAt: marketData.createdAt,
-        updatedAt: marketData.updatedAt,
-      })
-    );
+    let marketTx = adminDb.tx.markets[newMarketId].update({
+      title: marketData.title,
+      description: marketData.description,
+      marketType: marketData.marketType,
+      displayVariant: marketData.displayVariant,
+      state: marketData.state,
+      openingTime: marketData.openingTime,
+      closingTime: marketData.closingTime,
+      liquidity: marketData.liquidity,
+      liquidityParam: marketData.liquidityParam,
+      tradingVolume: marketData.tradingVolume,
+      totalTrades: marketData.totalTrades,
+      createdBy: marketData.createdBy,
+      imageUrl: marketData.imageUrl,
+      slug: marketData.slug,
+      isFeatured: marketData.isFeatured,
+      createdAt: marketData.createdAt,
+      updatedAt: marketData.updatedAt,
+    });
+
+    if (marketData.categorySlug) {
+      try {
+        const catRes = await adminDb.query({
+          categories: {
+            $: { where: { slug: marketData.categorySlug } },
+          },
+        });
+        const matchedCategory = catRes.categories?.[0];
+        if (matchedCategory) {
+          marketTx = marketTx.link({ category: matchedCategory.id });
+        }
+      } catch (err) {
+        console.warn("Failed to link category during market creation:", err);
+      }
+    }
+
+    txOps.push(marketTx);
 
     for (const opt of optionsData) {
       const newOptId = id();
@@ -510,16 +526,12 @@ class InstantDbLedgerRepository implements ILedgerRepository {
   }
 
   async idempotencyKeyExists(key: string): Promise<boolean> {
-    try {
-      const result = await adminDb.query({
-        ledger: {
-          $: { where: { idempotencyKey: key } },
-        },
-      });
-      return (result.ledger?.length || 0) > 0;
-    } catch {
-      return false;
-    }
+    const result = await adminDb.query({
+      ledger: {
+        $: { where: { idempotencyKey: key } },
+      },
+    });
+    return (result.ledger?.length || 0) > 0;
   }
 }
 
