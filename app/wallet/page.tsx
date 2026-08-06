@@ -33,10 +33,14 @@ function WalletPageContent() {
   const { wallet, availableBalance, isLoading: walletLoading } = useWallet()
   const { entries, isLoading: ledgerLoading } = useLedger(20)
 
+  const processedRef = React.useRef<string | null>(null)
+
   // Handle fallback Paystack redirect verification
   React.useEffect(() => {
     const reference = searchParams.get("reference") || searchParams.get("trxref")
-    if (reference) {
+    if (reference && processedRef.current !== reference) {
+      processedRef.current = reference
+      
       const verifyRedirectPayment = async () => {
         try {
           // Clear URL to prevent re-verifying on refresh
