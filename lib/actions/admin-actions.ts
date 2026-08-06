@@ -156,3 +156,91 @@ export async function createCategoryAction(
     return { success: false, error: message };
   }
 }
+
+/**
+ * Wipe all financial state (demo testing cleanup).
+ * Deletes all ledger and positions, resets wallets to 0.
+ */
+export async function wipeFinancialStateAction(): Promise<ActionResponse> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Authentication required.' };
+    }
+
+    // Query all entities to wipe
+    const queryRes = await adminDb.query({
+      ledger: {},
+      positions: {},
+      wallets: {},
+      markets: {},
+      market_options: {},
+      market_activity: {},
+      market_suggestions: {},
+      withdrawal_requests: {},
+      deposits: {},
+      wallet_transactions: {},
+      audit_logs: {},
+    });
+
+    const txs: any[] = [];
+
+    // Reset all wallets
+    if (queryRes.wallets) {
+      queryRes.wallets.forEach((w: any) => txs.push(
+        adminDb.tx.wallets[w.id].update({
+          availableBalance: 0,
+          lockedBalance: 0,
+          lifetimeDeposits: 0,
+          lifetimeWithdrawals: 0,
+          lifetimeProfit: 0,
+          updatedAt: Date.now()
+        })
+      ));
+    }
+
+    // Helper to delete all items in an array
+    const deleteAll = (collectionName: keyof typeof adminDb.tx, items: any[]) => {
+      if (items && Array.isArray(items)) {
+        items.forEach((item) => {
+          if (item && item.id) {
+            // @ts-ignore
+            txs.push(adminDb.tx[collectionName][item.id].delete());
+          }
+        });
+      }
+    };
+
+    // Delete all other entities
+    deleteAll('ledger', queryRes.ledger);
+    deleteAll('positions', queryRes.positions);
+    deleteAll('markets', queryRes.markets);
+    deleteAll('market_options', queryRes.market_options);
+    deleteAll('market_activity', queryRes.market_activity);
+    deleteAll('market_suggestions', queryRes.market_suggestions);
+    deleteAll('withdrawal_requests', queryRes.withdrawal_requests);
+    deleteAll('deposits', queryRes.deposits);
+    deleteAll('wallet_transactions', queryRes.wallet_transactions);
+    deleteAll('audit_logs', queryRes.audit_logs);
+
+    // Chunk transactions to avoid limits (chunk by 50)
+    for (let i = 0; i < txs.length; i += 50) {
+      await adminDb.transact(txs.slice(i, i + 50));
+    }
+
+    // Add a single audit log for the wipe itself
+    await repository.auditLogs.createAuditLog({
+      adminUserId: userId,
+      actionType: 'WIPE_FINANCIAL_STATE' as any,
+      targetEntityId: 'global',
+      details: { action: 'ADMIN_WIPED_FINANCIAL_STATE_AND_MARKETS' },
+      createdAt: Date.now(),
+    });
+
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    console.error('[Admin] wipeFinancialStateAction error:', message);
+    return { success: false, error: message };
+  }
+}

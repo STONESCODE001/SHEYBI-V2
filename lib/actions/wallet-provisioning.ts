@@ -59,19 +59,12 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
       }
     }
 
-    // 2. Check if wallet already exists for this Clerk userId
     let wallet = await repository.wallets.getWalletByUserId(userId);
     if (!wallet) {
-      // First login — create a wallet and seed with ₦50,000 demo funds
+      // First login — create a wallet
       const walletId = await repository.wallets.createWallet(userId);
       console.log(`[Wallet] Created new wallet ${walletId} for user ${userId}`);
-      await processDepositAction(userId, 50000, `demo_seed_${walletId}_${Date.now()}`);
       return { success: true, walletId };
-    } else if (wallet.availableBalance === 0) {
-      const entries = await repository.ledger.getLedgerEntriesByUser(userId);
-      if (entries.length === 0) {
-        await processDepositAction(userId, 50000, `demo_seed_${wallet.id}_${Date.now()}`);
-      }
     }
 
     return { success: true, walletId: wallet.id };

@@ -10,6 +10,7 @@ import { DialogStatus } from "../../types"
 import { useDialog } from "../../dialog-context"
 import { Loader2 } from "lucide-react"
 
+import { useRouter } from "next/navigation"
 import { initializePaystackTransaction, verifyAndCreditDeposit } from "@/lib/actions/paystack-actions"
 
 interface DepositDialogProps {
@@ -19,10 +20,11 @@ interface DepositDialogProps {
   setStatus: (status: DialogStatus) => void
 }
 
-type DepositStep = "input" | "review" | "processing"
+type DepositStep = "input" | "review" | "processing" | "waiting"
 
 export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDialogProps) {
   const dialog = useDialog()
+  const router = useRouter()
   const [step, setStep] = React.useState<DepositStep>("input")
   const [amount, setAmount] = React.useState("")
   const [isLoading, setIsLoading] = React.useState(false)
@@ -71,32 +73,44 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
 
     const { access_code, authorization_url } = initResult.data
     setIsLoading(false)
+    setStep("waiting")
 
     try {
       const { default: PaystackPop } = await import("@paystack/inline-js")
       const paystack = new PaystackPop()
 
-      // Close the deposit dialog before popup appears (avoids z-index stacking)
-      onClose()
-
       paystack.newTransaction({
         key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!,
         access_code,
         onSuccess: async (tx: { reference: string }) => {
-          const verifyResult = await verifyAndCreditDeposit(tx.reference)
-          if (verifyResult.success) {
-            await dialog.success({
-              title: "Deposit Successful",
-              description: `₦${verifyResult.data?.depositAmount.toLocaleString()} added to your wallet.`
-            })
-          } else {
+          setStep("processing")
+          try {
+            const verifyResult = await verifyAndCreditDeposit(tx.reference)
+            if (verifyResult.success) {
+              router.refresh()
+              onClose()
+              await dialog.success({
+                title: "Deposit Successful",
+                description: `₦${verifyResult.data?.depositAmount.toLocaleString()} added to your wallet.`
+              })
+            } else {
+              onClose()
+              await dialog.error({
+                title: "Verification Pending",
+                description: verifyResult.error ?? "We are confirming your payment."
+              })
+            }
+          } catch (error) {
+            console.error("[DepositDialog] Verification error:", error)
+            onClose()
             await dialog.error({
               title: "Verification Pending",
-              description: verifyResult.error ?? "We are confirming your payment."
+              description: "Your payment was successful but verification is taking longer than expected. Your balance will update shortly."
             })
           }
         },
         onCancel: () => {
+          onClose()
           void dialog.error({ title: "Payment Cancelled", description: "You cancelled the payment." })
         },
       })
@@ -110,6 +124,7 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
         return
       }
 
+      onClose()
       await dialog.error({
         title: "Payment Error",
         description: safeErrMsg
@@ -208,7 +223,17 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
         <div className="mt-4 flex flex-col items-center justify-center gap-4 py-8">
           <Loader2 className="size-8 animate-spin text-primary" />
           <p className="text-sm text-[var(--text-secondary)] text-center">
-            Initializing secure payment...
+            Verifying payment...
+          </p>
+        </div>
+      )}
+
+      {step === "waiting" && (
+        <div className="mt-4 flex flex-col items-center justify-center gap-4 py-8">
+          <Loader2 className="size-8 animate-spin text-primary" />
+          <p className="text-sm text-[var(--text-secondary)] text-center">
+            Waiting for payment completion in the Paystack popup...<br/>
+            Please do not close this window.
           </p>
         </div>
       )}

@@ -44,6 +44,7 @@ import { CreateMarketDialog } from "@/components/admin/create-market-dialog"
 import { ResolveMarketDialog } from "@/components/dialog/features/market/resolve-market-dialog"
 import { PauseMarketDialog } from "@/components/dialog/features/market/pause-market-dialog"
 import { WithdrawalActionDialog } from "@/components/admin/withdrawal-action-dialog"
+import { FinancialWipeDialog } from "@/components/dialog/features/admin/financial-wipe-dialog"
 
 /**
  * AdminDashboardPage Component
@@ -70,6 +71,8 @@ export default function AdminDashboardPage() {
 
   const [isWithdrawalActionOpen, setIsWithdrawalActionOpen] = React.useState(false)
   const [selectedWithdrawal, setSelectedWithdrawal] = React.useState<WithdrawalItem | null>(null)
+
+  const [isFinancialWipeOpen, setIsFinancialWipeOpen] = React.useState(false)
 
   // --------------------------------------------------------------------------
   // Reactive InstantDB Queries
@@ -357,11 +360,20 @@ export default function AdminDashboardPage() {
   return (
     <AdminLayout>
       <div className="dark flex flex-col gap-6 text-text-primary">
-        {/* Section Header */}
-        <SectionHeader
-          title="Admin Control Center"
-          description="Manage prediction markets, review withdrawal requests, process user suggestions, and audit platform activity."
-        />
+        {/* Section Header with Wipe Button */}
+        <div className="flex items-center justify-between">
+          <SectionHeader
+            title="Admin Control Center"
+            description="Manage prediction markets, review withdrawal requests, process user suggestions, and audit platform activity."
+            className="mb-0"
+          />
+          <button
+            onClick={() => setIsFinancialWipeOpen(true)}
+            className="px-3 py-1.5 text-xs font-medium bg-[var(--danger-soft)] text-[var(--danger)] border border-[var(--danger)]/30 rounded-lg hover:bg-[var(--danger)]/10 transition-colors"
+          >
+            Wipe Demo State
+          </button>
+        </div>
 
         {/* Top KPI Summary Cards */}
         <AdminSummaryCards
@@ -508,6 +520,13 @@ export default function AdminDashboardPage() {
         onClose={() => setIsWithdrawalActionOpen(false)}
         withdrawal={selectedWithdrawal}
         onAction={handleWithdrawalAction}
+      />
+
+      <FinancialWipeDialog
+        isOpen={isFinancialWipeOpen}
+        onClose={() => setIsFinancialWipeOpen(false)}
+        status="idle"
+        setStatus={() => {}}
       />
     </AdminLayout>
   )
