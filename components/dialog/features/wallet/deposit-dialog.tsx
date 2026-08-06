@@ -8,11 +8,9 @@ import { Label } from "@/components/ui/label"
 import { DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../../primitives"
 import { DialogStatus } from "../../types"
 import { useDialog } from "../../dialog-context"
-import { CreditCard, Landmark, Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Loader2 } from "lucide-react"
 
-import { useUser } from "@clerk/nextjs"
-import { processDepositAction } from "@/lib/actions/wallet-actions"
+import { initializePaystackTransaction, verifyAndCreditDeposit } from "@/lib/actions/paystack-actions"
 
 interface DepositDialogProps {
   isOpen: boolean
@@ -21,58 +19,87 @@ interface DepositDialogProps {
   setStatus: (status: DialogStatus) => void
 }
 
-type DepositStep = "input" | "review"
+type DepositStep = "input" | "review" | "processing"
 
 export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDialogProps) {
   const dialog = useDialog()
-  const { user } = useUser()
   const [step, setStep] = React.useState<DepositStep>("input")
   const [amount, setAmount] = React.useState("")
-  const [method, setMethod] = React.useState<"card" | "bank">("card")
+  const [isLoading, setIsLoading] = React.useState(false)
+
+  // Reset state when dialog closes
+  React.useEffect(() => {
+    if (!isOpen) {
+      setStep("input")
+      setAmount("")
+      setIsLoading(false)
+    }
+  }, [isOpen])
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!amount || parseFloat(amount) <= 0) return
+    const val = parseFloat(amount)
+    if (!val || val < 100) return
     setStep("review")
   }
 
+  /**
+   * DEPOSIT FLOW:
+   * 1. Call initializePaystackTransaction(amount) [server] → get access_code
+   * 2. Trigger dynamic import('@paystack/inline-js') → new PaystackPop().checkout({ access_code })
+   * 3. onSuccess({ reference }) → call verifyAndCreditDeposit(reference) [server]
+   * 4. Server verifies with Paystack API → credits wallet if legitimate
+   */
   const handleConfirm = async () => {
     const amountNum = parseFloat(amount)
-    setStep("input") // reset step for next time
+    setStep("processing")
+    setIsLoading(true)
+
+    // ---- Step 1: Initialize transaction on server ----
+    const initResult = await initializePaystackTransaction(amountNum)
+
+    if (!initResult.success || !initResult.data) {
+      setIsLoading(false)
+      setStep("review")
+      onClose()
+      await dialog.error({
+        title: "Payment Setup Failed",
+        description: initResult.error ?? "Could not initialize payment. Please try again."
+      })
+      return
+    }
+
+    const { access_code, authorization_url } = initResult.data
+    setIsLoading(false)
+
+    // Close the deposit dialog before popup appears (avoids z-index stacking)
     onClose()
 
-    if (!user?.id) {
+    // ---- Step 2: Trigger Paystack checkout popup via official SDK ----
+    try {
+      const { default: PaystackPop } = await import("@paystack/inline-js")
+      const paystack = new PaystackPop()
+
+      paystack.resumeTransaction(access_code)
+    } catch (err: unknown) {
+      const safeErrMsg = err instanceof Error ? err.message : "Failed to open payment popup."
+      console.error("[DepositDialog] Paystack popup error:", safeErrMsg)
+
+      // Fallback: If inline popup SDK fails, redirect directly to Paystack secure checkout URL
+      if (authorization_url && typeof window !== "undefined") {
+        window.open(authorization_url, "_blank")
+        return
+      }
+
       await dialog.error({
-        title: "Authentication Required",
-        description: "Please sign in to deposit funds."
+        title: "Payment Error",
+        description: safeErrMsg
       })
-      return
     }
-
-    const loader = dialog.loading({
-      title: "Processing Deposit",
-      description: "Finalizing ledger entries..."
-    })
-
-    const ref = `dep_${Date.now()}_${crypto.randomUUID().slice(0, 6)}`
-    const result = await processDepositAction(user.id, amountNum, ref)
-
-    loader.close()
-
-    if (!result.success) {
-      await dialog.error({
-        title: "Deposit Failed",
-        description: result.error ?? "Failed to process deposit."
-      })
-      return
-    }
-
-    // Show success dialog
-    await dialog.success({
-      title: "Deposit Successful",
-      description: `₦${amountNum.toLocaleString()} has been added to your wallet balance.`
-    })
   }
+
+  const amountNum = parseFloat(amount)
+  const isValidAmount = !isNaN(amountNum) && amountNum >= 100
 
   return (
     <ResponsiveWrapper
@@ -85,10 +112,10 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
     >
       <DialogHeader className="p-0">
         <DialogTitle className="text-xl">Deposit Funds</DialogTitle>
-        <DialogDescription>Select your payment channel and enter the amount you wish to add.</DialogDescription>
+        <DialogDescription>Enter the amount to add. You&apos;ll pay securely via Paystack.</DialogDescription>
       </DialogHeader>
 
-      {step === "input" ? (
+      {step === "input" && (
         <form onSubmit={handleNext} className="mt-4 flex flex-col gap-4">
           <div className="space-y-2">
             <Label htmlFor="deposit-amount" className="text-sm font-medium text-[var(--text-secondary)]">Amount (₦)</Label>
@@ -96,72 +123,43 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
               id="deposit-amount"
               type="number"
               min="100"
+              step="any"
               placeholder="Min ₦100"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               required
               className="h-11 rounded-xl bg-[var(--bg-surface-secondary)] border-[var(--border-default)] font-mono text-base focus-visible:ring-[var(--border-active)]"
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-[var(--text-secondary)]">Payment Method</Label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setMethod("card")}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all duration-200 outline-none",
-                  method === "card"
-                    ? "border-[var(--border-active)] bg-primary/5 text-primary"
-                    : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
-                )}
-              >
-                <CreditCard className="size-5" />
-                <span>Debit Card</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setMethod("bank")}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all duration-200 outline-none",
-                  method === "bank"
-                    ? "border-[var(--border-active)] bg-primary/5 text-primary"
-                    : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
-                )}
-              >
-                <Landmark className="size-5" />
-                <span>Bank Transfer</span>
-              </button>
-            </div>
+            {amountNum > 0 && amountNum < 100 && (
+              <p className="text-xs text-[var(--state-error)]">Minimum deposit is ₦100</p>
+            )}
           </div>
 
           <DialogFooter className="mt-4 p-0">
             <Button
               type="submit"
-              disabled={!amount || parseFloat(amount) <= 0}
+              disabled={!isValidAmount}
               className="w-full bg-primary text-white hover:bg-primary-hover h-11 rounded-xl"
             >
               Continue
             </Button>
           </DialogFooter>
         </form>
-      ) : (
+      )}
+
+      {step === "review" && (
         <div className="mt-4 flex flex-col gap-4">
           <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface-secondary)] flex flex-col gap-2.5">
-            <h4 className="text-sm font-semibold text-[var(--text-primary)]">Review Payment Details</h4>
-            <div className="flex justify-between text-sm">
-              <span className="text-[var(--text-muted)]">Method</span>
-              <span className="text-[var(--text-primary)] font-medium">
-                {method === "card" ? "Debit Card (Paystack)" : "Bank Transfer"}
-              </span>
-            </div>
+            <h4 className="text-sm font-semibold text-[var(--text-primary)]">Confirm Deposit</h4>
             <div className="flex justify-between text-sm border-t border-[var(--border-default)] pt-2.5">
               <span className="text-[var(--text-muted)]">Amount</span>
               <span className="text-[var(--text-primary)] font-mono font-bold">
-                ₦{parseFloat(amount).toLocaleString()}
+                ₦{amountNum.toLocaleString()}
               </span>
             </div>
+            <p className="text-xs text-[var(--text-muted)] mt-1">
+              You&apos;ll be redirected to a secure Paystack checkout popup to complete your payment.
+            </p>
           </div>
 
           <DialogFooter className="p-0 gap-2">
@@ -174,14 +172,29 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
             </Button>
             <Button
               onClick={handleConfirm}
+              disabled={isLoading}
               className="w-full sm:w-1/2 bg-success text-white hover:bg-success/90"
             >
-              Confirm Payment
+              {isLoading ? (
+                <><Loader2 className="size-4 animate-spin mr-2" /> Setting up...</>
+              ) : (
+                "Pay with Paystack"
+              )}
             </Button>
           </DialogFooter>
+        </div>
+      )}
+
+      {step === "processing" && (
+        <div className="mt-4 flex flex-col items-center justify-center gap-4 py-8">
+          <Loader2 className="size-8 animate-spin text-primary" />
+          <p className="text-sm text-[var(--text-secondary)] text-center">
+            Initializing secure payment...
+          </p>
         </div>
       )}
     </ResponsiveWrapper>
   )
 }
+
 export default DepositDialog

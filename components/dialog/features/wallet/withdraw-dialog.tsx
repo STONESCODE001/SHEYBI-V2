@@ -8,8 +8,14 @@ import { Label } from "@/components/ui/label"
 import { DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../../primitives"
 import { DialogStatus } from "../../types"
 import { useDialog } from "../../dialog-context"
+import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+import {
+  fetchNigerianBanks,
+  resolveBankAccount,
+  type NigerianBank,
+} from "@/lib/actions/paystack-actions"
 import { requestWithdrawalAction } from "@/lib/actions/wallet-actions"
 
 interface WithdrawDialogProps {
@@ -25,34 +31,99 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
   const dialog = useDialog()
   const [step, setStep] = React.useState<WithdrawStep>("input")
   const [amount, setAmount] = React.useState("")
-  const [bank, setBank] = React.useState("gtb")
+
+  // ---- Bank list state (fetched from Paystack /bank) ----
+  const [banks, setBanks] = React.useState<NigerianBank[]>([])
+  const [banksLoading, setBanksLoading] = React.useState(false)
+  const [banksError, setBanksError] = React.useState<string | null>(null)
+
+  // ---- Selected bank (stores both name and code for /bank/resolve) ----
+  const [selectedBankCode, setSelectedBankCode] = React.useState("")
+  const [selectedBankName, setSelectedBankName] = React.useState("")
+
+  // ---- Account resolution state (Paystack /bank/resolve) ----
   const [accountNumber, setAccountNumber] = React.useState("")
   const [accountName, setAccountName] = React.useState("")
   const [resolvingAccount, setResolvingAccount] = React.useState(false)
+  const [resolveError, setResolveError] = React.useState<string | null>(null)
 
-  // Simulate account resolution when 10 digits are inputted
+  // ---- Reset on close ----
   React.useEffect(() => {
-    if (accountNumber.length === 10) {
-      setResolvingAccount(true)
-      const timer = setTimeout(() => {
-        setAccountName("JANE DOE")
-        setResolvingAccount(false)
-      }, 1000)
-      return () => clearTimeout(timer)
-    } else {
+    if (!isOpen) {
+      setStep("input")
+      setAmount("")
+      setSelectedBankCode("")
+      setSelectedBankName("")
+      setAccountNumber("")
       setAccountName("")
+      setResolveError(null)
     }
-  }, [accountNumber])
+  }, [isOpen])
+
+  // ---- Fetch bank list from Paystack on first open ----
+  React.useEffect(() => {
+    if (!isOpen || banks.length > 0) return
+
+    setBanksLoading(true)
+    setBanksError(null)
+
+    fetchNigerianBanks().then((result) => {
+      setBanksLoading(false)
+      if (result.success && result.data && result.data.length > 0) {
+        setBanks(result.data)
+        // Pre-select first bank
+        setSelectedBankCode(result.data[0].code)
+        setSelectedBankName(result.data[0].name)
+      } else {
+        setBanksError(result.error ?? "Failed to load banks.")
+      }
+    })
+  }, [isOpen, banks.length])
+
+  // ---- Real account resolution via Paystack /bank/resolve ----
+  React.useEffect(() => {
+    // Only trigger when 10 digits entered AND a bank is selected
+    if (accountNumber.length !== 10 || !selectedBankCode) {
+      setAccountName("")
+      setResolveError(null)
+      return
+    }
+
+    setResolvingAccount(true)
+    setAccountName("")
+    setResolveError(null)
+
+    resolveBankAccount(accountNumber, selectedBankCode).then((result) => {
+      setResolvingAccount(false)
+      if (result.success && result.data) {
+        setAccountName(result.data.accountName)
+      } else {
+        setResolveError(result.error ?? "Could not verify account.")
+      }
+    })
+  }, [accountNumber, selectedBankCode])
+
+  const handleBankChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCode = e.target.value
+    const bank = banks.find((b) => b.code === selectedCode)
+    setSelectedBankCode(selectedCode)
+    setSelectedBankName(bank?.name ?? "")
+    // Re-trigger account resolution when bank changes (if account already entered)
+    setAccountName("")
+    setResolveError(null)
+  }
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!amount || parseFloat(amount) <= 0 || accountNumber.length !== 10 || !accountName) return
+    const val = parseFloat(amount)
+    if (!val || val <= 0) return
+    if (accountNumber.length !== 10 || !accountName) return
     setStep("review")
   }
 
   const handleConfirm = async () => {
     const amountNum = parseFloat(amount)
-    setStep("input") // reset step for next time
+    setStep("input")
     onClose()
 
     const loader = dialog.loading({
@@ -60,15 +131,8 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
       description: "Submitting withdrawal request..."
     })
 
-    const bankLabels: Record<string, string> = {
-      gtb: "Guaranty Trust Bank",
-      access: "Access Bank",
-      zenith: "Zenith Bank",
-      uba: "United Bank for Africa",
-    }
-
     const result = await requestWithdrawalAction(amountNum, {
-      bankName: bankLabels[bank] || bank,
+      bankName: selectedBankName,
       accountNumber,
       accountName,
     })
@@ -83,12 +147,14 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
       return
     }
 
-    // Show success dialog
     await dialog.success({
       title: "Withdrawal Requested",
-      description: `₦${amountNum.toLocaleString()} withdrawal request submitted. Net amount ₦${result.data?.netAmount.toLocaleString()} will reflect in your bank account shortly.`
+      description: `₦${amountNum.toLocaleString()} withdrawal request submitted. Net amount ₦${result.data?.netAmount.toLocaleString()} will reflect in your bank account after approval.`
     })
   }
+
+  const amountNum = parseFloat(amount)
+  const isValidForm = amountNum > 0 && accountNumber.length === 10 && !!accountName
 
   return (
     <ResponsiveWrapper
@@ -104,14 +170,16 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
         <DialogDescription>Submit your bank payout information and withdrawal amount.</DialogDescription>
       </DialogHeader>
 
-      {step === "input" ? (
+      {step === "input" && (
         <form onSubmit={handleNext} className="mt-4 flex flex-col gap-4">
+          {/* Amount */}
           <div className="space-y-2">
             <Label htmlFor="withdraw-amount" className="text-sm font-medium text-[var(--text-secondary)]">Amount (₦)</Label>
             <Input
               id="withdraw-amount"
               type="number"
-              min="100"
+              min="1000"
+              step="any"
               placeholder="Min ₦1,000"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -120,77 +188,122 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
             />
           </div>
 
+          {/* Bank dropdown — live from Paystack */}
           <div className="space-y-2">
-            <Label htmlFor="withdraw-bank" className="text-sm font-medium text-[var(--text-secondary)]">Destination Bank</Label>
-            <select
-              id="withdraw-bank"
-              value={bank}
-              onChange={(e) => setBank(e.target.value)}
-              className="w-full h-11 px-3 rounded-xl bg-[var(--bg-surface-secondary)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
-            >
-              <option value="gtb">Guaranty Trust Bank</option>
-              <option value="access">Access Bank</option>
-              <option value="zenith">Zenith Bank</option>
-              <option value="uba">United Bank for Africa</option>
-            </select>
+            <Label htmlFor="withdraw-bank" className="text-sm font-medium text-[var(--text-secondary)]">
+              Destination Bank
+              {banksLoading && (
+                <span className="ml-2 inline-flex items-center gap-1 text-xs text-[var(--text-muted)]">
+                  <Loader2 className="size-3 animate-spin" /> Loading banks...
+                </span>
+              )}
+            </Label>
+            {banksError ? (
+              <p className="text-xs text-[var(--state-error)]">{banksError}</p>
+            ) : (
+              <select
+                id="withdraw-bank"
+                value={selectedBankCode}
+                onChange={handleBankChange}
+                disabled={banksLoading || banks.length === 0}
+                className={cn(
+                  "w-full h-11 px-3 rounded-xl bg-[var(--bg-surface-secondary)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-active)]",
+                  (banksLoading || banks.length === 0) && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                {banks.length === 0 && (
+                  <option value="">Loading banks...</option>
+                )}
+                {banks.map((bank) => (
+                  <option key={`${bank.code}-${bank.slug}`} value={bank.code}>
+                    {bank.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
+          {/* Account Number */}
           <div className="space-y-2">
             <Label htmlFor="withdraw-account" className="text-sm font-medium text-[var(--text-secondary)]">Account Number</Label>
             <Input
               id="withdraw-account"
               type="text"
+              inputMode="numeric"
               maxLength={10}
               placeholder="10-digit Account Number"
               value={accountNumber}
-              onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ""))}
+              onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, "")
+                setAccountNumber(digits)
+              }}
               required
               className="h-11 rounded-xl bg-[var(--bg-surface-secondary)] border-[var(--border-default)] font-mono text-base focus-visible:ring-[var(--border-active)]"
             />
           </div>
 
+          {/* Account resolution feedback */}
           {resolvingAccount && (
-            <div className="text-xs text-[var(--text-muted)] flex items-center gap-1.5 animate-pulse">
-              Verifying bank account...
+            <div className="flex items-center gap-2 text-xs text-[var(--text-muted)] animate-pulse">
+              <Loader2 className="size-3 animate-spin" />
+              Verifying account with {selectedBankName}...
             </div>
           )}
 
-          {accountName && (
-            <div className="p-3 rounded-xl bg-[var(--bg-surface-secondary)] border border-[var(--border-default)] text-xs text-[var(--state-success)] font-mono">
-              Account Holder: {accountName}
+          {resolveError && !resolvingAccount && (
+            <div className="p-3 rounded-xl bg-[var(--bg-surface-secondary)] border border-[var(--state-error)]/30 text-xs text-[var(--state-error)]">
+              {resolveError}
+            </div>
+          )}
+
+          {accountName && !resolvingAccount && !resolveError && (
+            <div className="p-3 rounded-xl bg-[var(--bg-surface-secondary)] border border-[var(--state-success)]/40 flex items-center gap-2">
+              <div className="size-2 rounded-full bg-[var(--state-success)] flex-shrink-0" />
+              <span className="text-xs text-[var(--state-success)] font-mono font-medium">
+                {accountName}
+              </span>
             </div>
           )}
 
           <DialogFooter className="mt-4 p-0">
             <Button
               type="submit"
-              disabled={!amount || parseFloat(amount) <= 0 || accountNumber.length !== 10 || !accountName}
+              disabled={!isValidForm}
               className="w-full bg-primary text-white hover:bg-primary-hover h-11 rounded-xl"
             >
               Continue
             </Button>
           </DialogFooter>
         </form>
-      ) : (
+      )}
+
+      {step === "review" && (
         <div className="mt-4 flex flex-col gap-4">
           <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface-secondary)] flex flex-col gap-2.5">
             <h4 className="text-sm font-semibold text-[var(--text-primary)]">Review Payout Details</h4>
             <div className="flex justify-between text-sm">
               <span className="text-[var(--text-muted)]">Bank</span>
-              <span className="text-[var(--text-primary)] font-medium">
-                {bank === "gtb" ? "GTBank" : bank === "access" ? "Access Bank" : bank === "zenith" ? "Zenith Bank" : "UBA"}
-              </span>
+              <span className="text-[var(--text-primary)] font-medium">{selectedBankName}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-[var(--text-muted)]">Account</span>
-              <span className="text-[var(--text-primary)] font-mono font-medium">{accountNumber} ({accountName})</span>
+              <span className="text-[var(--text-primary)] font-mono font-medium">
+                {accountNumber}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-[var(--text-muted)]">Account Name</span>
+              <span className="text-[var(--text-primary)] font-medium">{accountName}</span>
             </div>
             <div className="flex justify-between text-sm border-t border-[var(--border-default)] pt-2.5">
               <span className="text-[var(--text-muted)]">Withdrawal Amount</span>
-              <span className="text-[var(--text-primary)] font-mono font-bold text-[var(--loss)]">
-                -₦{parseFloat(amount).toLocaleString()}
+              <span className="font-mono font-bold text-[var(--loss)]">
+                -₦{amountNum.toLocaleString()}
               </span>
             </div>
+            <p className="text-xs text-[var(--text-muted)] mt-1">
+              A 3% processing fee (min ₦150) will be deducted. Net amount will be sent after admin approval.
+            </p>
           </div>
 
           <DialogFooter className="p-0 gap-2">
@@ -213,4 +326,5 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
     </ResponsiveWrapper>
   )
 }
+
 export default WithdrawDialog

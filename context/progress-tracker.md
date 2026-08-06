@@ -7,7 +7,7 @@ Update this document immediately after every completed implementation unit. This
 ## Current Phase: Phase 4: Core Engine & Algorithm Implementation
 
 ### Current Implementation Target
-- None (Phase Complete)
+- **Cycle E — Real-time Notification Feed & Platform Activity Ticker** (Notifications dropdown, trade execution activity stream, and live ticker integration)
 
 ---
    
@@ -67,6 +67,8 @@ Implement Cycle C — Admin Live feature specification.
 * Trade History Sync, Wallet DB Sync & Odds Precision — Fixed trade history update by querying InstantDB market activity and extracting live trade items; scaled LMSR probabilities to 0-100 percentage scale in database and adapters (`45.69% Chance` / `45% Chance`); applied compact odds precision digit limits (`1.7k`, `20k`, `123k`, `178k`); wired `useWallet()` to header `ApplicationShell` for live database balance updates; and integrated `Upward ↑` (Green) / `Downward ↓` (Red) bet trend indicators in `TradeDialog`.
 * Admin Control Center Dark Theme Conversion via Design System Tokens — Enforced `.dark` theme scope on `ApplicationShell` (for `variant="admin"`) and `app/admin/page.tsx`; updated all admin cards, tables, inputs, tab bars, and modals (`CreateMarketDialog`, `WithdrawalActionDialog`, `ResolveMarketDialog`, `PauseMarketDialog`) to use official `app/globals.css` design system semantic tokens (`bg-bg-base` `#0B0E14`, `bg-bg-surface` `#0F1727`, `bg-bg-surface-secondary` `#141E30`, `border-border` `#1E2A3F`, `text-text-primary` `#FFFFFF`).
 * Admin Market Resolution Button & Backend Wiring — Added explicit **Resolve** market action button alongside Pause/Unpause in `AdminMarketsTab` for all active, open, paused, and closed markets; updated `resolveMarketAction` in `lib/actions/market-actions.ts` to allow resolving open, paused, closed, or draft markets; and verified full InstantDB backend payout calculation and balance distribution upon resolution.
+* **Spec 17 — Paystack Full Integration (`@paystack/inline-js`)** (`context/feature-specs/17-paystack-integration.md`) — Complete audit verified: (1) `lib/actions/paystack-actions.ts` with 4 server actions (`initializePaystackTransaction`, `verifyAndCreditDeposit`, `fetchNigerianBanks` with 24h cache & priority commercial bank sorting, `resolveBankAccount` with exact API error extraction); (2) `app/api/webhooks/paystack/route.ts` webhook handler with HMAC-SHA512 `timingSafeEqual` signature verification; (3) `@paystack/inline-js` package integration in `DepositDialog` with dynamic client import, `resumeTransaction`, and fallback `authorization_url` redirect; (4) `WithdrawDialog` with pre-selected priority bank (GTBank `058`), 10-digit NUBAN resolution, and InstantDB request persistence; (5) `types/paystack.d.ts` module declaration; (6) Sanitized console error logging eliminating Next.js `ClientFileLogger` `SecurityError` crashes; (7) `npx tsc --noEmit` exit code 0 ✅, `npm run build` exit code 0 ✅ across all 13 routes.
+
 
 ---
 
@@ -78,14 +80,10 @@ Implement Cycle C — Admin Live feature specification.
 
 Implementation will continue in the following order:
 
-4. Markets
-5. Wallet system
-6. Trading
-7. Portfolio
-8. Community
-9. Administration
-10. Background Jobs
-11. Production deployment
+1. **Cycle E: Real-time Notification Feed & Platform Activity Ticker** (`useNotificationFeed`, header bell dropdown, live trade activity stream)
+2. **Cycle F: Market Discovery, Search & Category Filters** (`/markets` search bar, status tabs, category pills)
+3. **Phase 10: Production Deployment & Domain Setup**
+4. **Future Roadmap: Paystack Automated Transfers API** (Deferred until live Paystack corporate business account verification is complete; manual admin approval active)
 
 Each feature will receive its own specification document before implementation begins.
 
