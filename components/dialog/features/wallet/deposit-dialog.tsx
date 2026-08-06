@@ -63,11 +63,11 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
     if (!initResult.success || !initResult.data) {
       setIsLoading(false)
       setStep("review")
-      onClose()
       await dialog.error({
         title: "Payment Setup Failed",
         description: initResult.error ?? "Could not initialize payment. Please try again."
       })
+      onClose()
       return
     }
 
@@ -88,30 +88,30 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
             const verifyResult = await verifyAndCreditDeposit(tx.reference)
             if (verifyResult.success) {
               router.refresh()
-              onClose()
               await dialog.success({
                 title: "Deposit Successful",
                 description: `₦${verifyResult.data?.depositAmount.toLocaleString()} added to your wallet.`
               })
-            } else {
               onClose()
+            } else {
               await dialog.error({
                 title: "Verification Pending",
                 description: verifyResult.error ?? "We are confirming your payment."
               })
+              onClose()
             }
           } catch (error) {
             console.error("[DepositDialog] Verification error:", error)
-            onClose()
             await dialog.error({
               title: "Verification Pending",
               description: "Your payment was successful but verification is taking longer than expected. Your balance will update shortly."
             })
+            onClose()
           }
         },
         onCancel: () => {
-          onClose()
           void dialog.error({ title: "Payment Cancelled", description: "You cancelled the payment." })
+          onClose()
         },
       })
     } catch (err: unknown) {
@@ -124,11 +124,11 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
         return
       }
 
-      onClose()
       await dialog.error({
         title: "Payment Error",
         description: safeErrMsg
       })
+      onClose()
     }
   }
 

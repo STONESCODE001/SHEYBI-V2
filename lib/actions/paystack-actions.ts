@@ -152,7 +152,7 @@ export async function initializePaystackTransaction(
     if (!res.ok) {
       const errBody = await res.text();
       console.error('[Paystack] Initialize failed:', res.status, errBody);
-      return { success: false, error: 'Failed to initialize payment. Please try again.' };
+      return { success: false, error: `Paystack Error: ${errBody}` };
     }
 
     const body = await res.json() as {
@@ -180,7 +180,7 @@ export async function initializePaystackTransaction(
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unexpected error.';
     console.error('[Paystack] initializePaystackTransaction error:', message);
-    return { success: false, error: 'Could not start payment. Please try again.' };
+    return { success: false, error: `Crash: ${message}` };
   }
 }
 
