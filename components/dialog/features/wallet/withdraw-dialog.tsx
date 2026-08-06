@@ -71,9 +71,6 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
       setBanksLoading(false)
       if (result.success && result.data && result.data.length > 0) {
         setBanks(result.data)
-        // Pre-select first bank
-        setSelectedBankCode(result.data[0].code)
-        setSelectedBankName(result.data[0].name)
       } else {
         setBanksError(result.error ?? "Failed to load banks.")
       }
@@ -89,20 +86,28 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
       return
     }
 
+    let cancelled = false
     setResolvingAccount(true)
     setAccountName("")
     setResolveError(null)
 
-    resolveBankAccount(accountNumber, selectedBankCode).then((result) => {
-      setResolvingAccount(false)
-      if (result.success && result.data) {
-        setAccountName(result.data.accountName)
-      } else {
-        setResolveError(result.error ?? "Could not verify account.")
-      }
-    })
-  }, [accountNumber, selectedBankCode])
+    const timer = setTimeout(() => {
+      resolveBankAccount(accountNumber, selectedBankCode).then((result) => {
+        if (cancelled) return
+        setResolvingAccount(false)
+        if (result.success && result.data) {
+          setAccountName(result.data.accountName)
+        } else {
+          setResolveError(result.error ?? "Could not verify account.")
+        }
+      })
+    }, 400)
 
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [accountNumber, selectedBankCode])
   const handleBankChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCode = e.target.value
     const bank = banks.find((b) => b.code === selectedCode)
@@ -116,7 +121,7 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault()
     const val = parseFloat(amount)
-    if (!val || val <= 0) return
+    if (!val || val < 1000) return
     if (accountNumber.length !== 10 || !accountName) return
     setStep("review")
   }
@@ -154,7 +159,7 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
   }
 
   const amountNum = parseFloat(amount)
-  const isValidForm = amountNum > 0 && accountNumber.length === 10 && !!accountName
+  const isValidForm = amountNum >= 1000 && accountNumber.length === 10 && !!accountName
 
   return (
     <ResponsiveWrapper
@@ -211,8 +216,10 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
                   (banksLoading || banks.length === 0) && "opacity-50 cursor-not-allowed"
                 )}
               >
-                {banks.length === 0 && (
+                {banks.length === 0 ? (
                   <option value="">Loading banks...</option>
+                ) : (
+                  <option value="">Select your bank</option>
                 )}
                 {banks.map((bank) => (
                   <option key={`${bank.code}-${bank.slug}`} value={bank.code}>
@@ -302,7 +309,7 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
               </span>
             </div>
             <p className="text-xs text-[var(--text-muted)] mt-1">
-              A 3% processing fee (min ₦150) will be deducted. Net amount will be sent after admin approval.
+              A standard processing fee will be deducted. Net amount will be sent after admin approval.
             </p>
           </div>
 

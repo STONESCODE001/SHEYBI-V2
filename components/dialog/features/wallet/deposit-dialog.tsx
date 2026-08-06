@@ -72,22 +72,41 @@ export function DepositDialog({ isOpen, onClose, status, setStatus }: DepositDia
     const { access_code, authorization_url } = initResult.data
     setIsLoading(false)
 
-    // Close the deposit dialog before popup appears (avoids z-index stacking)
-    onClose()
-
-    // ---- Step 2: Trigger Paystack checkout popup via official SDK ----
     try {
       const { default: PaystackPop } = await import("@paystack/inline-js")
       const paystack = new PaystackPop()
 
-      paystack.resumeTransaction(access_code)
+      // Close the deposit dialog before popup appears (avoids z-index stacking)
+      onClose()
+
+      paystack.newTransaction({
+        key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!,
+        access_code,
+        onSuccess: async (tx: { reference: string }) => {
+          const verifyResult = await verifyAndCreditDeposit(tx.reference)
+          if (verifyResult.success) {
+            await dialog.success({
+              title: "Deposit Successful",
+              description: `₦${verifyResult.data?.depositAmount.toLocaleString()} added to your wallet.`
+            })
+          } else {
+            await dialog.error({
+              title: "Verification Pending",
+              description: verifyResult.error ?? "We are confirming your payment."
+            })
+          }
+        },
+        onCancel: () => {
+          void dialog.error({ title: "Payment Cancelled", description: "You cancelled the payment." })
+        },
+      })
     } catch (err: unknown) {
       const safeErrMsg = err instanceof Error ? err.message : "Failed to open payment popup."
       console.error("[DepositDialog] Paystack popup error:", safeErrMsg)
 
       // Fallback: If inline popup SDK fails, redirect directly to Paystack secure checkout URL
       if (authorization_url && typeof window !== "undefined") {
-        window.open(authorization_url, "_blank")
+        window.location.href = authorization_url
         return
       }
 

@@ -2,7 +2,7 @@
 
 > **Spec Number**: 17
 > **File Path**: `context/feature-specs/17-paystack-integration.md`
-> **Status**: ✅ Completed — All AC-01 through AC-11 verified
+> **Status**: ⏳ Verification Pending — Test mode verified, awaiting production keys
 > **Implemented**: 2026-08-06
 > **Verified**: 2026-08-06
 > **Depends On**: Spec 15a (Payment State & Wallet Seeding), `database-schema.md` (Financial Domain), `architecture.md`
@@ -12,7 +12,7 @@
 
 ## 1. Executive Summary
 
-This document records the **complete, production-ready Paystack integration** in Sheybi v2. It serves as:
+This document records the **complete Paystack integration (Test Mode Verified)** in Sheybi v2. It serves as:
 
 1. A definitive record of every file created or modified.
 2. A trace of every InstantDB database call made before and after Paystack.
@@ -22,7 +22,7 @@ This document records the **complete, production-ready Paystack integration** in
 
 The integration achieves:
 
-- **Deposits via Paystack Inline Popup (`@paystack/inline-js`)** — using official NPM SDK `popup.checkout({ key, access_code, onSuccess, onCancel })` with server-side initialization (`initializePaystackTransaction`) and server-side verification (`verifyAndCreditDeposit`) before any wallet credit.
+- **Deposits via Paystack Inline Popup (`@paystack/inline-js`)** — using official NPM SDK `newTransaction({ key, access_code, onSuccess, onCancel })` with server-side initialization (`initializePaystackTransaction`) and server-side verification (`verifyAndCreditDeposit`) before any wallet credit.
 - **Webhook handler** — `charge.success` events received and verified with HMAC-SHA512, routed to the idempotent `processDepositAction`.
 - **Live Nigerian bank list** — fetched from Paystack `/bank` API (24h cached, deduplicated), replacing the previous static 4-bank dropdown.
 - **Real account name resolution** — fetched from Paystack `/bank/resolve` API, replacing the hardcoded `"JANE DOE"` mock.
@@ -117,7 +117,7 @@ DepositDialog
   idempotencyKey: `deposit_${paystackReference}`,
   balanceAfter: wallet.availableBalance + amount,
   referenceId: paystackReference,
-  metadata: { paymentProvider: 'paystack', paymentReference },
+  metadata: { paymentProvider: 'paystack', paymentReference: paystackReference },
   createdAt: Date.now(),
 }
 ```
@@ -284,11 +284,12 @@ POST /api/webhooks/paystack
 [5] event = JSON.parse(rawBody)
         │
         ▼
-[6] return NextResponse.json({ received: true }, { status: 200 })
-    ← Return 200 IMMEDIATELY. Paystack retries on non-2xx responses.
+[6] after(async () => await handleWebhookEvent(event))
+    ← Queue processing for after the response is sent.
         │
         ▼
-[7] void handleWebhookEvent(event)  ← Fire-and-forget after response sent
+[7] return NextResponse.json({ received: true }, { status: 200 })
+    ← Return 200 IMMEDIATELY. Paystack retries on non-2xx responses.
 ```
 
 **Why `sha512` not `sha256`:** Paystack uses HMAC-SHA512. Using SHA256 would produce a different hash and all webhooks would fail verification.
@@ -312,11 +313,12 @@ POST /api/webhooks/paystack
     await initializePaystackTransaction(amountNum)          [server]
     if error → dialog.error("Payment Setup Failed")
     if success:
-      onClose()                                             ← close dialog first
       const { default: PaystackPop } = await import("@paystack/inline-js")  ← dynamic import prevents SSR window error
       const paystack = new PaystackPop()
-      paystack.resumeTransaction(access_code)
-      // Webhook or popup callback fires → verifyAndCreditDeposit(reference)
+      onClose()                                             ← close dialog right before popup
+      paystack.newTransaction({ key, access_code, onSuccess, onCancel })
+      // Popup callback fires → verifyAndCreditDeposit(reference)
+      // Webhook fires separately → payload verified, triggers processDepositAction directly
 ```
 
 **SDK Loading & SSR Safety:**  
@@ -329,7 +331,8 @@ Instead of loading Inline.js dynamically via `<Script>` tags, we use the officia
 ```
 [input step — on mount]
   → fetchNigerianBanks() [server] called once (or from 24h in-memory cache)
-  → setBanks([...Nigerian banks]) + pre-select first bank (e.g. Abbey Mortgage Bank)
+  → setBanks([...Nigerian banks])
+  → Selection defaults to an empty placeholder ("Select your bank")
 
   Amount field (min ₦1,000)
   Bank <select> (100+ banks from Paystack)
@@ -515,7 +518,8 @@ Used PowerShell to truncate each file to the correct line count, removing all le
 ### AC-05 Webhook — Signature Verification
 
 - [ ] Missing `x-paystack-signature` header → HTTP 401.
-- [ ] Invalid signature → HTTP 401.
+- [ ] Malformed signature (length !== 128) → HTTP 401.
+- [ ] Invalid signature (failed HMAC check) → HTTP 401.
 - [ ] Valid HMAC-SHA512 signature → HTTP 200 within 100ms (response sent before processing).
 
 ### AC-06 Webhook — Event Processing
@@ -529,7 +533,7 @@ Used PowerShell to truncate each file to the correct line count, removing all le
 - [ ] Opening WithdrawDialog shows "Loading banks..." spinner.
 - [ ] Dropdown renders 50+ real Nigerian banks from Paystack.
 - [ ] No React duplicate key warnings in browser console.
-- [ ] Second open of WithdrawDialog within 24h served from cache (no network request).
+- [ ] Second open of WithdrawDialog within 24h served from cache on a best-effort basis (memory-local).
 
 ### AC-08 WithdrawDialog — Account Resolution
 

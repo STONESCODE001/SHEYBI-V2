@@ -180,7 +180,7 @@ export async function initializePaystackTransaction(
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unexpected error.';
     console.error('[Paystack] initializePaystackTransaction error:', message);
-    return { success: false, error: message };
+    return { success: false, error: 'Could not start payment. Please try again.' };
   }
 }
 
@@ -266,9 +266,15 @@ export async function verifyAndCreditDeposit(
       return { success: false, error: 'Payment reference mismatch. Contact support.' };
     }
 
+    // ---- Guard 3: Currency must be NGN ----
+    if (txData.currency !== 'NGN') {
+      console.error('[Paystack] Currency mismatch:', txData.currency, '!= NGN');
+      return { success: false, error: 'Only NGN payments are supported.' };
+    }
+
     // ---- Guard 3: userId in metadata must match authenticated user ----
     const metadataUserId = txData.metadata?.userId;
-    if (metadataUserId && metadataUserId !== userId) {
+    if (!metadataUserId || metadataUserId !== userId) {
       console.error('[Paystack] UserId mismatch:', metadataUserId, '!=', userId);
       return { success: false, error: 'Payment does not belong to this account.' };
     }
@@ -323,7 +329,7 @@ export async function fetchNigerianBanks(): Promise<ActionResponse<NigerianBank[
     }
 
     const res = await fetch(
-      `${PAYSTACK_BASE_URL}/bank?country=nigeria&perPage=100&use_cursor=false`,
+      `${PAYSTACK_BASE_URL}/bank?country=nigeria&perPage=1000&use_cursor=false`,
       {
         method: 'GET',
         headers: paystackHeaders(),
@@ -425,7 +431,7 @@ export async function resolveBankAccount(
     }
 
     // ---- Validate inputs ----
-    if (!accountNumber || accountNumber.length !== 10) {
+    if (!/^\d{10}$/.test(accountNumber ?? '')) {
       return { success: false, error: 'Account number must be exactly 10 digits.' };
     }
     if (!bankCode) {

@@ -24,7 +24,7 @@
  * @see context/feature-specs/15a-payment-state-and-wallet-seeding.md §5.2
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import crypto from 'crypto';
 import { processDepositAction } from '@/lib/actions/wallet-actions';
 
@@ -88,6 +88,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     .update(rawBody)
     .digest('hex');
 
+  if (signature.length !== 128) {
+    console.warn('[Paystack Webhook] Signature length is invalid');
+    return NextResponse.json({ error: 'Invalid signature format' }, { status: 401 });
+  }
+
   // ---- Step 5: Timing-safe comparison (prevents timing attacks) ----
   let isValid = false;
   try {
@@ -114,16 +119,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  // ---- Step 7: Return 200 IMMEDIATELY (Paystack retries on non-2xx) ----
-  // Process the event asynchronously after acknowledging receipt.
-  // This prevents Paystack from timing out and sending duplicate events.
-  const response = NextResponse.json({ received: true }, { status: 200 });
+  // ---- Step 8: Handle events after the response is flushed ----
+  after(async () => {
+    try {
+      await handleWebhookEvent(event);
+    } catch (error) {
+      console.error('[Paystack Webhook] Handler failed:', error);
+    }
+  });
 
-  // ---- Step 8: Handle events ----
-  // Using void to explicitly not await (fire-and-forget pattern)
-  void handleWebhookEvent(event);
-
-  return response;
+  return NextResponse.json({ received: true }, { status: 200 });
 }
 
 // ============================================================================
@@ -155,7 +160,17 @@ async function handleWebhookEvent(event: PaystackWebhookEvent): Promise<void> {
 // ============================================================================
 
 async function handleChargeSuccess(event: PaystackChargeSuccessEvent): Promise<void> {
-  const { reference, amount, metadata, customer } = event.data;
+  const { reference, amount, metadata, customer, status, currency } = event.data;
+
+  // ---- Guard: Validate status and currency ----
+  if (status !== 'success') {
+    console.warn(`[Paystack Webhook] charge not successful. status=${status}`);
+    return;
+  }
+  if (currency !== 'NGN') {
+    console.warn(`[Paystack Webhook] charge currency is not NGN. currency=${currency}`);
+    return;
+  }
 
   // ---- Extract userId ----
   // userId is embedded in the metadata when we initialize the transaction.
@@ -166,7 +181,7 @@ async function handleChargeSuccess(event: PaystackChargeSuccessEvent): Promise<v
     console.error(
       '[Paystack Webhook] charge.success missing userId in metadata.',
       'Reference:', reference,
-      'Customer:', customer.email
+      'CustomerCode:', customer.customer_code
     );
     // Cannot credit without a userId — log and skip
     // In production: alert the ops team (e.g., send a Slack notification)
@@ -199,5 +214,7 @@ async function handleChargeSuccess(event: PaystackChargeSuccessEvent): Promise<v
       `[Paystack Webhook] ✗ Failed to credit wallet: userId=${userId}`,
       `error=${result.error}`
     );
+    // TODO: Write failure to a dead-letter table for reconciliation
+    console.error(`[DEAD-LETTER] userId=${userId}, ref=${reference}, amount=${nairaAmount}`);
   }
 }
