@@ -142,7 +142,6 @@ export async function initializePaystackTransaction(
         email,
         amount: Math.round(amount * 100), // Convert ₦ → kobo
         currency: 'NGN',
-        callback_url: '', // Forces Paystack to NOT redirect, ensuring the popup's onSuccess callback runs
         metadata: {
           userId,           // Used by webhook handler to credit the right wallet
           sheybiRef,        // Internal reference for audit trails
