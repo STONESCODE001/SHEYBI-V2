@@ -92,12 +92,12 @@ function SearchResultCard({
       )}
       {...props}
     >
-      {/* Left: Small thumbnail */}
-      <div className="size-16 shrink-0 overflow-hidden rounded-xl">
+      {/* Left: Larger thumbnail */}
+      <div className="size-24 shrink-0 overflow-hidden rounded-xl">
         <CardImage
           src={imageUrl}
           alt={`${title} thumbnail`}
-          className="size-16 rounded-xl"
+          className="size-24 rounded-xl"
         />
       </div>
 

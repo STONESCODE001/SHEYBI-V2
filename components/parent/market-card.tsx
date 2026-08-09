@@ -215,34 +215,34 @@ function MarketCard({
                 </h3>
               </div>
 
-              {/* Contestant 1 vs Contestant 2 Raw Headshots */}
-              <div className="flex items-center justify-center gap-6 py-1">
+              {/* Contestant 1 vs Contestant 2 Headshots */}
+              <div className="flex items-center justify-center gap-6 py-2">
                 {/* Left Contestant Headshot */}
-                <div className="relative h-14 w-14 sm:h-16 sm:w-16">
+                <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl overflow-hidden shadow-md">
                   <Image
                     src={contestants[0]?.avatarUrl || defaultTestImg}
                     alt={contestants[0]?.name || "Contestant 1"}
                     fill
                     unoptimized
-                    sizes="(max-width: 768px) 64px, 64px"
-                    className="object-contain"
+                    sizes="(max-width: 768px) 96px, 96px"
+                    className="object-cover object-top"
                   />
                 </div>
 
                 {/* Center VS Label */}
-                <span className="text-sm sm:text-base font-black tracking-wider text-slate-300">
+                <span className="text-base sm:text-lg font-black tracking-wider text-slate-300">
                   VS
                 </span>
 
                 {/* Right Contestant Headshot */}
-                <div className="relative h-14 w-14 sm:h-16 sm:w-16">
+                <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl overflow-hidden shadow-md">
                   <Image
                     src={contestants[1]?.avatarUrl || defaultTestImg}
                     alt={contestants[1]?.name || "Contestant 2"}
                     fill
                     unoptimized
-                    sizes="(max-width: 768px) 64px, 64px"
-                    className="object-contain"
+                    sizes="(max-width: 768px) 96px, 96px"
+                    className="object-cover object-top"
                   />
                 </div>
               </div>
@@ -313,15 +313,15 @@ function MarketCard({
                     className="flex items-center justify-between rounded-xl bg-[#0D1424] p-2 sm:p-2.5 transition-colors group-hover/market-card:bg-[#121B30]"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      {/* Raw Contestant Avatar */}
-                      <div className="relative h-7 w-7 sm:h-8 sm:w-8 shrink-0">
+                      {/* Contestant Avatar */}
+                      <div className="relative h-10 w-10 sm:h-12 sm:w-12 rounded-xl overflow-hidden shrink-0">
                         <Image
                           src={c.avatarUrl || defaultTestImg}
                           alt={c.name}
                           fill
                           unoptimized
-                          sizes="(max-width: 768px) 32px, 32px"
-                          className="object-contain"
+                          sizes="(max-width: 768px) 48px, 48px"
+                          className="object-cover object-top"
                         />
                       </div>
                       <span className="text-xs sm:text-sm font-semibold text-slate-200 truncate">

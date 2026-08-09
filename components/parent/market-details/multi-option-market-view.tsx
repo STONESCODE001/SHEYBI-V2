@@ -131,17 +131,17 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
             >
               {/* Left Side: Avatar + Name + Volume Metric */}
               <div className="flex items-center gap-3">
-                <div className="relative size-12 sm:size-14 overflow-hidden rounded-xl bg-[var(--bg-surface)] flex-shrink-0 flex items-center justify-center">
+                <div className="relative size-16 sm:size-20 overflow-hidden rounded-xl bg-[var(--bg-surface)] flex-shrink-0 flex items-center justify-center shadow-md">
                   {candidate.avatarUrl ? (
                     <Image
                       src={candidate.avatarUrl}
                       alt={candidate.name}
                       fill
-                      sizes="(max-width: 768px) 56px, 56px"
-                      className="object-cover"
+                      sizes="(max-width: 768px) 80px, 80px"
+                      className="object-cover object-top"
                     />
                   ) : (
-                    <User className="size-6 text-[var(--accent-green)]" />
+                    <User className="size-8 text-[var(--accent-green)]" />
                   )}
                 </div>
                 <div className="flex flex-col">

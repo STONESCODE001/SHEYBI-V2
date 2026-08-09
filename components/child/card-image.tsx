@@ -68,7 +68,7 @@ function CardImageInner({
           onLoad={handleLoad}
           onError={handleError}
           className={cn(
-            "object-cover",
+            "object-cover object-top",
             "transition-opacity duration-200",
             imageState === "loading" && "opacity-0",
             imageState === "default" && "opacity-100",
@@ -83,7 +83,7 @@ function CardImageInner({
           alt={alt}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover"
+          className="object-cover object-top"
         />
       )}
     </div>
