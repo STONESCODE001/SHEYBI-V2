@@ -7,17 +7,19 @@ Update this document immediately after every completed implementation unit. This
 ## Current Phase: Phase 4: Core Engine & Algorithm Implementation
 
 ### Current Implementation Target
-- **Spec 19 — Critical Launch Fixes, Data Optimization, KYC Verification & UX Hardening** (`context/feature-specs/19-critical-launch-fixes-and-kyc.md`)
+- **Spec 20 — Real-Time Market Discovery & Search Bar Integration** (`context/feature-specs/20-market-search-and-discovery.md`) — **Completed**
 
 ---
    
 # Current Goal
 
-Implement Spec 19: Critical launch fixes, data query optimizations, guest market access, trending filters, simplified KYC collection and admin review, skeleton loaders, and on-brand SEO metadata.
+All verification criteria for Spec 20 passed. Live InstantDB market discovery & search dialog integrated across desktop and mobile shell headers.
 
 ---
 
 # Completed
+
+* **Spec 20 — Real-Time Market Discovery & Search Bar Integration** (`context/feature-specs/20-market-search-and-discovery.md`) — Completed 100%. (1) Replaced `MOCK_DB` in `SearchDialog` with live InstantDB `db.useQuery` for `markets` fetching linked `category` and `options`; (2) Case-insensitive substring matching algorithm across market titles, descriptions, category names, and option names with fallback normalized matching; (3) Priority sorting rendering `open` state markets first; (4) Quick search tag pills (`#BBNaija`, `#Eviction`, `#HeadOfHouse`, `#Winner`) populating search query on click; (5) Skeleton loaders (`SearchResultCardSkeleton`) during query loading; (6) `DialogEmptyState` rendering `"No markets found matching '[query]'."`; (7) Routing to `/markets/[id]` upon selecting a search result card; (8) Keyboard navigation (`Esc` to close, `Enter` / `Space` selection).
 
 * Product vision established.
 * Project scope defined.
@@ -285,6 +287,10 @@ Make sure you update this section after every meaningful implementation unit.
   * **Verification:** `npx tsx lib/seed/seed-instantdb.ts` executed cleanly (3 categories, 3 markets, 8 options created); `npx instant-cli push schema` and `push perms` output `✓ Done`; prediction engine tests passed 100%.
 
 * **2026-08-09**
+  * **Feature Completed:** Spec 20 — Real-Time Market Discovery & Search Bar Integration (`20-market-search-and-discovery.md`).
+  * **Files Modified:** `components/dialog/features/search/search-dialog.tsx`, `context/feature-specs/20-market-search-and-discovery.md`, `context/progress-tracker.md`.
+  * **Decisions & Implementation:** Connected `SearchDialog` to live InstantDB database query (`db.useQuery`); permanently removed `MOCK_DB`; implemented real-time case-insensitive substring matching algorithm across market titles, descriptions, category names, and option names with fallback normalized matching; sorted results prioritizing `open` state markets; added quick search tag pills (`#BBNaija`, `#Eviction`, `#HeadOfHouse`, `#Winner`) populating search query on click; displayed `SearchResultCardSkeleton` loading states and `DialogEmptyState` when zero matches found; enabled router navigation to `/markets/[id]`.
+  * **Verification:** `npx tsc --noEmit` passed 0 errors; `npm run build` completed 100% successfully (27/27 pages compiled); all 7 specification verification criteria verified 100% green.
   * **Feature Completed:** Spec 19 — Critical Launch Fixes, Data Optimization, KYC Verification & UX Hardening (`19-critical-launch-fixes-and-kyc.md`).
   * **Files Created/Modified:** `package.json`, `instant.schema.ts`, `app/layout.tsx`, `app/page.tsx`, `app/markets/page.tsx`, `app/markets/[id]/page.tsx`, `app/wallet/page.tsx`, `app/portfolio/page.tsx`, `app/dashboard/page.tsx`, `app/admin/page.tsx`, `lib/actions/kyc-actions.ts` [NEW], `lib/hooks/use-kyc.ts` [NEW], `components/ui/skeletons.tsx` [NEW], `components/dialog/features/profile/kyc-dialog.tsx` [NEW], `components/admin/admin-kyc-tab.tsx` [NEW], `components/home/home-client.tsx` [NEW], `components/markets/markets-client.tsx` [NEW], `components/wallet/wallet-client.tsx` [NEW], `components/portfolio/portfolio-client.tsx` [NEW], `components/parent/market-details/market-detail-client.tsx` [NEW], `components/dialog/register-dialogs.ts`, `lib/actions/wallet-actions.ts`, `lib/hooks/use-admin-data.ts`, `lib/hooks/use-markets.ts`, `lib/storage.ts`, `components/shell/application-shell.tsx`, `components/parent/hero-banner.tsx`, `components/parent/category-tabs.tsx`, `context/progress-tracker.md`, `context/feature-specs/19-critical-launch-fixes-and-kyc.md`.
   * **Decisions & Implementation:** Isolated market detail queries (`id`/`slug` filter); scoped withdrawal history queries (`userId` filter); unauthenticated public guest access to `/markets` via `PublicLayout`; sorted/filtered Trending tab (`tradingVolume > 0`, `desc`); 11-digit NIN & document image upload KYC submission flow with InstantDB storage URL resolution and base64 Data URL fallback; reactive `useKyc` hook & wallet status badge; pre-withdrawal KYC enforcement (`KYC_REQUIRED`); admin KYC control panel with masked NIN (`*****32194`), thumbnail previews, external links, and audit logs; reusable skeleton suite; on-brand SEO metadata; React hydration warning suppression on elements with `select-none`.
