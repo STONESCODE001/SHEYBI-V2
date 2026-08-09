@@ -55,6 +55,7 @@ function ApplicationShell({
     <div
       data-slot="application-root"
       data-variant={effectiveVariant}
+      suppressHydrationWarning
       className={cn(
         "relative flex h-[100dvh] w-screen overflow-hidden bg-bg-base text-text-primary font-sans",
         effectiveVariant === "admin" && "dark",

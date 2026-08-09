@@ -145,6 +145,14 @@ export function WithdrawDialog({ isOpen, onClose, status, setStatus }: WithdrawD
     loader.close()
 
     if (!result.success) {
+      if (result.error === "KYC_REQUIRED" || result.error?.includes("KYC")) {
+        await dialog.error({
+          title: "Identity Verification Required",
+          description: "You must complete identity verification (KYC) before requesting withdrawals.",
+        })
+        dialog.open("profile/kyc")
+        return
+      }
       await dialog.error({
         title: "Withdrawal Failed",
         description: result.error ?? "Failed to request withdrawal."

@@ -38,7 +38,7 @@ const schema = i.schema({
       resolutionTime: i.number().optional(),
       liquidity: i.number(), // Admin-assigned Naira amount L
       liquidityParam: i.number(), // Computed LMSR `b` parameter
-      tradingVolume: i.number(), // Cumulative ₦ traded
+      tradingVolume: i.number().indexed(), // Cumulative ₦ traded
       totalTrades: i.number(), // Count of completed trades
       winningOptionId: i.string().optional(),
       createdBy: i.string().indexed(), // Clerk userId
@@ -184,12 +184,15 @@ const schema = i.schema({
     kyc_records: i.entity({
       userId: i.string().unique().indexed(),
       verificationStatus: i.string().indexed(), // "pending" | "approved" | "rejected"
-      legalName: i.string(),
-      dateOfBirth: i.string(),
-      documentType: i.string(),
-      submittedAt: i.number(),
+      legalName: i.string().optional(),
+      dateOfBirth: i.string().optional(),
+      documentType: i.string().optional(),
+      nin: i.string().optional(),
+      documentImageUrl: i.string().optional(),
+      submittedAt: i.number().indexed(),
       reviewedAt: i.number().optional(),
       reviewedBy: i.string().optional(),
+      rejectionReason: i.string().optional(),
     }),
 
     system_settings: i.entity({

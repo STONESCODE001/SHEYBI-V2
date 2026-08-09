@@ -46,12 +46,13 @@ function HeroBanner({
     <section
       data-slot="hero-banner"
       role="banner"
+      suppressHydrationWarning
       className={cn("w-full py-2 sm:py-4 md:py-6", className)}
       {...props}
     >
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8">
         {/* Left: Stacked Headline (Left aligned on all viewports) */}
-        <div className="flex flex-col items-start text-left select-none max-w-2xl">
+        <div suppressHydrationWarning className="flex flex-col items-start text-left select-none max-w-2xl">
           {headline ? (
             <h1 className="font-black text-4xl sm:text-5xl md:text-6xl tracking-tight text-white leading-tight">
               {headline}
@@ -76,6 +77,7 @@ function HeroBanner({
         {/* Right: Mascot Image (Hidden on Mobile per Figma design; visible & enlarged on Desktop) */}
         <div className="hidden md:flex relative w-64 md:w-[320px] lg:w-[380px] xl:w-[420px] shrink-0 justify-end items-center">
           <img
+            suppressHydrationWarning
             src={mascotUrl}
             alt="Sheybi Mascot"
             className="w-full h-auto object-contain max-h-[360px] lg:max-h-[400px] drop-shadow-2xl pointer-events-none select-none"

@@ -7,13 +7,13 @@ Update this document immediately after every completed implementation unit. This
 ## Current Phase: Phase 4: Core Engine & Algorithm Implementation
 
 ### Current Implementation Target
-- **Cycle E — Real-time Notification Feed & Platform Activity Ticker** (Notifications dropdown, trade execution activity stream, and live ticker integration)
+- **Spec 19 — Critical Launch Fixes, Data Optimization, KYC Verification & UX Hardening** (`context/feature-specs/19-critical-launch-fixes-and-kyc.md`)
 
 ---
    
 # Current Goal
 
-Implement Cycle C — Admin Live feature specification.
+Implement Spec 19: Critical launch fixes, data query optimizations, guest market access, trending filters, simplified KYC collection and admin review, skeleton loaders, and on-brand SEO metadata.
 
 ---
 
@@ -70,13 +70,14 @@ Implement Cycle C — Admin Live feature specification.
 * **Spec 17 — Paystack Full Integration (`@paystack/inline-js`) & Verification Lifecycle** (`context/feature-specs/17-paystack-integration.md`) — Complete audit verified: (1) `lib/actions/paystack-actions.ts` with 4 server actions (`initializePaystackTransaction`, `verifyAndCreditDeposit`, `fetchNigerianBanks` with 24h cache & priority commercial bank sorting, `resolveBankAccount` with exact API error extraction); (2) `app/api/webhooks/paystack/route.ts` webhook handler with HMAC-SHA512 `timingSafeEqual` signature verification & idempotency guards; (3) `@paystack/inline-js` package integration in `DepositDialog` with dynamic client import.
   * **Critical Architecture Fix (Payment Lifecycle):** Resolved a silent verification failure where calling `onClose()` before opening the Paystack popup caused Next.js to unmount the `DepositDialog`, aborting the `onSuccess` server action fetch. Fixed by introducing a `waiting` state, ensuring the component stays mounted until verification completes, and explicitly overriding `callback_url: ''` to prevent aggressive browser redirects from Paystack dashboard settings. Handled fallback external redirects gracefully in `app/wallet/page.tsx` using a `<Suspense>` bounded `useSearchParams` URL parser that silently credits orphaned transactions upon user return.
 
-* **Spec 18 — Paystack Live Mode & Financial State Reset (`18-paystack-live-and-financial-reset.md`)** — Removed demo wallet seeding. Implemented robust `wipeFinancialStateAction` capable of clearing 11 distinct collections (ledger, positions, markets, market_options, deposits, withdrawal_requests, audit_logs, market_activity, market_suggestions) via chunked multi-transaction InstantDB batching. Integrated strict `FinancialWipeDialog` UI into the Admin Dashboard with "CONFIRM WIPE" string matching. Build verified.
+* **Spec 19 — Critical Launch Fixes, Data Optimization, KYC Verification & UX Hardening** (`context/feature-specs/19-critical-launch-fixes-and-kyc.md`) — Completed 100%. (1) Server-side isolated InstantDB queries for market details (`/markets/[id]`) and user-scoped withdrawal requests (`/wallet`); (2) Package identity standardized to `"sheybi"`; (3) Unauthenticated guest access to `/markets` feed via `PublicLayout`; (4) Trending markets filtering (`tradingVolume > 0`) & descending volume ordering; (5) Simplified Identity Verification (KYC) flow supporting 11-digit NIN validation or document image upload; (6) Reactive `useKyc` hook, dynamic wallet status badge mapping (`Unverified`, `Pending KYC`, `Active`, `KYC Rejected`), and pre-withdrawal KYC enforcement (`KYC_REQUIRED`); (7) Admin KYC control panel with masked NIN display (`*****32194`), thumbnail previews, external image tab links, and audit-logged approval/rejection actions; (8) Reusable skeleton suite (`MarketCardSkeleton`, `WalletCardSkeleton`, `ActivityItemSkeleton`); (9) Server route SEO metadata exports across `/`, `/markets`, `/markets/[id]`, `/wallet`, and `/portfolio`.
 
 ---
 
 # In Progress
 
 - None.
+
 
 # Next Up
 
@@ -283,11 +284,12 @@ Make sure you update this section after every meaningful implementation unit.
   * **Decisions:** Registered Clerk OAuth client (`SHEYBI`) on InstantDB App ID `5979c681-39cb-4421-9181-05786260e9bd`; pushed 15 schema namespaces and relational links via `npx instant-cli push schema`; pushed CEL access rules via `npx instant-cli push perms`; executed seed script `seed-instantdb.ts` using `@instantdb/admin` populating 3 categories (*BBNaija Season 9*, *Head of House*, *Eviction Predictions*) and 3 live prediction markets (Binary, 1v1, Multi-option) with initial probabilities and LMSR liquidity parameters ($L=₦50,000$, $b=36067$).
   * **Verification:** `npx tsx lib/seed/seed-instantdb.ts` executed cleanly (3 categories, 3 markets, 8 options created); `npx instant-cli push schema` and `push perms` output `✓ Done`; prediction engine tests passed 100%.
 
-* **2026-07-28**
-  * **Feature Completed:** Cycle A — Markets Feed & Detail Page Live (`14-cycle-a-markets-live.md`).
-  * **Files Modified/Deleted:** `app/page.tsx`, `app/markets/page.tsx`, `app/dashboard/page.tsx`, `app/markets/[id]/page.tsx`, `lib/market-adapter.ts`, `lib/mock-markets.ts` [DELETED], `lib/repositories/mock-repository.ts` [DELETED], `context/progress-tracker.md`.
-  * **Decisions:** Connected all market feed and detail surfaces directly to live InstantDB graph database via `useMarkets` and `db.useQuery`; transformed database entities to card and detail view props using `lib/market-adapter.ts`; eliminated all mock market data fallbacks and deleted dead mock dataset files.
-  * **Verification:** Checked 100% against Spec 14 checklist. All mock data eliminated; live InstantDB data reactive across all market surfaces.
+* **2026-08-09**
+  * **Feature Completed:** Spec 19 — Critical Launch Fixes, Data Optimization, KYC Verification & UX Hardening (`19-critical-launch-fixes-and-kyc.md`).
+  * **Files Created/Modified:** `package.json`, `instant.schema.ts`, `app/layout.tsx`, `app/page.tsx`, `app/markets/page.tsx`, `app/markets/[id]/page.tsx`, `app/wallet/page.tsx`, `app/portfolio/page.tsx`, `app/dashboard/page.tsx`, `app/admin/page.tsx`, `lib/actions/kyc-actions.ts` [NEW], `lib/hooks/use-kyc.ts` [NEW], `components/ui/skeletons.tsx` [NEW], `components/dialog/features/profile/kyc-dialog.tsx` [NEW], `components/admin/admin-kyc-tab.tsx` [NEW], `components/home/home-client.tsx` [NEW], `components/markets/markets-client.tsx` [NEW], `components/wallet/wallet-client.tsx` [NEW], `components/portfolio/portfolio-client.tsx` [NEW], `components/parent/market-details/market-detail-client.tsx` [NEW], `components/dialog/register-dialogs.ts`, `lib/actions/wallet-actions.ts`, `lib/hooks/use-admin-data.ts`, `lib/hooks/use-markets.ts`, `lib/storage.ts`, `components/shell/application-shell.tsx`, `components/parent/hero-banner.tsx`, `components/parent/category-tabs.tsx`, `context/progress-tracker.md`, `context/feature-specs/19-critical-launch-fixes-and-kyc.md`.
+  * **Decisions & Implementation:** Isolated market detail queries (`id`/`slug` filter); scoped withdrawal history queries (`userId` filter); unauthenticated public guest access to `/markets` via `PublicLayout`; sorted/filtered Trending tab (`tradingVolume > 0`, `desc`); 11-digit NIN & document image upload KYC submission flow with InstantDB storage URL resolution and base64 Data URL fallback; reactive `useKyc` hook & wallet status badge; pre-withdrawal KYC enforcement (`KYC_REQUIRED`); admin KYC control panel with masked NIN (`*****32194`), thumbnail previews, external links, and audit logs; reusable skeleton suite; on-brand SEO metadata; React hydration warning suppression on elements with `select-none`.
+  * **Verification (Final Sweep):** `npx tsc --noEmit` passed with 0 errors across all modules; `npm run build` completed 100% successfully (27/27 pages compiled and static/dynamic routes generated); automated LMSR test suite (`run-tests.ts`) passed 100% (liquidity parameters, LogSumExp, Worked Example 1 buy trade, Single-Outcome Exposure invariant, and settlement payouts).
+
 
 
 

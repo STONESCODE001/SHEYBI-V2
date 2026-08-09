@@ -57,3 +57,13 @@ export function useAdminLedger() {
   });
   return { isLoading, error, ledgerEntries: data?.ledger ?? [] };
 }
+
+export function useAdminKycRecords() {
+  const { isLoading, error, data } = db.useQuery({
+    kyc_records: {
+      $: { order: { submittedAt: 'desc' } },
+    },
+  });
+  return { isLoading, error, kycRecords: data?.kyc_records ?? [] };
+}
+

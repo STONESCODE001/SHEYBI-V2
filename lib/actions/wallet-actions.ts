@@ -23,6 +23,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { WITHDRAWAL_FEE_RATE, MIN_WITHDRAWAL_FEE } from '@/lib/prediction-engine/lmsr';
 import { repository } from '@/lib/repositories';
+import { adminDb } from '@/lib/instant-admin';
 
 // ============================================================================
 // RESPONSE TYPES & INPUT INTERFACES
@@ -175,29 +176,7 @@ export async function processDepositAction(
  * Request a withdrawal from the user's available balance.
  *
  * IMPORTANT:
- * - Deducts from availableBalance IMMEDIATELY upon request
- * - Does NOT touch lockedBalance (that's exclusively for trading positions)
- * - If admin rejects the withdrawal, funds are refunded via rejectWithdrawalAction
- * - If admin approves, Paystack processes the payout
- *
- * FEE CALCULATION:
- *   fee = max(amount * 3.0%, ₦150)
- *   netAmount = amount - fee (what the user receives)
- *
- * EXECUTION ORDER:
- * 1. Validate authentication
- * 2. Validate withdrawal amount
- * 3. Fetch wallet and validate balance
- * 4. Calculate withdrawal fee
- * 5. Deduct availableBalance immediately
- * 6. Record ledger entries (withdrawal + fee)
- * 7. Return withdrawal reference
- */
-
-/**
- * Request a withdrawal from the user's available balance.
- *
- * IMPORTANT:
+ * - Requires approved KYC record in kyc_records entity
  * - Deducts from availableBalance IMMEDIATELY upon request
  * - Does NOT touch lockedBalance (that's exclusively for trading positions)
  * - If admin rejects the withdrawal, funds are refunded via rejectWithdrawalAction
@@ -219,6 +198,23 @@ export async function requestWithdrawalAction(
     const { userId } = await auth();
     if (!userId) {
       return { success: false, error: 'Authentication required. Please sign in.' };
+    }
+
+    // ---- STEP 1.5: Enforce Pre-Withdrawal KYC Check ----
+    const kycResult = await adminDb.query({
+      kyc_records: {
+        $: {
+          where: { userId },
+        },
+      },
+    });
+
+    const kycRecord = (kycResult as any)?.kyc_records?.[0];
+    if (!kycRecord || kycRecord.verificationStatus !== 'approved') {
+      return {
+        success: false,
+        error: 'KYC_REQUIRED',
+      };
     }
 
     // ---- STEP 2: Validate amount ----

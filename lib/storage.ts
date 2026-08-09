@@ -27,9 +27,15 @@ export async function uploadInstantFile(
   file: File
 ): Promise<UploadResult> {
   const { data } = await db.storage.uploadFile(path, file);
+  const fileId = data?.id || "";
+  const url =
+    (data as any)?.url ||
+    (data as any)?.downloadUrl ||
+    (fileId ? `https://api.instantdb.com/storage/files/${fileId}` : "");
+
   return {
-    fileId: data.id,
-    url: (data as any).url || "",
+    fileId,
+    url,
   };
 }
 

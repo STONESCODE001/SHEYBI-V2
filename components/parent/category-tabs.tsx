@@ -72,7 +72,7 @@ function CategoryTabs({
   }
 
   return (
-    <div data-slot="category-tabs" className={cn("w-full py-1", className)} {...props}>
+    <div data-slot="category-tabs" suppressHydrationWarning className={cn("w-full py-1", className)} {...props}>
       <div className="inline-flex max-w-full items-center gap-2 overflow-x-auto scrollbar-none rounded-2xl border border-white/10 bg-[#0B101D] p-1.5 shadow-sm">
         {categories.map((category) => {
           const isActive = currentTab === category.value
@@ -80,6 +80,7 @@ function CategoryTabs({
             <button
               key={category.value}
               type="button"
+              suppressHydrationWarning
               disabled={category.disabled}
               onClick={() => handleSelect(category.value)}
               className={cn(

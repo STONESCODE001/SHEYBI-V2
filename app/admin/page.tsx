@@ -3,7 +3,7 @@
 import * as React from "react"
 import { AdminLayout } from "@/components/layouts"
 import { SectionHeader } from "@/components/parent"
-import { Store, Lightbulb, Wallet, Tags, ScrollText } from "lucide-react"
+import { Store, Lightbulb, Wallet, Tags, ScrollText, ShieldCheck } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from "@clerk/nextjs"
 
@@ -15,6 +15,7 @@ import {
   useAdminAuditLogs,
   useAdminCategories,
   useAdminLedger,
+  useAdminKycRecords,
 } from "@/lib/hooks/use-admin-data"
 
 // Import Server Actions
@@ -38,6 +39,7 @@ import { AdminSuggestionsTab, type MarketSuggestionItem } from "@/components/adm
 import { AdminWithdrawalsTab, type WithdrawalItem } from "@/components/admin/admin-withdrawals-tab"
 import { AdminCategoriesTab, type CategoryItem } from "@/components/admin/admin-categories-tab"
 import { AdminAuditLogsTab, type AuditLogRecord } from "@/components/admin/admin-audit-logs-tab"
+import { AdminKycTab } from "@/components/admin/admin-kyc-tab"
 
 // Import Admin Dialogs
 import { CreateMarketDialog } from "@/components/admin/create-market-dialog"
@@ -56,7 +58,7 @@ export default function AdminDashboardPage() {
 
   // Active Workspace Tab Selection State:
   const [activeTab, setActiveTab] = React.useState<
-    "markets" | "suggestions" | "withdrawals" | "categories" | "audit"
+    "markets" | "suggestions" | "withdrawals" | "categories" | "audit" | "kyc"
   >("markets")
 
   // Modal Dialog Visibility & Active Item States:
@@ -83,6 +85,11 @@ export default function AdminDashboardPage() {
   const { logs: dbLogs } = useAdminAuditLogs()
   const { categories: dbCategories } = useAdminCategories()
   const { ledgerEntries } = useAdminLedger()
+  const { kycRecords: dbKycRecords } = useAdminKycRecords()
+
+  const pendingKycCount = React.useMemo(() => {
+    return dbKycRecords.filter((r: any) => r.verificationStatus === "pending").length
+  }, [dbKycRecords])
 
   // --------------------------------------------------------------------------
   // Data Transformations for Tab Components
@@ -442,6 +449,17 @@ export default function AdminDashboardPage() {
           >
             <ScrollText className="h-4 w-4" /> Audit Logs ({auditLogs.length})
           </button>
+
+          <button
+            onClick={() => setActiveTab("kyc")}
+            className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all shrink-0 ${
+              activeTab === "kyc"
+                ? "border-primary text-primary"
+                : "border-transparent text-text-muted hover:text-text-primary"
+            }`}
+          >
+            <ShieldCheck className="h-4 w-4" /> KYC Requests ({pendingKycCount})
+          </button>
         </div>
 
         {/* Tab Workspace Content */}
@@ -487,6 +505,8 @@ export default function AdminDashboardPage() {
           )}
 
           {activeTab === "audit" && <AdminAuditLogsTab logs={auditLogs} />}
+
+          {activeTab === "kyc" && <AdminKycTab records={dbKycRecords as any} />}
         </div>
       </div>
 

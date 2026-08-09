@@ -18,7 +18,7 @@ export function useMarkets(options: UseMarketsOptions = {}) {
       options: {},
       category: {},
       $: {
-        order: { createdAt: 'desc' },
+        order: categorySlug === 'trending' ? { tradingVolume: 'desc' } : { createdAt: 'desc' },
       },
     },
   };
@@ -43,6 +43,13 @@ export function useMarkets(options: UseMarketsOptions = {}) {
   // Filter by Category Slug
   if (categorySlug && categorySlug !== 'all' && categorySlug !== 'trending') {
     markets = markets.filter((m) => m.category?.slug === categorySlug);
+  }
+
+  // Filter & Sort for Trending Category
+  if (categorySlug === 'trending') {
+    markets = markets
+      .filter((m) => typeof m.tradingVolume === 'number' && m.tradingVolume > 0)
+      .sort((a, b) => (b.tradingVolume || 0) - (a.tradingVolume || 0));
   }
 
   // Filter by Search Query

@@ -36,6 +36,7 @@ import { ProfileMenuDialog } from "./features/profile/profile-menu-dialog"
 import { EditProfileDialog } from "./features/profile/edit-profile-dialog"
 import { ChangeEmailDialog } from "./features/settings/change-email-dialog"
 import { UpdatePasswordDialog } from "./features/settings/update-password-dialog"
+import { KYCDialog } from "./features/profile/kyc-dialog"
 
 let registered = false
 
@@ -80,6 +81,7 @@ export function registerDialogs() {
   DialogRegistry.register("market/pause", PauseMarketDialog as any)
   DialogRegistry.register("profile/menu", ProfileMenuDialog as any)
   DialogRegistry.register("profile/edit", EditProfileDialog as any)
+  DialogRegistry.register("profile/kyc", KYCDialog as any)
   DialogRegistry.register("settings/change-email", ChangeEmailDialog as any)
   DialogRegistry.register("settings/update-password", UpdatePasswordDialog as any)
 }
