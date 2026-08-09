@@ -20,22 +20,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     })
     const market = (res as any)?.markets?.[0]
     if (market) {
+      const title = (market.title || "Prediction Market").slice(0, 100)
+      const description = (
+        market.description || `Predict the outcome of "${title}". Win Naira payouts on Sheybi.`
+      ).slice(0, 200)
+
       return {
-        title: `${market.title} — Sheybi`,
-        description: market.description || `Predict the outcome of "${market.title}". Win Naira payouts on Sheybi.`,
+        title,
+        description,
         openGraph: {
-          title: `${market.title} — Sheybi`,
-          description: market.description || `Predict the outcome of "${market.title}".`,
+          title,
+          description,
           images: [market.imageUrl || "/sheybi-mascot.png"],
         },
       }
     }
-  } catch {
-    // Fallback
+  } catch (err) {
+    console.error("[generateMetadata] Error fetching market metadata:", err)
   }
 
   return {
-    title: "Prediction Market — Sheybi",
+    title: "Prediction Market",
     description: "Predict Big Brother Naija outcomes in real-time on Sheybi.",
   }
 }

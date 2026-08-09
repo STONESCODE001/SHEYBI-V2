@@ -17,6 +17,7 @@ export function PortfolioClient() {
   const dialog = useDialog()
   const [activeTab, setActiveTab] = React.useState("open")
   const [sellingPositionId, setSellingPositionId] = React.useState<string | null>(null)
+  const sellKeysRef = React.useRef<Record<string, string>>({})
 
   const { openPositions, closedPositions, isLoading: positionsLoading } = usePositions()
   const { entries: ledgerEntries, isLoading: ledgerLoading } = useLedger(50)
@@ -34,10 +35,12 @@ export function PortfolioClient() {
     const options = market?.options || []
     const option = options.find((o: any) => o.id === pos.optionId)
     const currentPrice = option?.sharePrice ?? pos.averageEntryPrice ?? 0.5
-    const posCurrentValue = pos.sharesOwned * currentPrice
+    const posShares = pos.sharesOwned ?? 0
+    const posInvested = pos.investedAmount ?? 0
+    const posCurrentValue = posShares * currentPrice
 
     totalValue += posCurrentValue
-    totalInvested += pos.investedAmount || 0
+    totalInvested += posInvested
   })
 
   const profitLoss = totalValue - totalInvested
@@ -46,25 +49,30 @@ export function PortfolioClient() {
 
   // Sell Position Handler
   const handleSellPosition = async (pos: any) => {
+    const shares = pos.sharesOwned ?? 0
+    if (shares <= 0) return
+
     try {
       const confirmSell = await dialog.confirm({
         title: "Sell Position",
-        description: `Are you sure you want to sell your ${Math.round(pos.sharesOwned).toLocaleString()} shares in "${pos.market?.title}"?`
+        description: `Are you sure you want to sell your ${Math.round(shares).toLocaleString()} shares in "${pos.market?.title || "this market"}"?`
       })
 
       if (!confirmSell) return
 
       setSellingPositionId(pos.id)
 
-      const idempotencyKey = `sell_${pos.id}_${Date.now()}`
+      if (!sellKeysRef.current[pos.id]) {
+        sellKeysRef.current[pos.id] = `sell_${pos.id}_${crypto.randomUUID()}`
+      }
+      const idempotencyKey = sellKeysRef.current[pos.id]
+
       const result = await sellPositionAction(
         pos.marketId,
         pos.optionId,
-        pos.sharesOwned,
+        shares,
         idempotencyKey
       )
-
-      setSellingPositionId(null)
 
       if (!result.success) {
         await dialog.error({
@@ -74,17 +82,24 @@ export function PortfolioClient() {
         return
       }
 
+      delete sellKeysRef.current[pos.id]
+
+      const formattedProceeds = (result.data?.netProceeds ?? 0).toLocaleString("en-NG", {
+        minimumFractionDigits: 2,
+      })
+
       await dialog.success({
         title: "Position Sold",
-        description: `Successfully sold position! ₦${result.data?.netProceeds.toLocaleString()} credited to your wallet.`
+        description: `Successfully sold position! ₦${formattedProceeds} credited to your wallet.`
       })
     } catch (err) {
-      setSellingPositionId(null)
       const msg = err instanceof Error ? err.message : "Failed to execute sale."
       await dialog.error({
         title: "Error",
         description: msg
       })
+    } finally {
+      setSellingPositionId(null)
     }
   }
 
@@ -94,13 +109,17 @@ export function PortfolioClient() {
 
         {/* Portfolio Value Summary Card */}
         <div className="w-full">
-          <PortfolioCard
-            totalValue={`₦${totalValue.toLocaleString("en-NG", { minimumFractionDigits: 2 })}`}
-            profitLoss={`${isProfit ? "+" : "-"}₦${Math.abs(profitLoss).toLocaleString("en-NG", { minimumFractionDigits: 2 })}`}
-            isProfit={isProfit}
-            percentageChange={parseFloat(percentageChange.toFixed(1))}
-            status="Active"
-          />
+          {positionsLoading ? (
+            <ActivityItemSkeleton />
+          ) : (
+            <PortfolioCard
+              totalValue={`₦${totalValue.toLocaleString("en-NG", { minimumFractionDigits: 2 })}`}
+              profitLoss={`${isProfit ? "+" : "-"}₦${Math.abs(profitLoss).toLocaleString("en-NG", { minimumFractionDigits: 2 })}`}
+              isProfit={isProfit}
+              percentageChange={parseFloat(percentageChange.toFixed(1))}
+              status="Active"
+            />
+          )}
         </div>
 
         {/* Positions & Trades Section */}
@@ -114,7 +133,7 @@ export function PortfolioClient() {
                 Closed Positions ({closedPositions.length})
               </TabsTrigger>
               <TabsTrigger value="history" className="rounded-lg font-semibold text-xs sm:text-sm px-4">
-                Trade History ({tradeHistoryEntries.length})
+                Trade History
               </TabsTrigger>
             </TabsList>
 
@@ -136,11 +155,14 @@ export function PortfolioClient() {
                   const options = market?.options || []
                   const option = options.find((o: any) => o.id === pos.optionId)
                   const optionName = option?.name ?? "Outcome"
-                  const currentPrice = option?.sharePrice ?? pos.averageEntryPrice ?? 0.5
-                  const currentValue = pos.sharesOwned * currentPrice
-                  const posPnL = currentValue - pos.investedAmount
+                  const posShares = pos.sharesOwned ?? 0
+                  const posInvested = pos.investedAmount ?? 0
+                  const posAvgEntry = pos.averageEntryPrice ?? 0
+                  const currentPrice = option?.sharePrice ?? posAvgEntry ?? 0.5
+                  const currentValue = posShares * currentPrice
+                  const posPnL = currentValue - posInvested
                   const posIsProfit = posPnL >= 0
-                  const posPct = pos.investedAmount > 0 ? (Math.abs(posPnL) / pos.investedAmount) * 100 : 0
+                  const posPct = posInvested > 0 ? (Math.abs(posPnL) / posInvested) * 100 : 0
                   const isSelling = sellingPositionId === pos.id
 
                   return (
@@ -161,7 +183,7 @@ export function PortfolioClient() {
                             {optionName} Position
                           </Badge>
                           <span className="text-xs text-[var(--text-muted)]">
-                            {Math.round(pos.sharesOwned).toLocaleString()} Shares
+                            {Math.round(posShares).toLocaleString()} Shares
                           </span>
                         </div>
                         <h3 className="text-base font-bold text-[var(--text-primary)]">
@@ -169,10 +191,10 @@ export function PortfolioClient() {
                         </h3>
                         <div className="flex items-center gap-4 text-xs font-mono text-[var(--text-secondary)]">
                           <span>
-                            Invested: <strong className="text-[var(--text-primary)]">₦{pos.investedAmount.toLocaleString()}</strong>
+                            Invested: <strong className="text-[var(--text-primary)]">₦{posInvested.toLocaleString()}</strong>
                           </span>
                           <span>
-                            Avg Entry: <strong className="text-[var(--text-primary)]">₦{pos.averageEntryPrice.toFixed(2)}</strong>
+                            Avg Entry: <strong className="text-[var(--text-primary)]">₦{posAvgEntry.toFixed(2)}</strong>
                           </span>
                           <span>
                             Current Price: <strong className={posIsProfit ? "text-success" : "text-danger"}>₦{currentPrice.toFixed(2)}</strong>
@@ -228,6 +250,8 @@ export function PortfolioClient() {
                 closedPositions.map((pos: any) => {
                   const pnl = pos.realizedProfitLoss ?? 0
                   const isWin = pnl >= 0
+                  const posState = (pos.state || "closed").toUpperCase()
+                  const posInvested = pos.investedAmount ?? 0
 
                   return (
                     <div
@@ -239,7 +263,7 @@ export function PortfolioClient() {
                           {pos.market?.title || "Market Position"}
                         </h4>
                         <span className={`text-xs font-semibold ${isWin ? "text-success" : "text-danger"}`}>
-                          State: {pos.state.toUpperCase()} • Invested ₦{pos.investedAmount.toLocaleString()}
+                          State: {posState} • Invested ₦{posInvested.toLocaleString()}
                         </span>
                       </div>
                       <Badge

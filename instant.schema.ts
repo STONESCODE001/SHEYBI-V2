@@ -125,6 +125,7 @@ const schema = i.schema({
 
     withdrawal_requests: i.entity({
       userId: i.string().indexed(),
+      reference: i.string().optional().indexed(),
       grossAmount: i.number(),
       feeAmount: i.number(),
       netAmount: i.number(),

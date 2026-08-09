@@ -40,22 +40,35 @@ export function KYCDialog({ isOpen, onClose, status, setStatus }: KYCDialogProps
   // Reset form when dialog opens/closes
   React.useEffect(() => {
     if (!isOpen) {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+      }
       setNin("")
       setFile(null)
       setPreviewUrl(null)
       setError(null)
       setIsSubmitting(false)
     }
-  }, [isOpen])
+  }, [isOpen, previewUrl])
 
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0]
     if (!selected) return
 
-    if (!selected.type.startsWith("image/")) {
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"]
+    if (!allowedTypes.includes(selected.type)) {
       setError("Please select a valid image file (JPEG, PNG, WebP).")
       return
+    }
+
+    if (selected.size > 5 * 1024 * 1024) {
+      setError("Document image file size must not exceed 5MB.")
+      return
+    }
+
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl)
     }
 
     setError(null)
@@ -86,17 +99,16 @@ export function KYCDialog({ isOpen, onClose, status, setStatus }: KYCDialogProps
         try {
           const uploadRes = await uploadInstantFile(path, file)
           documentImageUrl = uploadRes.url
-        } catch (err) {
-          console.warn("Storage upload failed, reading file as data URL fallback:", err)
+        } catch (err: any) {
+          setError(err?.message || "Failed to upload document image to storage.")
+          setIsSubmitting(false)
+          return
         }
 
         if (!documentImageUrl) {
-          // Convert file to base64 Data URL so submission never sends empty string
-          documentImageUrl = await new Promise<string>((resolve) => {
-            const reader = new FileReader()
-            reader.onloadend = () => resolve(reader.result as string)
-            reader.readAsDataURL(file)
-          })
+          setError("Failed to obtain persistent document URL from storage.")
+          setIsSubmitting(false)
+          return
         }
       } else {
         if (nin.length !== 11 || !/^\d{11}$/.test(nin)) {

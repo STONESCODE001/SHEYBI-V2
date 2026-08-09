@@ -12,7 +12,7 @@ export function MarketsClient() {
 
   const { categories: dbCategories } = useCategories()
   const { markets: dbMarkets, isLoading } = useMarkets({
-    state: activeTab === "all" ? undefined : "open",
+    state: "open",
     categorySlug: activeTab,
   })
 

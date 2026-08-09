@@ -80,8 +80,8 @@ export function AdminKycTab({ records }: AdminKycTabProps) {
   }
 
   const maskNin = (ninStr?: string) => {
-    if (!ninStr || ninStr.length < 5) return "*****"
-    return `*****${ninStr.slice(-5)}`
+    if (!ninStr || ninStr.length < 4) return "*******"
+    return `*******${ninStr.slice(-4)}`
   }
 
   return (

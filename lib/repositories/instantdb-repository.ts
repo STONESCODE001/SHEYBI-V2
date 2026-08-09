@@ -568,6 +568,7 @@ class InstantDbWithdrawalRepository implements IWithdrawalRepository {
     await adminDb.transact([
       adminDb.tx.withdrawal_requests[newWithdrawalId].update({
         userId: data.userId,
+        reference: data.reference || null,
         grossAmount: data.grossAmount,
         feeAmount: data.feeAmount,
         netAmount: data.netAmount,

@@ -450,6 +450,7 @@ export interface IAuditLogRepository {
 
 export interface WithdrawalRequestCreateData {
   userId: string;
+  reference?: string;
   grossAmount: number;
   feeAmount: number;
   netAmount: number;
@@ -470,6 +471,7 @@ export interface WithdrawalRequestUpdateData {
 
 export interface WithdrawalRequest extends WithdrawalRequestCreateData {
   id: string;
+  reference?: string;
   rejectionReason?: string;
   approvedBy?: string;
 }

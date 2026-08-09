@@ -26,12 +26,19 @@ export async function uploadInstantFile(
   path: string,
   file: File
 ): Promise<UploadResult> {
-  const { data } = await db.storage.uploadFile(path, file);
-  const fileId = data?.id || "";
-  const url =
-    (data as any)?.url ||
-    (data as any)?.downloadUrl ||
-    (fileId ? `https://api.instantdb.com/storage/files/${fileId}` : "");
+  const res = await db.storage.uploadFile(path, file);
+  const data = res?.data;
+
+  if (!data) {
+    throw new Error("File upload failed: No data returned from Instant Storage.");
+  }
+
+  const fileId = data.id || "";
+  const url = (data as any)?.url || (data as any)?.downloadUrl || "";
+
+  if (!fileId || !url) {
+    throw new Error("File upload failed: Missing storage file ID or persistent URL.");
+  }
 
   return {
     fileId,

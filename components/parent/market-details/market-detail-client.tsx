@@ -46,10 +46,27 @@ export function MarketDetailClient({ marketId }: { marketId: string }) {
 
   const market = (data as any)?.markets?.[0]
 
-  if (error || !market) {
+  if (error) {
     return (
       <PublicLayout>
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-[var(--text-muted)] gap-2">
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-[var(--text-muted)] gap-3 text-center px-4">
+          <p className="text-lg font-bold text-[var(--text-primary)]">Unable to load market</p>
+          <p className="text-sm max-w-md">{error.message || "A network or server error occurred while loading this market."}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 rounded-xl bg-[var(--bg-surface-secondary)] text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
+          >
+            Retry
+          </button>
+        </div>
+      </PublicLayout>
+    )
+  }
+
+  if (!market) {
+    return (
+      <PublicLayout>
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-[var(--text-muted)] gap-2 text-center px-4">
           <p className="text-lg font-bold text-[var(--text-primary)]">Market Not Found</p>
           <p className="text-sm">The prediction market you are looking for does not exist or has been removed.</p>
         </div>

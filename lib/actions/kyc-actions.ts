@@ -87,17 +87,6 @@ export async function submitKycAction(
         reviewedBy: null,
         rejectionReason: null,
       }),
-      adminDb.tx.audit_logs[id()].update({
-        adminUserId: userId,
-        actionType: 'KYC_SUBMITTED',
-        targetEntityId: recordId,
-        details: {
-          ninMasked: cleanNin ? `*****${cleanNin.slice(-4)}` : null,
-          hasDocumentImage: !!documentImageUrl,
-          submittedAt: now,
-        },
-        createdAt: now,
-      }),
     ]);
 
     return { success: true };
@@ -117,6 +106,16 @@ export async function adminApproveKycAction(
     const { userId } = await auth();
     if (!userId) {
       return { success: false, error: 'Admin authentication required.' };
+    }
+
+    const userRes = await adminDb.query({
+      $users: {
+        $: { where: { id: userId } },
+      },
+    });
+    const callerRole = (userRes as any)?.$users?.[0]?.role;
+    if (callerRole !== 'admin' && callerRole !== 'superadmin') {
+      return { success: false, error: 'Unauthorized. Admin access required.' };
     }
 
     const now = Date.now();
@@ -155,6 +154,16 @@ export async function adminRejectKycAction(
     const { userId } = await auth();
     if (!userId) {
       return { success: false, error: 'Admin authentication required.' };
+    }
+
+    const userRes = await adminDb.query({
+      $users: {
+        $: { where: { id: userId } },
+      },
+    });
+    const callerRole = (userRes as any)?.$users?.[0]?.role;
+    if (callerRole !== 'admin' && callerRole !== 'superadmin') {
+      return { success: false, error: 'Unauthorized. Admin access required.' };
     }
 
     if (!rejectionReason || !rejectionReason.trim()) {

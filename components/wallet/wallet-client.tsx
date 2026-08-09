@@ -31,7 +31,7 @@ export function WalletClientContent() {
 
   const { wallet, availableBalance, isLoading: walletLoading } = useWallet()
   const { entries, isLoading: ledgerLoading } = useLedger(20)
-  const { kycStatus } = useKyc()
+  const { kycStatus, isLoading: kycLoading } = useKyc()
 
   const processedRef = React.useRef<string | null>(null)
 
@@ -83,14 +83,15 @@ export function WalletClientContent() {
   const formattedBalance = `₦${availableBalance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}`
 
   // Map KYC status to wallet card badge text
-  const walletBadgeStatus =
-    kycStatus === "approved"
-      ? "Active"
-      : kycStatus === "pending"
-      ? "Pending KYC"
-      : kycStatus === "rejected"
-      ? "KYC Rejected"
-      : "Unverified"
+  const walletBadgeStatus = kycLoading
+    ? "Loading..."
+    : kycStatus === "approved"
+    ? "Active"
+    : kycStatus === "pending"
+    ? "Pending KYC"
+    : kycStatus === "rejected"
+    ? "KYC Rejected"
+    : "Unverified"
 
   return (
     <div className="mx-auto max-w-4xl flex flex-col gap-8 py-2">
@@ -136,9 +137,11 @@ export function WalletClientContent() {
             entries.map((entry: any) => {
               let statusLabel = ""
               if (entry.eventType === "WITHDRAWAL") {
-                const matched = userWithdrawals.find((w: any) => w.id === entry.referenceId || w.userId === entry.userId)
+                const matched = userWithdrawals.find(
+                  (w: any) => (w.reference && w.reference === entry.referenceId) || w.id === entry.referenceId
+                )
                 const status = matched?.status?.toLowerCase()
-                if (status === "approved" || status === "sent") {
+                if (status === "approved" || status === "sent" || status === "paid") {
                   statusLabel = " (Money Sent)"
                 } else if (status === "rejected") {
                   statusLabel = " (Rejected & Refunded)"

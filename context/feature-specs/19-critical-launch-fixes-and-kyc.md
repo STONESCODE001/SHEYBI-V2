@@ -66,9 +66,10 @@ This specification governs:
 ## 3. KYC Collection, Verification & Admin Workflow
 
 ### 3.1 Data Schema Requirements
-- The `kyc_records` entity in `instant.schema.ts` **must** contain two optional fields:
+- The `kyc_records` entity in `instant.schema.ts` **must** contain optional fields:
   - `nin`: string field storing an 11-digit National Identification Number.
   - `documentImageUrl`: string field storing the uploaded document image URL.
+  - `rejectionReason`: optional string field storing the administrator's rejection reason when `verificationStatus = "rejected"`.
 - Existing fields (`legalName`, `dateOfBirth`, `documentType`, `verificationStatus`, `submittedAt`, `reviewedAt`, `reviewedBy`) **must** remain preserved.
 - Remote database schema configuration **must** be pushed to InstantDB cloud.
 
@@ -77,7 +78,7 @@ This specification governs:
 #### 3.2.1 Submission Modes
 - The KYC submission interface **must** support two mutually exclusive submission options:
   1. **NIN Text Entry**: Input field accepting an 11-digit numerical string.
-  2. **Document Image Upload**: File uploader accepting image binary files (`image/*`).
+  2. **Document Image Upload**: File uploader accepting image binary files matching exact allowlist (`image/jpeg`, `image/png`, `image/webp`).
 
 #### 3.2.2 NIN Validation Rules
 - The NIN text input **must** enforce exact 11-digit numeric validation.
@@ -85,16 +86,16 @@ This specification governs:
 - The submission trigger **must** remain disabled until exactly 11 digits are entered.
 
 #### 3.2.3 Document Image Upload Rules
-- The file selector **must** accept only valid image mime types (`image/jpeg`, `image/png`, `image/webp`).
-- Uploading a document **must** upload the file to InstantDB Storage using the application storage client and retrieve a persistent public URL.
+- The file selector and server validation **must** enforce one exact allowlist containing only `image/jpeg`, `image/png`, and `image/webp`.
+- Uploading a document **must** upload the file to InstantDB Storage using the application storage client and retrieve a persistent public URL. Base64 Data URLs **cannot** be persisted.
 - The user interface **must** display an image thumbnail preview after file selection and show an active loading state during file upload.
 
-#### 3.2.4 Submission Mutation & Duplication Prevention
+#### 3.2.4 Submission Mutation & Resubmission Semantics
 - KYC submissions **must** execute via a server action (`submitKycAction`).
 - The server action **must** verify the authenticated user session via Clerk.
-- If a user already possesses a `kyc_records` entity with `verificationStatus` equal to `"pending"` or `"approved"`, duplicate submissions **must** be rejected.
-- Successful submission **must** create a `kyc_records` entity with `verificationStatus = "pending"` and `submittedAt = timestamp`.
-- An audit log record **must** be generated with `actionType = "KYC_SUBMITTED"`.
+- If a user possesses a `kyc_records` entity with `verificationStatus` equal to `"pending"` or `"approved"`, duplicate submissions **must** be rejected.
+- If a user possesses a previously `"rejected"` KYC record, resubmission **must** update the existing record reset to `verificationStatus = "pending"`, updated timestamp, and cleared rejection fields.
+- Successful submission **must** create or update the user's `kyc_records` entity with `verificationStatus = "pending"` and `submittedAt = timestamp`.
 
 ### 3.3 Reactive KYC State & Wallet Status Badge Integration
 

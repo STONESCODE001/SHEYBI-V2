@@ -9,6 +9,7 @@ import "./globals.css";
 import { InstantClerkBridge } from "@/components/auth/instant-clerk-bridge";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://sheybi.com"),
   title: {
     default: "Sheybi — Live Prediction Markets",
     template: "%s — Sheybi",

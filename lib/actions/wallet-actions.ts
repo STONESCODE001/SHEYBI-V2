@@ -287,6 +287,7 @@ export async function requestWithdrawalAction(
     // ---- STEP 7: Persist Withdrawal Request for Admin Panel ----
     await repository.withdrawals.createWithdrawalRequest({
       userId,
+      reference: withdrawalReference,
       grossAmount: amount,
       feeAmount: fee,
       netAmount,
