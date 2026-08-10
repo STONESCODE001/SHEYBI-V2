@@ -37,6 +37,9 @@ interface TradeDialogProps {
     optionId?: string
     candidateId?: string
     marketTitle: string
+    optionName?: string
+    playerName?: string
+    candidateName?: string
     initialOutcome?: "yes" | "no"
     initialMode?: "buy" | "sell"
     yesProbability?: number // e.g. 50
@@ -60,6 +63,8 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
   const dialog = useDialog()
   const { wallet } = useWallet()
   const userAvailableBalance = wallet?.availableBalance ?? 0
+
+  const optionName = payload.optionName || payload.playerName || payload.candidateName || null
 
   const [mode, setMode] = React.useState<"buy" | "sell">(payload.initialMode || "buy")
   const [outcome, setOutcome] = React.useState<"yes" | "no">(payload.initialOutcome || "yes")
@@ -157,13 +162,30 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
       title="Trade Prediction"
       description="Place or edit your prediction order."
     >
-      <DialogHeader className="p-0 text-left">
-        <DialogTitle className="text-xl font-bold text-[var(--text-primary)]">
-          {mode === "buy" ? "Place Prediction" : "Sell Position"}
-        </DialogTitle>
-        <DialogDescription className="text-sm text-[var(--text-muted)] line-clamp-2 mt-0.5">
+      <DialogHeader className="p-0 text-left space-y-2">
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "px-2.5 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider border",
+              mode === "sell"
+                ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                : outcome === "yes"
+                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                  : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+            )}
+          >
+            {mode === "sell"
+              ? optionName
+                ? `Selling ${outcome.toUpperCase()} Position (${optionName})`
+                : `Selling ${outcome.toUpperCase()} Position`
+              : optionName
+                ? `Predicting ${outcome.toUpperCase()} for ${optionName}`
+                : `Predicting ${outcome.toUpperCase()}`}
+          </span>
+        </div>
+        <DialogTitle className="text-lg sm:text-xl font-extrabold text-[var(--text-primary)] leading-snug">
           {payload.marketTitle}
-        </DialogDescription>
+        </DialogTitle>
       </DialogHeader>
 
       <div className="mt-4 flex flex-col gap-4">
@@ -201,34 +223,26 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             type="button"
             onClick={() => setOutcome("yes")}
             className={cn(
-              "flex flex-col items-center justify-center p-3 rounded-xl border transition-all relative overflow-hidden",
+              "flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all relative overflow-hidden",
               outcome === "yes"
                 ? "bg-[var(--market-yes)]/10 border-[var(--market-yes)] ring-1 ring-[var(--market-yes)]"
                 : "bg-[var(--bg-base)] border-[var(--border-default)] opacity-70 hover:opacity-100"
             )}
           >
-            <div className="flex items-center gap-1 text-xs font-semibold text-emerald-400">
-              <TrendingUp className="size-3.5 text-emerald-400" />
-              <span>Upward ↑</span>
-            </div>
-            <span className="text-lg font-black text-[var(--market-yes)] mt-0.5">YES</span>
+            <span className="text-xl font-black text-[var(--market-yes)]">YES</span>
           </button>
 
           <button
             type="button"
             onClick={() => setOutcome("no")}
             className={cn(
-              "flex flex-col items-center justify-center p-3 rounded-xl border transition-all relative overflow-hidden",
+              "flex flex-col items-center justify-center p-3.5 rounded-xl border transition-all relative overflow-hidden",
               outcome === "no"
                 ? "bg-rose-500/10 border-rose-500 ring-1 ring-rose-500"
                 : "bg-[var(--bg-base)] border-[var(--border-default)] opacity-70 hover:opacity-100"
             )}
           >
-            <div className="flex items-center gap-1 text-xs font-semibold text-rose-400">
-              <TrendingDown className="size-3.5 text-rose-400" />
-              <span>Downward ↓</span>
-            </div>
-            <span className="text-lg font-black text-rose-400 mt-0.5">NO</span>
+            <span className="text-xl font-black text-rose-400">NO</span>
           </button>
         </div>
 
@@ -300,17 +314,8 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
             {/* Human-First Win Projection (Zero Jargon) */}
             <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] space-y-2">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-[var(--text-muted)] font-medium flex items-center gap-1.5">
-                  Predicted Trend:
-                  {outcome === "yes" ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      <TrendingUp className="size-3" /> Upward ↑
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                      <TrendingDown className="size-3" /> Downward ↓
-                    </span>
-                  )}
+                <span className="text-[var(--text-muted)] font-medium">
+                  Stake Amount
                 </span>
                 <span className="font-mono font-bold text-[var(--text-primary)]">₦{numericAmount.toLocaleString()}</span>
               </div>
@@ -405,13 +410,17 @@ export function TradeDialog({ isOpen, onClose, payload, status, onExecuteTrade }
           {isSubmitting ? (
             "Executing Trade..."
           ) : mode === "buy" ? (
-            <>
-              Predict {outcome.toUpperCase()} with ₦{numericAmount.toLocaleString()}
-            </>
+            optionName ? (
+              <>Confirm {outcome.toUpperCase()} for {optionName} — ₦{numericAmount.toLocaleString()}</>
+            ) : (
+              <>Confirm {outcome.toUpperCase()} — ₦{numericAmount.toLocaleString()}</>
+            )
           ) : (
-            <>
-              Confirm Sell {sharesBeingSold} {outcome.toUpperCase()} Shares
-            </>
+            optionName ? (
+              <>Confirm Sell {sharesBeingSold} {outcome.toUpperCase()} Shares for {optionName}</>
+            ) : (
+              <>Confirm Sell {sharesBeingSold} {outcome.toUpperCase()} Shares</>
+            )
           )}
         </Button>
       </div>

@@ -7,18 +7,19 @@ Update this document immediately after every completed implementation unit. This
 ## Current Phase: Phase 4: Core Engine & Algorithm Implementation
 
 ### Current Implementation Target
-- **Spec 20 — Real-Time Market Discovery & Search Bar Integration** (`context/feature-specs/20-market-search-and-discovery.md`) — **Completed**
+- **1v1 Matchup Card Classification & Detail View Parsing Fix** (`lib/market-adapter.ts`, `components/parent/market-details/versus-market-view.tsx`) — **Completed**
 
 ---
    
 # Current Goal
 
-All verification criteria for Spec 20 passed. Live InstantDB market discovery & search dialog integrated across desktop and mobile shell headers.
+1v1 matchup card classification fixed to respect `displayVariant === '1v1'` over `marketType === 'multi_option'`. 4-option DB structures (`[A YES, A NO, B YES, B NO]`) properly parsed into Contestant 1 (*A Male*) vs Contestant 2 (*A Female*), and Yes/No buttons linked dynamically to individual option IDs.
 
 ---
 
 # Completed
 
+* **1v1 Matchup Card Classification & Detail View Parsing Fix** (`lib/market-adapter.ts`, `components/parent/market-details/versus-market-view.tsx`) — (1) Updated `adaptMarketToCardProps` to prioritize `displayVariant === '1v1'` over `marketType === 'multi_option'` so feed cards render as 1v1 headshot cards; (2) Parsed 4-option 1v1 DB structures (`[A YES, A NO, B YES, B NO]`) into clean Contestant 1 (*A Male*) vs Contestant 2 (*A Female*) data; (3) Added `yesOptionId` and `noOptionId` to `PlayerData` in `versus-market-view.tsx` so clicking YES or NO under a contestant targets their exact option ID.
 * **Spec 20 — Real-Time Market Discovery & Search Bar Integration** (`context/feature-specs/20-market-search-and-discovery.md`) — Completed 100%. (1) Replaced `MOCK_DB` in `SearchDialog` with live InstantDB `db.useQuery` for `markets` fetching linked `category` and `options`; (2) Case-insensitive substring matching algorithm across market titles, descriptions, category names, and option names with fallback normalized matching; (3) Priority sorting rendering `open` state markets first; (4) Quick search tag pills (`#BBNaija`, `#Eviction`, `#HeadOfHouse`, `#Winner`) populating search query on click; (5) Skeleton loaders (`SearchResultCardSkeleton`) during query loading; (6) `DialogEmptyState` rendering `"No markets found matching '[query]'."`; (7) Routing to `/markets/[id]` upon selecting a search result card; (8) Keyboard navigation (`Esc` to close, `Enter` / `Space` selection).
 
 * Product vision established.
@@ -77,6 +78,8 @@ All verification criteria for Spec 20 passed. Live InstantDB market discovery & 
 * **Individual Candidate Option Pausing (Multi-Option Markets)** — Completed 100%. (1) Updated `instant.schema.ts` with `isPaused: i.boolean().optional()` attribute on `market_options` entity; (2) Pushed schema definition and indexes to InstantDB cloud (`npx instant-cli push schema --yes`); (3) Added `toggleOptionPauseAction` server action in `lib/actions/market-actions.ts` with activity log and audit trail records (`PAUSE_MARKET_OPTION` / `UNPAUSE_MARKET_OPTION`); (4) Guarded `buyPositionAction` and `sellPositionAction` in `lib/actions/trade-actions.ts` to reject trades targeting paused options (`"Trading for this option is currently paused."`); (5) Mapped `isPaused` in `lib/market-adapter.ts` (`adaptToMultiOptionMarketData`); (6) Updated `MultiOptionMarketView` in `components/parent/market-details/multi-option-market-view.tsx` to hide YES and NO odds buttons for paused candidates and display an amber `TRADING PAUSED` status badge; (7) Created `ManageOptionsDialog` (`components/admin/manage-options-dialog.tsx`) and added `Options` control button in `AdminMarketsTab` (`components/admin/admin-markets-tab.tsx`) wired to `/admin` dashboard.
 
 * **Seed Volume Registration, Equal Candidate Seed Distribution & Admin Featured Toggle** — Completed 100%. (1) Updated `prepareMarketCreationData` in `lib/actions/market-validation.ts` to initialize `tradingVolume: liquidity` on creation; (2) Updated `adaptToMultiOptionMarketData` in `lib/market-adapter.ts` to split seed volume equally across candidate rows (`candidateSeedVolume = liquidity / N`); (3) Implemented `toggleMarketFeaturedAction` in `lib/actions/market-actions.ts` to star/unstar featured markets; (4) Added 1-click **Featured / Trending** star toggle button in `AdminMarketsTab` table and checkbox in `CreateMarketDialog`; (5) Ensured continuous real-time volume updates across Market Cards, Market Details Headers, and Candidate Row Cards.
+
+* **Trade Dialog Header Redesign & Action Confirmation** — Completed 100%. (1) Replaced static `"Place Prediction"` top title in `TradeDialog` with prominent, bold market question header; (2) Added high-contrast prediction pill badge (`PREDICTING YES FOR ABI` / `PREDICTING NO FOR ABI` / `SELLING POSITION`); (3) Removed redundant `"Upward ↑"` and `"Downward ↓"` helper labels for clean YES/NO selection buttons; (4) Updated bottom action button to state explicit prediction confirmations (`Confirm YES for Abi — ₦1,000` / `Confirm YES — ₦1,000`); (5) Verified across Binary, Versus, and Multi-Option market views with 100% clean production build pass (`npm run build`).
 
 ---
 

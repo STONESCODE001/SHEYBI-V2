@@ -14,7 +14,7 @@ export interface AdminMarketItem {
   status: "Draft" | "Scheduled" | "Open" | "Paused" | "Closed" | "Resolved" | "Cancelled"
   closeDate: string
   totalVolume: number
-  format: "binary" | "multi"
+  format: "binary" | "1v1" | "multi"
   isFeatured?: boolean
   options: { id: string; title: string; probability?: number; isPaused?: boolean }[]
 }

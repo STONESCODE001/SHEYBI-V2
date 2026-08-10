@@ -67,32 +67,101 @@ function extractTradeHistory(market: any): Array<{
 /**
  * Transforms InstantDB market entity objects into MarketCardProps for UI rendering.
  */
+function cleanContestantName(name: string = ''): string {
+  return name.replace(/\s+(YES|NO)$/i, '').trim();
+}
+
+/**
+ * Transforms InstantDB market entity objects into MarketCardProps for UI rendering.
+ */
 export function adaptMarketToCardProps(market: any): MarketCardProps {
   const options = market.options || [];
 
   let variant: 'binary' | '1v1' | 'multi_option' = 'binary';
-  if (market.marketType === 'multi_option') {
+  if (market.displayVariant === '1v1') {
+    variant = '1v1';
+  } else if (market.marketType === 'multi_option') {
     variant = 'multi_option';
   } else if (options.length === 2 && options[0]?.imageUrl && options[1]?.imageUrl) {
     variant = '1v1';
   }
 
-  const contestants: ContestantOption[] = options.map((opt: any) => {
-    const prob = normalizeProbability(opt.probability, 50);
-    return {
-      id: opt.id || opt.name,
-      name: opt.name,
-      avatarUrl: opt.imageUrl,
-      probability: prob,
-      odds: formatOddsFromProbability(prob),
-    };
-  });
+  let contestants: ContestantOption[] = [];
+  let yesProbability = 50;
+  let noProbability = 50;
 
-  const yesOption = options.find((o: any) => o.name.toUpperCase() === 'YES') || options[0];
-  const noOption = options.find((o: any) => o.name.toUpperCase() === 'NO') || options[1];
+  if (variant === '1v1') {
+    const sorted = [...options].sort((a: any, b: any) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+    if (sorted.length === 4) {
+      // 4-option 1v1 matchup: [A YES, A NO, B YES, B NO]
+      const p1Yes = sorted[0];
+      const p2Yes = sorted[2];
 
-  const yesProbability = normalizeProbability(yesOption?.probability, 50);
-  const noProbability = normalizeProbability(noOption?.probability, 100 - yesProbability);
+      const prob1 = normalizeProbability(p1Yes?.probability, 50);
+      const prob2 = normalizeProbability(p2Yes?.probability, 50);
+
+      contestants = [
+        {
+          id: p1Yes?.id || p1Yes?.name || 'c1',
+          name: cleanContestantName(p1Yes?.name || 'Contestant 1'),
+          avatarUrl: p1Yes?.imageUrl,
+          probability: prob1,
+          odds: formatOddsFromProbability(prob1),
+        },
+        {
+          id: p2Yes?.id || p2Yes?.name || 'c2',
+          name: cleanContestantName(p2Yes?.name || 'Contestant 2'),
+          avatarUrl: p2Yes?.imageUrl,
+          probability: prob2,
+          odds: formatOddsFromProbability(prob2),
+        },
+      ];
+      yesProbability = prob1;
+      noProbability = prob2;
+    } else {
+      // 2-option 1v1 matchup fallback
+      const p1 = sorted[0];
+      const p2 = sorted[1];
+      const prob1 = normalizeProbability(p1?.probability, 50);
+      const prob2 = normalizeProbability(p2?.probability, 50);
+
+      contestants = [
+        {
+          id: p1?.id || p1?.name || 'c1',
+          name: cleanContestantName(p1?.name || 'Contestant 1'),
+          avatarUrl: p1?.imageUrl,
+          probability: prob1,
+          odds: formatOddsFromProbability(prob1),
+        },
+        {
+          id: p2?.id || p2?.name || 'c2',
+          name: cleanContestantName(p2?.name || 'Contestant 2'),
+          avatarUrl: p2?.imageUrl,
+          probability: prob2,
+          odds: formatOddsFromProbability(prob2),
+        },
+      ];
+      yesProbability = prob1;
+      noProbability = prob2;
+    }
+  } else {
+    contestants = options.map((opt: any) => {
+      const prob = normalizeProbability(opt.probability, 50);
+      return {
+        id: opt.id || opt.name,
+        name: opt.name,
+        avatarUrl: opt.imageUrl,
+        probability: prob,
+        odds: formatOddsFromProbability(prob),
+      };
+    });
+
+    const yesOption = options.find((o: any) => o.name.toUpperCase() === 'YES') || options[0];
+    const noOption = options.find((o: any) => o.name.toUpperCase() === 'NO') || options[1];
+
+    yesProbability = normalizeProbability(yesOption?.probability, 50);
+    noProbability = normalizeProbability(noOption?.probability, 100 - yesProbability);
+  }
 
   return {
     id: market.id || market.slug,
@@ -147,21 +216,70 @@ export function adaptToBinaryMarketData(market: any): BinaryMarketData {
 export function adaptToVersusMarketData(market: any): VersusMarketData {
   const options = market.options || [];
   const sorted = [...options].sort((a: any, b: any) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
-  const p1 = sorted[0];
-  const p2 = sorted[1];
 
-  function toPlayer(opt: any): PlayerData {
-    const prob = normalizeProbability(opt?.probability, 50);
-    return {
-      id: opt?.id ?? 'unknown',
-      name: opt?.name ?? 'Unknown',
-      avatarUrl: opt?.imageUrl,
-      probability: prob,
-      yesOddsText: formatOddsFromProbability(prob),
-      noOddsText: formatOddsFromProbability(100 - prob),
-      yesPrice: opt?.sharePrice ?? prob / 100,
-      noPrice: 1 - (opt?.sharePrice ?? prob / 100),
+  let player1: PlayerData;
+  let player2: PlayerData;
+
+  if (sorted.length === 4) {
+    // 4-option 1v1 matchup: [A YES, A NO, B YES, B NO]
+    const p1Yes = sorted[0];
+    const p1No = sorted[1];
+    const p2Yes = sorted[2];
+    const p2No = sorted[3];
+
+    const prob1Yes = normalizeProbability(p1Yes?.probability, 50);
+    const prob1No = normalizeProbability(p1No?.probability, 50);
+    const prob2Yes = normalizeProbability(p2Yes?.probability, 50);
+    const prob2No = normalizeProbability(p2No?.probability, 50);
+
+    player1 = {
+      id: p1Yes?.id ?? 'p1_yes',
+      name: cleanContestantName(p1Yes?.name ?? 'Player 1'),
+      avatarUrl: p1Yes?.imageUrl,
+      probability: prob1Yes,
+      yesOptionId: p1Yes?.id,
+      noOptionId: p1No?.id,
+      yesOddsText: formatOddsFromProbability(prob1Yes),
+      noOddsText: formatOddsFromProbability(prob1No),
+      yesPrice: p1Yes?.sharePrice ?? prob1Yes / 100,
+      noPrice: p1No?.sharePrice ?? prob1No / 100,
     };
+
+    player2 = {
+      id: p2Yes?.id ?? 'p2_yes',
+      name: cleanContestantName(p2Yes?.name ?? 'Player 2'),
+      avatarUrl: p2Yes?.imageUrl,
+      probability: prob2Yes,
+      yesOptionId: p2Yes?.id,
+      noOptionId: p2No?.id,
+      yesOddsText: formatOddsFromProbability(prob2Yes),
+      noOddsText: formatOddsFromProbability(prob2No),
+      yesPrice: p2Yes?.sharePrice ?? prob2Yes / 100,
+      noPrice: p2No?.sharePrice ?? prob2No / 100,
+    };
+  } else {
+    // Fallback for 2-option 1v1
+    const p1 = sorted[0];
+    const p2 = sorted[1];
+
+    function toPlayer(opt: any): PlayerData {
+      const prob = normalizeProbability(opt?.probability, 50);
+      return {
+        id: opt?.id ?? 'unknown',
+        name: cleanContestantName(opt?.name ?? 'Unknown'),
+        avatarUrl: opt?.imageUrl,
+        probability: prob,
+        yesOptionId: opt?.id,
+        noOptionId: opt?.id,
+        yesOddsText: formatOddsFromProbability(prob),
+        noOddsText: formatOddsFromProbability(100 - prob),
+        yesPrice: opt?.sharePrice ?? prob / 100,
+        noPrice: 1 - (opt?.sharePrice ?? prob / 100),
+      };
+    }
+
+    player1 = toPlayer(p1);
+    player2 = toPlayer(p2);
   }
 
   return {
@@ -169,8 +287,8 @@ export function adaptToVersusMarketData(market: any): VersusMarketData {
     title: market.title,
     category: market.category?.name,
     rules: market.description,
-    player1: toPlayer(p1),
-    player2: toPlayer(p2),
+    player1,
+    player2,
     tradeHistory: extractTradeHistory(market),
     userPosition: null,
   };
@@ -224,7 +342,16 @@ export function adaptMarketToDetailData(market: any): {
   variant: 'binary' | '1v1' | 'standard';
   data: BinaryMarketData | VersusMarketData | MultiOptionMarketData;
 } {
-  const variant = (market.displayVariant as 'binary' | '1v1' | 'standard') || 'binary';
+  let variant = (market.displayVariant as 'binary' | '1v1' | 'standard');
+  if (!variant) {
+    if (market.marketType === 'multi_option' && market.options?.length === 4) {
+      variant = '1v1';
+    } else if (market.marketType === 'multi_option') {
+      variant = 'standard';
+    } else {
+      variant = 'binary';
+    }
+  }
 
   switch (variant) {
     case '1v1':

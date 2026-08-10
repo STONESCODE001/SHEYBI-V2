@@ -114,7 +114,7 @@ export default function AdminDashboardPage() {
         status: (m.state.charAt(0).toUpperCase() + m.state.slice(1)) as any,
         closeDate: new Date(m.closingTime).toLocaleString(),
         totalVolume: m.tradingVolume ?? 0,
-        format: m.marketType === 'multi_option' ? 'multi' : 'binary',
+        format: m.displayVariant === '1v1' ? '1v1' : m.marketType === 'multi_option' ? 'multi' : 'binary',
         isFeatured: Boolean(m.isFeatured),
         options: (m.options ?? []).map((o: any) => ({
           id: o.id,

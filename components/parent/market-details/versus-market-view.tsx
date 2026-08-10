@@ -16,6 +16,8 @@ export interface PlayerData {
   name: string
   avatarUrl?: string
   probability?: number // e.g. 50
+  yesOptionId?: string
+  noOptionId?: string
   yesOddsText?: string // e.g. "1k → 3k"
   noOddsText?: string  // e.g. "1k → 5k"
   yesPrice?: number    // e.g. 0.33
@@ -84,11 +86,17 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
       return
     }
     if (!hasRules) return
+
+    const targetOptionId = outcome === "yes"
+      ? (player.yesOptionId || player.id)
+      : (player.noOptionId || player.id)
+
     dialog.open("trade/dialog", {
       marketId: market.id,
-      optionId: player.id,
+      optionId: targetOptionId,
       playerName: player.name,
-      marketTitle: `${market.title} (${player.name})`,
+      optionName: player.name,
+      marketTitle: market.title,
       initialOutcome: outcome,
       initialMode: "buy",
       yesProbability: player.probability || 50,
