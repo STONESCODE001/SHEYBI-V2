@@ -296,6 +296,11 @@ Make sure you update this section after every meaningful implementation unit.
   * **Decisions & Implementation:** Initialized `tradingVolume` with admin seed liquidity ($L$) at creation in `market-validation.ts`; updated `adaptToMultiOptionMarketData` to split seed volume equally across candidates ($\frac{L}{N}$ per housemate row); added `toggleMarketFeaturedAction` server action; added Star toggle button in `AdminMarketsTab` and Featured checkbox in `CreateMarketDialog`; verified continuous real-time reactive volume updates via InstantDB query subscriptions.
   * **Verification:** `npx tsc --noEmit` verified clean compile with 0 errors across all modules; InstantDB Cloud schema & permissions push confirmed `✓ Done`.
 
+* **2026-08-10**
+  * **Asset & Metadata Completed:** Favicon & App Icon Generation from `sheybi head.png`.
+  * **Files Created/Modified:** `scripts/generate-favicons.js` [NEW], `app/favicon.ico`, `app/icon.png`, `app/apple-icon.png`, `public/favicon.ico`, `public/apple-touch-icon.png`, `public/icon-192.png`, `public/icon-512.png`, `app/layout.tsx`.
+  * **Decisions & Implementation:** Processed `public/sheybi head.png` (333x333 transparent PNG) with Sharp to generate multi-resolution ICO (16x16, 32x32, 48x48), Next.js App Router icons (`app/icon.png`, `app/apple-icon.png`), and web manifest icons (`icon-192.png`, `icon-512.png`). Configured explicit `icons` field in `app/layout.tsx` metadata.
+
 
 
 

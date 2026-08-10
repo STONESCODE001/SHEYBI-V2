@@ -20,6 +20,13 @@ export const metadata: Metadata = {
     description: "Predict Big Brother Naija outcomes in real-time. Trade positions, win Naira payouts, and prove your predictions on Sheybi. Predict. Play. Win.",
     images: ["/sheybi-mascot.png"],
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
