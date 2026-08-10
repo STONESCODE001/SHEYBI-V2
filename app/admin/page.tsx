@@ -25,6 +25,7 @@ import {
   pauseMarketAction,
   unpauseMarketAction,
   toggleOptionPauseAction,
+  toggleMarketFeaturedAction,
 } from "@/lib/actions/market-actions"
 import { rejectWithdrawalAction } from "@/lib/actions/wallet-actions"
 import {
@@ -114,6 +115,7 @@ export default function AdminDashboardPage() {
         closeDate: new Date(m.closingTime).toLocaleString(),
         totalVolume: m.tradingVolume ?? 0,
         format: m.marketType === 'multi_option' ? 'multi' : 'binary',
+        isFeatured: Boolean(m.isFeatured),
         options: (m.options ?? []).map((o: any) => ({
           id: o.id,
           title: o.name,
@@ -314,6 +316,22 @@ export default function AdminDashboardPage() {
     toast.success(`Option ${!currentIsPaused ? 'paused' : 'unpaused'} successfully!`)
   }
 
+  /** Triggered when admin toggles featured/trending status on a market */
+  const handleToggleMarketFeatured = async (market: AdminMarketItem) => {
+    const newIsFeatured = !market.isFeatured
+    const result = await toggleMarketFeaturedAction({
+      marketId: market.id,
+      isFeatured: newIsFeatured,
+    })
+
+    if (!result.success) {
+      toast.error(result.error || 'Failed to update featured status.')
+      return
+    }
+
+    toast.success(`Market ${newIsFeatured ? 'starred as Featured' : 'unstarred from Featured'}!`)
+  }
+
   /** Triggered when admin accepts a market suggestion */
   const handleAcceptSuggestion = (suggestion: MarketSuggestionItem) => {
     setCreateMarketPreFill({
@@ -509,6 +527,7 @@ export default function AdminDashboardPage() {
                 setSelectedOptionsMarket(market)
                 setIsOptionsOpen(true)
               }}
+              onToggleFeatured={handleToggleMarketFeatured}
             />
           )}
 

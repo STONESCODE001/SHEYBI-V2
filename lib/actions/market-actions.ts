@@ -61,6 +61,7 @@ export interface CreateMarketInput {
   imageUrl?: string;
   createdBy: string;
   state?: 'open' | 'draft' | 'scheduled';
+  isFeatured?: boolean;
 }
 
 export interface ResolveMarketInput {
@@ -679,4 +680,47 @@ export async function toggleOptionPauseAction(
     return { success: false, error: message };
   }
 }
+
+export interface ToggleMarketFeaturedInput {
+  marketId: string;
+  isFeatured: boolean;
+}
+
+/**
+ * Toggle the featured/trending status of a market in InstantDB.
+ */
+export async function toggleMarketFeaturedAction(
+  input: ToggleMarketFeaturedInput
+): Promise<ActionResponse> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: 'Authentication required.' };
+
+    const market = await repository.markets.getMarketById(input.marketId);
+    if (!market) return { success: false, error: 'Market not found.' };
+
+    const now = Date.now();
+    await repository.markets.updateMarket(input.marketId, {
+      isFeatured: input.isFeatured,
+      updatedAt: now,
+    });
+
+    await repository.auditLogs.createAuditLog({
+      adminUserId: userId,
+      actionType: input.isFeatured ? 'PAUSE_MARKET' : 'UNPAUSE_MARKET',
+      targetEntityId: input.marketId,
+      details: {
+        title: market.title,
+        isFeatured: input.isFeatured,
+      },
+      createdAt: now,
+    });
+
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    return { success: false, error: message };
+  }
+}
+
 

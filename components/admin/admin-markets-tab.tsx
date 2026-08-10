@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Plus, Search, Trophy, Edit, AlertCircle, CheckCircle2, Users } from "lucide-react"
+import { Plus, Search, Trophy, Edit, AlertCircle, CheckCircle2, Users, Star } from "lucide-react"
 
 /**
  * Explanatory Interface: AdminMarketItem
@@ -15,6 +15,7 @@ export interface AdminMarketItem {
   closeDate: string
   totalVolume: number
   format: "binary" | "multi"
+  isFeatured?: boolean
   options: { id: string; title: string; probability?: number; isPaused?: boolean }[]
 }
 
@@ -28,6 +29,7 @@ export interface AdminMarketsTabProps {
   onOpenResolveDialog: (market: AdminMarketItem) => void
   onOpenPauseDialog?: (market: AdminMarketItem) => void
   onOpenOptionsDialog?: (market: AdminMarketItem) => void
+  onToggleFeatured?: (market: AdminMarketItem) => void
 }
 
 /**
@@ -42,6 +44,7 @@ export function AdminMarketsTab({
   onOpenResolveDialog,
   onOpenPauseDialog,
   onOpenOptionsDialog,
+  onToggleFeatured,
 }: AdminMarketsTabProps) {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState<string>("ALL")
@@ -163,6 +166,20 @@ export function AdminMarketsTab({
                         <span className="text-xs text-text-muted font-semibold italic">{market.status}</span>
                       ) : (
                         <div className="flex items-center justify-end gap-2">
+                          {onToggleFeatured && (
+                            <button
+                              type="button"
+                              onClick={() => onToggleFeatured(market)}
+                              title={market.isFeatured ? "Unstar Featured" : "Star as Featured / Trending"}
+                              className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-bold transition-all ${
+                                market.isFeatured
+                                  ? "bg-amber-500/20 text-amber-400 border-amber-500/30 hover:bg-amber-500/30"
+                                  : "bg-surface-container text-text-muted border-border hover:text-text-primary"
+                              }`}
+                            >
+                              <Star className={`h-3.5 w-3.5 ${market.isFeatured ? "fill-amber-400 text-amber-400" : ""}`} />
+                            </button>
+                          )}
                           {market.format === "multi" && onOpenOptionsDialog && (
                             <button
                               type="button"

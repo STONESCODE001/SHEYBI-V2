@@ -154,9 +154,13 @@ The liquidity pool supports pricing stability and settlement.
 
 ## Trading Volume
 
-The cumulative value of completed trades within a market.
+The cumulative value of market volume within a market.
 
-Trading volume increases after every successful buy or sell.
+Initializes at market creation to the admin seed liquidity amount $L$ (e.g. ₦50,000 or ₦200,000).
+
+In multi-option markets, seed volume is split equally across candidates: $\text{Candidate Seed} = \frac{L}{N}$.
+
+Trading volume continuously increases after every successful buy or sell order.
 
 ---
 

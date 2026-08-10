@@ -105,6 +105,7 @@ export interface MarketUpdateData {
   tradingVolume: number;
   totalTrades: number;
   winningOptionId: string;
+  isFeatured?: boolean;
   updatedAt: number;
 }
 

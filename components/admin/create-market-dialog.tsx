@@ -58,6 +58,7 @@ export function CreateMarketDialog({
   const [closeDate, setCloseDate] = React.useState("")
   const [liquidity, setLiquidity] = React.useState<number>(50000)
   const [format, setFormat] = React.useState<"binary" | "1v1" | "multi">("binary")
+  const [isFeatured, setIsFeatured] = React.useState<boolean>(false)
   const [options, setOptions] = React.useState<MarketOptionInput[]>([
     { id: "1", title: "Yes", initialProbability: 50 },
     { id: "2", title: "No", initialProbability: 50 },
@@ -90,14 +91,14 @@ export function CreateMarketDialog({
       ])
     } else if (newFormat === "1v1") {
       setOptions([
-        { id: "1", title: "Contestant A", initialProbability: 50, imageUrl: "" },
-        { id: "2", title: "Contestant B", initialProbability: 50, imageUrl: "" },
+        { id: "1", title: "Player 1", initialProbability: 50 },
+        { id: "2", title: "Player 2", initialProbability: 50 },
       ])
     } else {
       setOptions([
-        { id: "1", title: "Option 1", initialProbability: 33.3 },
-        { id: "2", title: "Option 2", initialProbability: 33.3 },
-        { id: "3", title: "Option 3", initialProbability: 33.4 },
+        { id: "1", title: "Seyi", initialProbability: 33 },
+        { id: "2", title: "Venita", initialProbability: 33 },
+        { id: "3", title: "Adekunle", initialProbability: 34 },
       ])
     }
   }
@@ -106,10 +107,9 @@ export function CreateMarketDialog({
    * Adds a new option line item for multi-option markets
    */
   const handleAddOption = () => {
-    const newId = String(Date.now())
     setOptions((prev) => [
       ...prev,
-      { id: newId, title: `Option ${prev.length + 1}`, initialProbability: 0 },
+      { id: Date.now().toString(), title: `Option ${prev.length + 1}`, initialProbability: 0 },
     ])
   }
 
@@ -118,7 +118,7 @@ export function CreateMarketDialog({
    */
   const handleRemoveOption = (id: string) => {
     if (options.length <= 2) {
-      toast.error("Prediction markets require at least two options!")
+      toast.error("A market must contain at least 2 options!")
       return
     }
     setOptions((prev) => prev.filter((opt) => opt.id !== id))
@@ -167,6 +167,7 @@ export function CreateMarketDialog({
       closeDate,
       liquidity: Number(liquidity) || 50000,
       format,
+      isFeatured,
       options,
       status: isDraft ? "Draft" : "Open",
       suggestionId: initialData?.suggestionId,
@@ -327,9 +328,23 @@ export function CreateMarketDialog({
                     : "border-border bg-bg-surface-secondary text-text-secondary hover:border-primary/40"
                 }`}
               >
-                Multi-Option
+                Multi-Option List
               </button>
             </div>
+          </div>
+
+          {/* Featured / Trending Toggle */}
+          <div className="flex items-center gap-3 rounded-xl border border-border bg-bg-surface-secondary p-3.5">
+            <input
+              type="checkbox"
+              id="isFeaturedToggle"
+              checked={isFeatured}
+              onChange={(e) => setIsFeatured(e.target.checked)}
+              className="h-4 w-4 rounded border-border text-primary focus:ring-primary bg-bg-surface"
+            />
+            <label htmlFor="isFeaturedToggle" className="text-xs font-bold text-text-primary cursor-pointer select-none">
+              Star as Featured / Trending Market (Highlight on Homepage & Category Tabs)
+            </label>
           </div>
 
           {/* Outcome Options Editor, Initial Probabilities & Image URLs */}

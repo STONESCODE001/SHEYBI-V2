@@ -183,13 +183,18 @@ export function adaptToMultiOptionMarketData(market: any): MultiOptionMarketData
   const options = market.options || [];
   const sorted = [...options].sort((a: any, b: any) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
+  const candidateCount = Math.max(1, sorted.length);
+  const totalMarketVolume = Number(market.tradingVolume || market.liquidity || 0);
+  const candidateSeedVolume = Math.round((market.liquidity || totalMarketVolume) / candidateCount);
+
   const candidates: CandidateData[] = sorted.map((opt: any) => {
     const prob = normalizeProbability(opt.probability, 0);
+    const candidateVolume = candidateSeedVolume + Number(opt.tradeVolume || 0);
     return {
       id: opt.id,
       name: opt.name,
       avatarUrl: opt.imageUrl,
-      tradesVolume: `₦${(market.tradingVolume || 0).toLocaleString()}`,
+      tradesVolume: `₦${candidateVolume.toLocaleString()}`,
       yesOddsText: formatOddsFromProbability(prob),
       noOddsText: formatOddsFromProbability(100 - prob),
       yesPrice: opt.sharePrice ?? prob / 100,
@@ -203,7 +208,7 @@ export function adaptToMultiOptionMarketData(market: any): MultiOptionMarketData
     id: market.id,
     title: market.title,
     category: market.category?.name,
-    totalTradesVolume: `₦ ${(market.tradingVolume || 0).toLocaleString()}`,
+    totalTradesVolume: `₦ ${totalMarketVolume.toLocaleString()}`,
     rules: market.description,
     candidates,
     tradeHistory: extractTradeHistory(market),
