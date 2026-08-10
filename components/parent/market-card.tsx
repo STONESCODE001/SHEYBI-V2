@@ -215,50 +215,72 @@ function MarketCard({
                 </h3>
               </div>
 
-              {/* Contestant 1 vs Contestant 2 Headshots */}
-              <div className="flex items-center justify-center gap-6 py-2">
-                {/* Left Contestant Headshot */}
-                <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl overflow-hidden shadow-md">
-                  <Image
-                    src={contestants[0]?.avatarUrl || defaultTestImg}
-                    alt={contestants[0]?.name || "Contestant 1"}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 768px) 96px, 96px"
-                    className="object-cover object-top"
-                  />
+              {/* Contestant 1 vs Contestant 2 Headshots + Name Labels */}
+              <div className="flex items-center justify-center gap-4 sm:gap-6 py-1">
+                {/* Left Contestant Block */}
+                <div className="flex flex-col items-center gap-1.5 min-w-0">
+                  <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl overflow-hidden shadow-md border border-white/10 border-t-2 border-t-[#30D878]">
+                    <Image
+                      src={contestants[0]?.avatarUrl || defaultTestImg}
+                      alt={contestants[0]?.name || "Contestant 1"}
+                      fill
+                      unoptimized
+                      sizes="(max-width: 768px) 96px, 96px"
+                      className="object-cover object-top"
+                    />
+                  </div>
+                  <span className="text-xs font-bold text-slate-200 truncate max-w-[90px] text-center">
+                    {contestants[0]?.name || "Option 1"}
+                  </span>
                 </div>
 
                 {/* Center VS Label */}
-                <span className="text-base sm:text-lg font-black tracking-wider text-slate-300">
+                <span className="text-base sm:text-lg font-black tracking-wider text-[#FFC91F] self-center">
                   VS
                 </span>
 
-                {/* Right Contestant Headshot */}
-                <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl overflow-hidden shadow-md">
-                  <Image
-                    src={contestants[1]?.avatarUrl || defaultTestImg}
-                    alt={contestants[1]?.name || "Contestant 2"}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 768px) 96px, 96px"
-                    className="object-cover object-top"
-                  />
+                {/* Right Contestant Block */}
+                <div className="flex flex-col items-center gap-1.5 min-w-0">
+                  <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl overflow-hidden shadow-md border border-white/10 border-t-2 border-t-[#FFC91F]">
+                    <Image
+                      src={contestants[1]?.avatarUrl || defaultTestImg}
+                      alt={contestants[1]?.name || "Contestant 2"}
+                      fill
+                      unoptimized
+                      sizes="(max-width: 768px) 96px, 96px"
+                      className="object-cover object-top"
+                    />
+                  </div>
+                  <span className="text-xs font-bold text-slate-200 truncate max-w-[90px] text-center">
+                    {contestants[1]?.name || "Option 2"}
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-3 pt-1">
+              {/* Option Ratio Labels */}
+              <div className="flex items-center justify-between text-xs font-bold px-0.5">
+                <span className="text-[#30D878] truncate">
+                  {Math.round(yesProbability)}% Win Chance
+                </span>
+                <span className="text-[#FFC91F] truncate">
+                  {Math.round(noProbability)}% Win Chance
+                </span>
+              </div>
+
               {/* Split Probability Ratio Bar */}
               <RatioBar
                 yesProbability={yesProbability}
                 noProbability={noProbability}
               />
 
-              {/* Outcome Odds Housing Container (Main Base BG Color) */}
-              <div className="flex flex-row items-center gap-1.5 sm:gap-2 rounded-2xl border border-white/5 bg-[#080D19] p-1.5 w-full overflow-hidden">
-                <OddsButton label="Yes" odds={computedYesOdds} variant="yes" />
-                <OddsButton label="No" odds={computedNoOdds} variant="no" />
+              {/* Full-width Accent Yellow Matchup CTA Button */}
+              <div className="w-full pt-0.5">
+                <div className="flex items-center justify-center gap-2 rounded-xl bg-[#FFC91F] hover:bg-[#FFD54F] border border-[#FFC91F] group-hover/market-card:bg-[#FFD54F] p-2.5 text-center text-xs sm:text-sm font-black text-[#0B101D] transition-all shadow-md active:scale-[0.99]">
+                  <span>Predict Matchup</span>
+                  <span className="text-base leading-none">→</span>
+                </div>
               </div>
             </div>
           </div>

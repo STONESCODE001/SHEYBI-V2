@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@clerk/nextjs"
-import { ArrowLeft, User } from "lucide-react"
+import { ArrowLeft, User, HelpCircle } from "lucide-react"
 import { RatioBar } from "@/components/child/ratio-bar"
 import { OddsButton } from "@/components/child/odds-button"
 import { useDialog } from "@/components/dialog"
@@ -126,11 +126,19 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
           {market.title}
         </h1>
 
-        {/* MOBILE VIEW (Figma Screen 1 & Screen 3 - Stacked 1v1 Cards) */}
+        {/* Master 1v1 Prediction Explanation Banner */}
+        <div className="p-3.5 rounded-2xl bg-[#141E33] border border-amber-400/30 flex items-start gap-2.5 shadow-sm text-xs sm:text-sm text-slate-200">
+          <HelpCircle className="size-4 text-[#0EA5E9] shrink-0 mt-0.5" />
+          <p className="leading-relaxed">
+            <strong className="text-amber-400 font-bold">How 1v1 Predictions Work:</strong> Pick <span className="text-[#30D878] font-bold">YES</span> if you think that candidate will win, or <span className="text-[#FFC91F] font-bold">NO</span> if you think they will lose.
+          </p>
+        </div>
+
+        {/* MOBILE VIEW (Stacked 1v1 Cards) */}
         <div className="md:hidden space-y-6">
           {/* Player 1 Block */}
           <div className="flex flex-col items-center space-y-3">
-            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg">
+            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10 border-t-2 border-t-[#30D878]">
               {player1.avatarUrl ? (
                 <Image
                   src={player1.avatarUrl}
@@ -150,21 +158,37 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
               {p1Prob}% Chance
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
-              <button
-                type="button"
-                onClick={() => handleOpenTradeDialog(player1, "yes")}
-                className="w-full text-left active:scale-[0.98] focus:outline-none"
-              >
-                <OddsButton label="Yes" odds={player1.yesOddsText || "1k → 3k"} variant="yes" className="h-12 px-3" />
-              </button>
-              <button
-                type="button"
-                onClick={() => handleOpenTradeDialog(player1, "no")}
-                className="w-full text-left active:scale-[0.98] focus:outline-none"
-              >
-                <OddsButton label="No" odds={player1.noOddsText || "1k → 5k"} variant="no" className="h-12 px-3" />
-              </button>
+            <div className="space-y-1.5 w-full">
+              <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
+                <button
+                  type="button"
+                  onClick={() => handleOpenTradeDialog(player1, "yes")}
+                  className="w-full text-left active:scale-[0.98] focus:outline-none"
+                >
+                  <OddsButton
+                    label="Yes"
+                    odds={player1.yesOddsText || "1k → 3k"}
+                    variant="yes"
+                    className="h-12 px-3"
+                  />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleOpenTradeDialog(player1, "no")}
+                  className="w-full text-left active:scale-[0.98] focus:outline-none"
+                >
+                  <OddsButton
+                    label="No"
+                    odds={player1.noOddsText || "1k → 5k"}
+                    variant="no"
+                    className="h-12 px-3"
+                  />
+                </button>
+              </div>
+              <div className="flex items-center justify-center gap-1 text-[11px] font-medium text-slate-400 text-center px-1">
+                <HelpCircle className="size-3 text-[#0EA5E9] shrink-0" />
+                <span><span className="text-[#30D878] font-bold">YES</span> = {player1.name} wins | <span className="text-[#FFC91F] font-bold">NO</span> = {player1.name} loses</span>
+              </div>
             </div>
           </div>
 
@@ -177,7 +201,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
 
           {/* Player 2 Block */}
           <div className="flex flex-col items-center space-y-3">
-            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg">
+            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10 border-t-2 border-t-[#FFC91F]">
               {player2.avatarUrl ? (
                 <Image
                   src={player2.avatarUrl}
@@ -197,32 +221,48 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
               {p2Prob}% Chance
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
-              <button
-                type="button"
-                onClick={() => handleOpenTradeDialog(player2, "yes")}
-                className="w-full text-left active:scale-[0.98] focus:outline-none"
-              >
-                <OddsButton label="Yes" odds={player2.yesOddsText || "1k → 3k"} variant="yes" className="h-12 px-3" />
-              </button>
-              <button
-                type="button"
-                onClick={() => handleOpenTradeDialog(player2, "no")}
-                className="w-full text-left active:scale-[0.98] focus:outline-none"
-              >
-                <OddsButton label="No" odds={player2.noOddsText || "1k → 5k"} variant="no" className="h-12 px-3" />
-              </button>
+            <div className="space-y-1.5 w-full">
+              <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
+                <button
+                  type="button"
+                  onClick={() => handleOpenTradeDialog(player2, "yes")}
+                  className="w-full text-left active:scale-[0.98] focus:outline-none"
+                >
+                  <OddsButton
+                    label="Yes"
+                    odds={player2.yesOddsText || "1k → 3k"}
+                    variant="yes"
+                    className="h-12 px-3"
+                  />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleOpenTradeDialog(player2, "no")}
+                  className="w-full text-left active:scale-[0.98] focus:outline-none"
+                >
+                  <OddsButton
+                    label="No"
+                    odds={player2.noOddsText || "1k → 5k"}
+                    variant="no"
+                    className="h-12 px-3"
+                  />
+                </button>
+              </div>
+              <div className="flex items-center justify-center gap-1 text-[11px] font-medium text-slate-400 text-center px-1">
+                <HelpCircle className="size-3 text-[#0EA5E9] shrink-0" />
+                <span><span className="text-[#30D878] font-bold">YES</span> = {player2.name} wins | <span className="text-[#FFC91F] font-bold">NO</span> = {player2.name} loses</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* DESKTOP VIEW (Figma Screen 2 - Hero Matchup Card) */}
+        {/* DESKTOP VIEW (Hero Matchup Card) */}
         <div className="hidden md:block space-y-6">
           <div className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] space-y-6 shadow-xl">
             <div className="grid grid-cols-3 items-center text-center">
               {/* Player 1 Avatar & Name */}
               <div className="flex flex-col items-center space-y-2.5">
-                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg">
+                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10 border-t-2 border-t-[#30D878]">
                   {player1.avatarUrl ? (
                     <Image
                       src={player1.avatarUrl}
@@ -250,7 +290,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
 
               {/* Player 2 Avatar & Name */}
               <div className="flex flex-col items-center space-y-2.5">
-                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg">
+                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10 border-t-2 border-t-[#FFC91F]">
                   {player2.avatarUrl ? (
                     <Image
                       src={player2.avatarUrl}
@@ -281,39 +321,71 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
           {/* Desktop Dual Player Odds Rows */}
           <div className="grid grid-cols-2 gap-4">
             {/* Player 1 Odds Pair */}
-            <div className="grid grid-cols-2 gap-2.5 p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
-              <button
-                type="button"
-                onClick={() => handleOpenTradeDialog(player1, "yes")}
-                className="w-full text-left active:scale-[0.98] focus:outline-none"
-              >
-                <OddsButton label="Yes" odds={player1.yesOddsText || "1k → 3k"} variant="yes" className="h-14 px-4 text-base" />
-              </button>
-              <button
-                type="button"
-                onClick={() => handleOpenTradeDialog(player1, "no")}
-                className="w-full text-left active:scale-[0.98] focus:outline-none"
-              >
-                <OddsButton label="No" odds={player1.noOddsText || "1k → 5k"} variant="no" className="h-14 px-4 text-base" />
-              </button>
+            <div className="space-y-1.5">
+              <div className="grid grid-cols-2 gap-2.5 p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
+                <button
+                  type="button"
+                  onClick={() => handleOpenTradeDialog(player1, "yes")}
+                  className="w-full text-left active:scale-[0.98] focus:outline-none"
+                >
+                  <OddsButton
+                    label="Yes"
+                    odds={player1.yesOddsText || "1k → 3k"}
+                    variant="yes"
+                    className="h-14 px-4 text-base"
+                  />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleOpenTradeDialog(player1, "no")}
+                  className="w-full text-left active:scale-[0.98] focus:outline-none"
+                >
+                  <OddsButton
+                    label="No"
+                    odds={player1.noOddsText || "1k → 5k"}
+                    variant="no"
+                    className="h-14 px-4 text-base"
+                  />
+                </button>
+              </div>
+              <div className="flex items-center justify-center gap-1 text-xs font-medium text-slate-400 text-center px-1">
+                <HelpCircle className="size-3.5 text-[#0EA5E9] shrink-0" />
+                <span><span className="text-[#30D878] font-bold">YES</span> = {player1.name} wins | <span className="text-[#FFC91F] font-bold">NO</span> = {player1.name} loses</span>
+              </div>
             </div>
 
             {/* Player 2 Odds Pair */}
-            <div className="grid grid-cols-2 gap-2.5 p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
-              <button
-                type="button"
-                onClick={() => handleOpenTradeDialog(player2, "yes")}
-                className="w-full text-left active:scale-[0.98] focus:outline-none"
-              >
-                <OddsButton label="Yes" odds={player2.yesOddsText || "1k → 3k"} variant="yes" className="h-14 px-4 text-base" />
-              </button>
-              <button
-                type="button"
-                onClick={() => handleOpenTradeDialog(player2, "no")}
-                className="w-full text-left active:scale-[0.98] focus:outline-none"
-              >
-                <OddsButton label="No" odds={player2.noOddsText || "1k → 5k"} variant="no" className="h-14 px-4 text-base" />
-              </button>
+            <div className="space-y-1.5">
+              <div className="grid grid-cols-2 gap-2.5 p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
+                <button
+                  type="button"
+                  onClick={() => handleOpenTradeDialog(player2, "yes")}
+                  className="w-full text-left active:scale-[0.98] focus:outline-none"
+                >
+                  <OddsButton
+                    label="Yes"
+                    odds={player2.yesOddsText || "1k → 3k"}
+                    variant="yes"
+                    className="h-14 px-4 text-base"
+                  />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleOpenTradeDialog(player2, "no")}
+                  className="w-full text-left active:scale-[0.98] focus:outline-none"
+                >
+                  <OddsButton
+                    label="No"
+                    odds={player2.noOddsText || "1k → 5k"}
+                    variant="no"
+                    className="h-14 px-4 text-base"
+                  />
+                </button>
+              </div>
+              <div className="flex items-center justify-center gap-1 text-xs font-medium text-slate-400 text-center px-1">
+                <HelpCircle className="size-3.5 text-[#0EA5E9] shrink-0" />
+                <span><span className="text-[#30D878] font-bold">YES</span> = {player2.name} wins | <span className="text-[#FFC91F] font-bold">NO</span> = {player2.name} loses</span>
+              </div>
             </div>
           </div>
         </div>

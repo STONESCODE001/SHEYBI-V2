@@ -7,18 +7,30 @@ Update this document immediately after every completed implementation unit. This
 ## Current Phase: Phase 4: Core Engine & Algorithm Implementation
 
 ### Current Implementation Target
-- **1v1 Matchup Card Classification & Detail View Parsing Fix** (`lib/market-adapter.ts`, `components/parent/market-details/versus-market-view.tsx`) — **Completed**
+- **1v1 Market UX & Clarity Enhancements** (`components/child/odds-button.tsx`, `components/parent/market-card.tsx`, `components/parent/market-details/versus-market-view.tsx`) — **Completed**
 
 ---
    
 # Current Goal
 
-1v1 matchup card classification fixed to respect `displayVariant === '1v1'` over `marketType === 'multi_option'`. 4-option DB structures (`[A YES, A NO, B YES, B NO]`) properly parsed into Contestant 1 (*A Male*) vs Contestant 2 (*A Female*), and Yes/No buttons linked dynamically to individual option IDs.
+1v1 market prediction clarity enhanced across grid cards and market detail views by eliminating ambiguous `YES / NO` card buttons, adding top-only colored avatar accent borders, clear ratio bar win chance labels (`[X]% Win Chance` / `[Y]% Win Chance`), explicit outcome action button subtitles (`YES (Name Wins)` / `NO (Name Loses)`), a top master explanation banner, dual micro info banners under both contestant sides, and a high-impact Accent Yellow CTA button (`Predict Matchup →`).
 
 ---
 
 # Completed
 
+* **1v1 Market UX & Clarity Enhancements** (`components/child/odds-button.tsx`, `components/parent/market-card.tsx`, `components/parent/market-details/versus-market-view.tsx`) — Completed 100%. 
+  1. **`OddsButton` Component Extension (`odds-button.tsx`)**: Added optional `readonly subtitle?: string` prop to render explicit outcome prediction subtext alongside odds e.g. `YES (Male Wins)` or `NO (Male Loses)`.
+  2. **1v1 Grid Cards Redesign (`market-card.tsx`)**: 
+     - **Avatar Presentation**: Removed redundant percentage pills under contestant headshots to keep contestant name labels clean and uncluttered.
+     - **Top-Only Avatar Accent Borders**: Applied 2px top-only colored accent borders (`border border-white/10 border-t-2 border-t-[#30D878]` for Contestant 1 and `border border-white/10 border-t-2 border-t-[#FFC91F]` for Contestant 2).
+     - **Unambiguous Ratio Bar Labels**: Formatted top ratio bar labels to concise outcome win probabilities: `${Math.round(yesProbability)}% Win Chance` on the green left side and `${Math.round(noProbability)}% Win Chance` on the yellow right side.
+     - **Accent Yellow CTA Button**: Replaced confusing bottom `YES / NO` buttons with a single full-width CTA button **`Predict Matchup →`** styled in Sheybi Accent Yellow (`#FFC91F`) with dark font-black text (`#0B101D`) and active hover scale effects.
+  3. **1v1 Market Detail Page Enhancements (`versus-market-view.tsx`)**: 
+     - **Master 1v1 Info Banner**: Positioned top explanation box: `💡 How 1v1 Predictions Work: Pick YES if you think that candidate will win, or NO if you think they will lose.`
+     - **Dynamic Outcome Action Subtitles**: Player 1 YES: `YES (Player 1 Name Wins)` | Player 1 NO: `NO (Player 1 Name Loses)` & Player 2 YES: `YES (Player 2 Name Wins)` | Player 2 NO: `NO (Player 2 Name Loses)`.
+     - **Dual Micro Info Banners**: Added dedicated micro banners directly under **both** Contestant 1 and Contestant 2 action blocks (`💡 YES = [Name] wins | NO = [Name] loses`).
+     - **Top-Only Avatar Accent Borders**: Enforced top-only 2px colored accent borders (`border border-white/10 border-t-2 border-t-[#30D878]` for Player 1 and `border border-white/10 border-t-2 border-t-[#FFC91F]` for Player 2) across mobile stacked and desktop dual-column layouts.
 * **1v1 Matchup Card Classification & Detail View Parsing Fix** (`lib/market-adapter.ts`, `components/parent/market-details/versus-market-view.tsx`) — (1) Updated `adaptMarketToCardProps` to prioritize `displayVariant === '1v1'` over `marketType === 'multi_option'` so feed cards render as 1v1 headshot cards; (2) Parsed 4-option 1v1 DB structures (`[A YES, A NO, B YES, B NO]`) into clean Contestant 1 (*A Male*) vs Contestant 2 (*A Female*) data; (3) Added `yesOptionId` and `noOptionId` to `PlayerData` in `versus-market-view.tsx` so clicking YES or NO under a contestant targets their exact option ID.
 * **Spec 20 — Real-Time Market Discovery & Search Bar Integration** (`context/feature-specs/20-market-search-and-discovery.md`) — Completed 100%. (1) Replaced `MOCK_DB` in `SearchDialog` with live InstantDB `db.useQuery` for `markets` fetching linked `category` and `options`; (2) Case-insensitive substring matching algorithm across market titles, descriptions, category names, and option names with fallback normalized matching; (3) Priority sorting rendering `open` state markets first; (4) Quick search tag pills (`#BBNaija`, `#Eviction`, `#HeadOfHouse`, `#Winner`) populating search query on click; (5) Skeleton loaders (`SearchResultCardSkeleton`) during query loading; (6) `DialogEmptyState` rendering `"No markets found matching '[query]'."`; (7) Routing to `/markets/[id]` upon selecting a search result card; (8) Keyboard navigation (`Esc` to close, `Enter` / `Space` selection).
 

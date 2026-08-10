@@ -9,6 +9,10 @@ export interface OddsButtonProps extends React.ComponentProps<"div"> {
    */
   readonly label: string
   /**
+   * Optional sublabel / outcome subtitle e.g. "Male Wins" or "Male Loses" for 1v1 clarity.
+   */
+  readonly subtitle?: string
+  /**
    * DB INTEGRATION NOTE:
    * Formatted odds string (e.g., "1k -> 3k") representing the stake -> payout ratio.
    * Can be calculated dynamically from market option probability: Payout = Base Stake / Probability.
@@ -22,11 +26,12 @@ export interface OddsButtonProps extends React.ComponentProps<"div"> {
 
 /**
  * OddsButton component
- * Renders an outcome display button (e.g., "Yes  1k -> 3k") linearly straight on a single line.
+ * Renders an outcome display button (e.g., "Yes (Male Wins) 1k -> 3k").
  * Keeps text responsive with tight padding and shrink constraints so it fits on all screen widths.
  */
 export function OddsButton({
   label,
+  subtitle,
   odds,
   variant = "yes",
   className,
@@ -42,10 +47,17 @@ export function OddsButton({
       )}
       {...props}
     >
-      {/* Outcome label (e.g., Yes / No) - strictly single line */}
-      <span className="shrink-0 text-xs font-semibold whitespace-nowrap text-slate-300">
-        {label}
-      </span>
+      {/* Outcome label & subtitle (e.g., Yes - Male Wins) */}
+      <div className="flex items-center gap-1.5 min-w-0 shrink-0">
+        <span className="shrink-0 text-xs font-semibold whitespace-nowrap text-slate-300">
+          {label}
+        </span>
+        {subtitle && (
+          <span className="text-[11px] font-medium text-slate-400 truncate max-w-[120px] sm:max-w-[160px]">
+            ({subtitle})
+          </span>
+        )}
+      </div>
 
       {/* Odds payout text (e.g., 1k -> 3k) - strictly single line font-mono */}
       <span
