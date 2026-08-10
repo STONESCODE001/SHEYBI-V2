@@ -40,17 +40,17 @@ export default {
 
   positions: {
     allow: {
-      view: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
-      create: "auth.id == data.userId",
-      update: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      view: "auth.id != null",
+      create: "auth.id != null",
+      update: "auth.id != null || 'admin' in auth.ref('$user.role')",
       delete: "false",
     },
   },
 
   wallets: {
     allow: {
-      view: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
-      create: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      view: "auth.id != null",
+      create: "auth.id != null || 'admin' in auth.ref('$user.role')",
       update: "'admin' in auth.ref('$user.role')", // Balances updated via server actions / adminDb
       delete: "false",
     },
@@ -58,7 +58,7 @@ export default {
 
   wallet_transactions: {
     allow: {
-      view: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      view: "auth.id != null",
       create: "false", // Immutable, created via server action / adminDb
       update: "false",
       delete: "false",
@@ -67,7 +67,7 @@ export default {
 
   ledger: {
     allow: {
-      view: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      view: "auth.id != null",
       create: "false", // Immutable double-entry ledger
       update: "false",
       delete: "false",
@@ -76,8 +76,8 @@ export default {
 
   deposits: {
     allow: {
-      view: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
-      create: "auth.id == data.userId",
+      view: "auth.id != null",
+      create: "auth.id != null",
       update: "'admin' in auth.ref('$user.role')",
       delete: "false",
     },
@@ -85,8 +85,8 @@ export default {
 
   withdrawal_requests: {
     allow: {
-      view: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
-      create: "auth.id == data.userId",
+      view: "auth.id != null",
+      create: "auth.id != null",
       update: "'admin' in auth.ref('$user.role')",
       delete: "false",
     },
