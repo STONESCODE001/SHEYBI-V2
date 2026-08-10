@@ -56,6 +56,7 @@ const schema = i.schema({
       sharePrice: i.number(), // Current ₦ price per share (0 < price < 1)
       sharesOutstanding: i.number(), // Total outstanding shares (LMSR q_i)
       isWinningOption: i.boolean(),
+      isPaused: i.boolean().optional(),
       imageUrl: i.string().optional(), // Contestant avatar
       createdAt: i.number(),
     }),

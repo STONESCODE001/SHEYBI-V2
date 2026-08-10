@@ -621,3 +621,62 @@ export async function reopenMarketAction(
     return { success: false, error: message };
   }
 }
+
+export interface ToggleOptionPauseInput {
+  marketId: string;
+  optionId: string;
+  isPaused: boolean;
+}
+
+/**
+ * Pause or unpause an individual option in a multi-option market.
+ * Used for pausing evicted or disabled housemates.
+ */
+export async function toggleOptionPauseAction(
+  input: ToggleOptionPauseInput
+): Promise<ActionResponse> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: 'Authentication required.' };
+
+    const market = await repository.markets.getMarketById(input.marketId);
+    if (!market) return { success: false, error: 'Market not found.' };
+
+    if (market.marketType !== 'multi_option') {
+      return { success: false, error: 'Option pausing is only available for multi-option markets.' };
+    }
+
+    const option = market.options.find((o) => o.id === input.optionId);
+    if (!option) return { success: false, error: 'Market option not found.' };
+
+    const now = Date.now();
+    await repository.markets.updateMarketOption(input.optionId, {
+      isPaused: input.isPaused,
+    });
+
+    await repository.markets.addMarketActivity(input.marketId, {
+      activityType: input.isPaused ? 'option_paused' : 'option_unpaused',
+      description: `Option "${option.name}" ${input.isPaused ? 'paused' : 'unpaused'} by admin.`,
+      relatedUserId: userId,
+      createdAt: now,
+    });
+
+    await repository.auditLogs.createAuditLog({
+      adminUserId: userId,
+      actionType: input.isPaused ? 'PAUSE_MARKET_OPTION' : 'UNPAUSE_MARKET_OPTION',
+      targetEntityId: input.optionId,
+      details: {
+        marketId: input.marketId,
+        optionName: option.name,
+        isPaused: input.isPaused,
+      },
+      createdAt: now,
+    });
+
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    return { success: false, error: message };
+  }
+}
+

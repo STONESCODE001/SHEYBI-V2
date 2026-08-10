@@ -24,6 +24,7 @@ import {
   resolveMarketAction,
   pauseMarketAction,
   unpauseMarketAction,
+  toggleOptionPauseAction,
 } from "@/lib/actions/market-actions"
 import { rejectWithdrawalAction } from "@/lib/actions/wallet-actions"
 import {
@@ -45,6 +46,7 @@ import { AdminKycTab } from "@/components/admin/admin-kyc-tab"
 import { CreateMarketDialog } from "@/components/admin/create-market-dialog"
 import { ResolveMarketDialog } from "@/components/dialog/features/market/resolve-market-dialog"
 import { PauseMarketDialog } from "@/components/dialog/features/market/pause-market-dialog"
+import { ManageOptionsDialog } from "@/components/admin/manage-options-dialog"
 import { WithdrawalActionDialog } from "@/components/admin/withdrawal-action-dialog"
 import { FinancialWipeDialog } from "@/components/dialog/features/admin/financial-wipe-dialog"
 
@@ -70,6 +72,9 @@ export default function AdminDashboardPage() {
 
   const [isPauseMarketOpen, setIsPauseMarketOpen] = React.useState(false)
   const [selectedPauseMarket, setSelectedPauseMarket] = React.useState<AdminMarketItem | null>(null)
+
+  const [isOptionsOpen, setIsOptionsOpen] = React.useState(false)
+  const [selectedOptionsMarket, setSelectedOptionsMarket] = React.useState<AdminMarketItem | null>(null)
 
   const [isWithdrawalActionOpen, setIsWithdrawalActionOpen] = React.useState(false)
   const [selectedWithdrawal, setSelectedWithdrawal] = React.useState<WithdrawalItem | null>(null)
@@ -109,7 +114,12 @@ export default function AdminDashboardPage() {
         closeDate: new Date(m.closingTime).toLocaleString(),
         totalVolume: m.tradingVolume ?? 0,
         format: m.marketType === 'multi_option' ? 'multi' : 'binary',
-        options: (m.options ?? []).map((o: any) => ({ id: o.id, title: o.name })),
+        options: (m.options ?? []).map((o: any) => ({
+          id: o.id,
+          title: o.name,
+          probability: o.probability,
+          isPaused: Boolean(o.isPaused),
+        })),
       }
     })
   }, [dbMarkets, dbCategories])
@@ -286,6 +296,22 @@ export default function AdminDashboardPage() {
     }
 
     toast.success(`Market ${isCurrentlyPaused ? 'unpaused' : 'paused'} successfully!`)
+  }
+
+  /** Triggered when admin toggles pause/unpause on an individual option */
+  const handleToggleOptionPause = async (optionId: string, currentIsPaused: boolean) => {
+    if (!selectedOptionsMarket) return
+    const result = await toggleOptionPauseAction({
+      marketId: selectedOptionsMarket.id,
+      optionId,
+      isPaused: !currentIsPaused,
+    })
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to update option state.')
+    }
+
+    toast.success(`Option ${!currentIsPaused ? 'paused' : 'unpaused'} successfully!`)
   }
 
   /** Triggered when admin accepts a market suggestion */
@@ -479,6 +505,10 @@ export default function AdminDashboardPage() {
                 setSelectedPauseMarket(market)
                 setIsPauseMarketOpen(true)
               }}
+              onOpenOptionsDialog={(market) => {
+                setSelectedOptionsMarket(market)
+                setIsOptionsOpen(true)
+              }}
             />
           )}
 
@@ -533,6 +563,20 @@ export default function AdminDashboardPage() {
         marketTitle={selectedPauseMarket?.title ?? ""}
         currentState={selectedPauseMarket?.status?.toLowerCase() ?? "open"}
         onConfirmPauseStateChange={handleConfirmPauseStateChange}
+      />
+
+      <ManageOptionsDialog
+        isOpen={isOptionsOpen}
+        onClose={() => setIsOptionsOpen(false)}
+        marketId={selectedOptionsMarket?.id ?? ""}
+        marketTitle={selectedOptionsMarket?.title ?? ""}
+        options={(selectedOptionsMarket?.options ?? []).map((o) => ({
+          id: o.id,
+          name: o.title,
+          probability: o.probability,
+          isPaused: o.isPaused,
+        }))}
+        onToggleOptionPause={handleToggleOptionPause}
       />
 
       <WithdrawalActionDialog

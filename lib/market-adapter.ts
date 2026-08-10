@@ -195,6 +195,7 @@ export function adaptToMultiOptionMarketData(market: any): MultiOptionMarketData
       yesPrice: opt.sharePrice ?? prob / 100,
       noPrice: 1 - (opt.sharePrice ?? prob / 100),
       probability: prob,
+      isPaused: Boolean(opt.isPaused),
     };
   });
 

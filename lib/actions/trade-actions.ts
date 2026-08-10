@@ -131,6 +131,9 @@ export async function buyPositionAction(
     if (optionIndex === -1) {
       return { success: false, error: 'Selected market option does not exist.' };
     }
+    if (market.options[optionIndex].isPaused) {
+      return { success: false, error: 'Trading for this option is currently paused.' };
+    }
 
     // ---- STEP 5: Validate trade amount ----
     // (amount validation happens inside calculateBuyTrade via MIN_TRADE_AMOUNT and MAX_TRADE_LIQUIDITY_RATIO)
@@ -375,6 +378,10 @@ export async function sellPositionAction(
     const position = await repository.positions.getPositionByUserAndOption(userId, optionId);
     if (!position) {
       return { success: false, error: 'You do not hold a position in this option.' };
+    }
+    const option = market.options.find((o) => o.id === optionId);
+    if (option?.isPaused) {
+      return { success: false, error: 'Trading for this option is currently paused.' };
     }
     if (sharesToSell <= 0) {
       return { success: false, error: 'Shares to sell must be positive.' };

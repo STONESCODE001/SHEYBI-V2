@@ -76,6 +76,7 @@ class InstantDbMarketRepository implements IMarketRepository {
           probability: opt.probability ?? 50,
           sharePrice: opt.sharePrice ?? 0.5,
           isWinningOption: opt.isWinningOption ?? false,
+          isPaused: opt.isPaused ?? false,
           imageUrl: opt.imageUrl,
         }))
         .sort((a, b) => a.displayOrder - b.displayOrder);
@@ -144,6 +145,7 @@ class InstantDbMarketRepository implements IMarketRepository {
             probability: opt.probability ?? 50,
             sharePrice: opt.sharePrice ?? 0.5,
             isWinningOption: opt.isWinningOption ?? false,
+            isPaused: opt.isPaused ?? false,
             imageUrl: opt.imageUrl,
           }))
           .sort((a: MarketOption, b: MarketOption) => a.displayOrder - b.displayOrder),

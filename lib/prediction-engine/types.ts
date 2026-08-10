@@ -33,6 +33,7 @@ export interface MarketOption {
   probability: number;       // Percentage (0.01 - 0.99 / 1% - 99%)
   sharePrice: number;        // Price in Naira (0.01 - 0.99)
   isWinningOption?: boolean;
+  isPaused?: boolean;
 }
 
 export interface Market {

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Plus, Search, Trophy, Edit, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Plus, Search, Trophy, Edit, AlertCircle, CheckCircle2, Users } from "lucide-react"
 
 /**
  * Explanatory Interface: AdminMarketItem
@@ -15,7 +15,7 @@ export interface AdminMarketItem {
   closeDate: string
   totalVolume: number
   format: "binary" | "multi"
-  options: { id: string; title: string }[]
+  options: { id: string; title: string; probability?: number; isPaused?: boolean }[]
 }
 
 /**
@@ -27,6 +27,7 @@ export interface AdminMarketsTabProps {
   onOpenCreateDialog: () => void
   onOpenResolveDialog: (market: AdminMarketItem) => void
   onOpenPauseDialog?: (market: AdminMarketItem) => void
+  onOpenOptionsDialog?: (market: AdminMarketItem) => void
 }
 
 /**
@@ -40,6 +41,7 @@ export function AdminMarketsTab({
   onOpenCreateDialog,
   onOpenResolveDialog,
   onOpenPauseDialog,
+  onOpenOptionsDialog,
 }: AdminMarketsTabProps) {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState<string>("ALL")
@@ -161,6 +163,15 @@ export function AdminMarketsTab({
                         <span className="text-xs text-text-muted font-semibold italic">{market.status}</span>
                       ) : (
                         <div className="flex items-center justify-end gap-2">
+                          {market.format === "multi" && onOpenOptionsDialog && (
+                            <button
+                              type="button"
+                              onClick={() => onOpenOptionsDialog(market)}
+                              className="inline-flex items-center gap-1 rounded-xl bg-surface-container text-text-primary border border-border px-2.5 py-1.5 text-xs font-bold hover:bg-bg-hover transition-all shadow-xs"
+                            >
+                              <Users className="h-3.5 w-3.5 text-primary" /> Options
+                            </button>
+                          )}
                           {(market.status === "Open" || market.status === "Paused") && (
                             <button
                               type="button"

@@ -20,6 +20,7 @@ export interface CandidateData {
   yesPrice?: number     // e.g. 0.33
   noPrice?: number      // e.g. 0.33
   probability?: number  // e.g. 33
+  isPaused?: boolean
 }
 
 export interface MultiOptionMarketData {
@@ -82,7 +83,7 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
       router.push("/auth/sign-in")
       return
     }
-    if (!hasRules) return
+    if (!hasRules || candidate.isPaused) return
     dialog.open("trade/dialog", {
       marketId: market.id,
       candidateId: candidate.id,
@@ -145,8 +146,13 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
                   )}
                 </div>
                 <div className="flex flex-col">
-                  <h3 className="text-base sm:text-lg font-bold text-[var(--text-primary)] leading-tight">
+                  <h3 className="text-base sm:text-lg font-bold text-[var(--text-primary)] leading-tight flex items-center gap-2">
                     {candidate.name}
+                    {candidate.isPaused && (
+                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                        Paused
+                      </span>
+                    )}
                   </h3>
                   <span className="text-xs text-[var(--text-muted)] font-normal">
                     Trades: {candidate.tradesVolume || "₦667k"}
@@ -154,41 +160,49 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
                 </div>
               </div>
 
-              {/* Right Side: Dual Outcome Odds Pair */}
-              <div className="grid grid-cols-2 gap-2.5 w-full sm:w-auto sm:min-w-[280px]">
-                <button
-                  type="button"
-                  disabled={!hasRules}
-                  onClick={() => handleOpenTradeDialog(candidate, "yes")}
-                  className={cn(
-                    "w-full text-left active:scale-[0.98] focus:outline-none",
-                    !hasRules && "opacity-50 cursor-not-allowed"
-                  )}
-                >
-                  <OddsButton
-                    label="Yes"
-                    odds={candidate.yesOddsText || "1k → 3k"}
-                    variant="yes"
-                    className="h-11 sm:h-12 px-3 text-xs sm:text-sm"
-                  />
-                </button>
-                <button
-                  type="button"
-                  disabled={!hasRules}
-                  onClick={() => handleOpenTradeDialog(candidate, "no")}
-                  className={cn(
-                    "w-full text-left active:scale-[0.98] focus:outline-none",
-                    !hasRules && "opacity-50 cursor-not-allowed"
-                  )}
-                >
-                  <OddsButton
-                    label="No"
-                    odds={candidate.noOddsText || "1k → 3k"}
-                    variant="no"
-                    className="h-11 sm:h-12 px-3 text-xs sm:text-sm"
-                  />
-                </button>
-              </div>
+              {/* Right Side: Dual Outcome Odds Pair OR Paused Indicator */}
+              {candidate.isPaused ? (
+                <div className="flex items-center justify-center sm:justify-end w-full sm:w-auto sm:min-w-[280px]">
+                  <div className="inline-flex items-center justify-center h-11 sm:h-12 w-full sm:w-auto px-8 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-xs">
+                    TRADING PAUSED
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2.5 w-full sm:w-auto sm:min-w-[280px]">
+                  <button
+                    type="button"
+                    disabled={!hasRules}
+                    onClick={() => handleOpenTradeDialog(candidate, "yes")}
+                    className={cn(
+                      "w-full text-left active:scale-[0.98] focus:outline-none",
+                      !hasRules && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    <OddsButton
+                      label="Yes"
+                      odds={candidate.yesOddsText || "1k → 3k"}
+                      variant="yes"
+                      className="h-11 sm:h-12 px-3 text-xs sm:text-sm"
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!hasRules}
+                    onClick={() => handleOpenTradeDialog(candidate, "no")}
+                    className={cn(
+                      "w-full text-left active:scale-[0.98] focus:outline-none",
+                      !hasRules && "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    <OddsButton
+                      label="No"
+                      odds={candidate.noOddsText || "1k → 3k"}
+                      variant="no"
+                      className="h-11 sm:h-12 px-3 text-xs sm:text-sm"
+                    />
+                  </button>
+                </div>
+              )}
             </div>
           ))}
 

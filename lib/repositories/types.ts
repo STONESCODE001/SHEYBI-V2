@@ -117,6 +117,7 @@ export interface OptionUpdateData {
   sharePrice: number;
   sharesOutstanding: number;
   isWinningOption: boolean;
+  isPaused: boolean;
 }
 
 /**
@@ -148,7 +149,9 @@ export interface MarketActivityData {
   | 'reopened'
   | 'resolved'
   | 'cancelled'
-  | 'extended';
+  | 'extended'
+  | 'option_paused'
+  | 'option_unpaused';
   description: string;
   relatedUserId?: string;
   metadata?: Record<string, unknown>;
@@ -291,7 +294,9 @@ export type AuditActionType =
   | 'CANCEL_MARKET'
   | 'APPROVE_WITHDRAWAL'
   | 'REJECT_WITHDRAWAL'
-  | 'SUSPEND_USER';
+  | 'SUSPEND_USER'
+  | 'PAUSE_MARKET_OPTION'
+  | 'UNPAUSE_MARKET_OPTION';
 
 /**
  * Data required to create an immutable audit log entry.

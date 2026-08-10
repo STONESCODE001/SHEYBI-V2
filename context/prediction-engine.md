@@ -333,6 +333,20 @@ Unpausing returns market to Open.
 
 ---
 
+## Pause Option (Multi-Option Markets)
+
+Allowed for multi-option markets while active.
+
+Sets `isPaused` flag to true on a specific option/candidate (e.g. evicted housemate).
+
+Hides YES and NO trading buttons for that candidate in the user interface and rejects all buy/sell trades targeting that option with `"Trading for this option is currently paused."`.
+
+Remaining options in the multi-option market continue trading without interruption.
+
+Unpausing returns candidate option to active trading.
+
+---
+
 ## Extend / Reopen Market
 
 Allowed while Open or Closed before Resolution.
