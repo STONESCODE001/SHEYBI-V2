@@ -73,7 +73,10 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
   const p1RawProb = player1.probability ?? 50
   const rawP1 = p1RawProb > 0 && p1RawProb <= 1 ? p1RawProb * 100 : p1RawProb
   const p1Prob = Number(rawP1.toFixed(1))
-  const p2Prob = Number((100 - p1Prob).toFixed(1))
+
+  const p2RawProb = player2.probability ?? (100 - p1Prob)
+  const rawP2 = p2RawProb > 0 && p2RawProb <= 1 ? p2RawProb * 100 : p2RawProb
+  const p2Prob = Number(rawP2.toFixed(1))
 
   const hasRules = Boolean(market.rules && market.rules.trim())
   const marketRules = hasRules ? market.rules : "Rules unavailable for this market. Trading is currently disabled."
@@ -127,7 +130,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
         </h1>
 
         {/* Master 1v1 Prediction Explanation Banner */}
-        <div className="p-3.5 rounded-2xl bg-[#141E33] border border-amber-400/30 flex items-start gap-2.5 shadow-sm text-xs sm:text-sm text-slate-200">
+        <div className="p-3.5 rounded-2xl bg-[#141E33] flex items-start gap-2.5 shadow-sm text-xs sm:text-sm text-slate-200">
           <HelpCircle className="size-4 text-[#0EA5E9] shrink-0 mt-0.5" />
           <p className="leading-relaxed">
             <strong className="text-amber-400 font-bold">How 1v1 Predictions Work:</strong> Pick <span className="text-[#30D878] font-bold">YES</span> if you think that candidate will win, or <span className="text-[#FFC91F] font-bold">NO</span> if you think they will lose.
@@ -138,7 +141,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
         <div className="md:hidden space-y-6">
           {/* Player 1 Block */}
           <div className="flex flex-col items-center space-y-3">
-            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10 border-t-2 border-t-[#30D878]">
+            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10">
               {player1.avatarUrl ? (
                 <Image
                   src={player1.avatarUrl}
@@ -153,10 +156,6 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
             </div>
 
             <h2 className="text-lg font-black text-[var(--text-primary)]">{player1.name}</h2>
-
-            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[var(--accent-green)]/10 border border-[var(--accent-green)] text-[var(--accent-green)] font-bold text-sm">
-              {p1Prob}% Chance
-            </div>
 
             <div className="space-y-1.5 w-full">
               <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
@@ -201,7 +200,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
 
           {/* Player 2 Block */}
           <div className="flex flex-col items-center space-y-3">
-            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10 border-t-2 border-t-[#FFC91F]">
+            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10">
               {player2.avatarUrl ? (
                 <Image
                   src={player2.avatarUrl}
@@ -216,10 +215,6 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
             </div>
 
             <h2 className="text-lg font-black text-[var(--text-primary)]">{player2.name}</h2>
-
-            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[var(--accent-yellow)]/10 border border-[var(--accent-yellow)] text-[var(--accent-yellow)] font-bold text-sm">
-              {p2Prob}% Chance
-            </div>
 
             <div className="space-y-1.5 w-full">
               <div className="grid grid-cols-2 gap-2.5 w-full p-1.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)]">
@@ -262,7 +257,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
             <div className="grid grid-cols-3 items-center text-center">
               {/* Player 1 Avatar & Name */}
               <div className="flex flex-col items-center space-y-2.5">
-                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10 border-t-2 border-t-[#30D878]">
+                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10">
                   {player1.avatarUrl ? (
                     <Image
                       src={player1.avatarUrl}
@@ -290,7 +285,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
 
               {/* Player 2 Avatar & Name */}
               <div className="flex flex-col items-center space-y-2.5">
-                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10 border-t-2 border-t-[#FFC91F]">
+                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10">
                   {player2.avatarUrl ? (
                     <Image
                       src={player2.avatarUrl}

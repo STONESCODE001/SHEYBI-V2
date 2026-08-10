@@ -97,8 +97,12 @@ export function adaptMarketToCardProps(market: any): MarketCardProps {
       const p1Yes = sorted[0];
       const p2Yes = sorted[2];
 
-      const prob1 = normalizeProbability(p1Yes?.probability, 50);
-      const prob2 = normalizeProbability(p2Yes?.probability, 50);
+      const rawProb1 = normalizeProbability(p1Yes?.probability, 25);
+      const rawProb2 = normalizeProbability(p2Yes?.probability, 25);
+
+      const pairSum = rawProb1 + rawProb2 || 1;
+      const prob1 = Number(((rawProb1 / pairSum) * 100).toFixed(1));
+      const prob2 = Number((100 - prob1).toFixed(1));
 
       contestants = [
         {
@@ -227,35 +231,37 @@ export function adaptToVersusMarketData(market: any): VersusMarketData {
     const p2Yes = sorted[2];
     const p2No = sorted[3];
 
-    const prob1Yes = normalizeProbability(p1Yes?.probability, 50);
-    const prob1No = normalizeProbability(p1No?.probability, 50);
-    const prob2Yes = normalizeProbability(p2Yes?.probability, 50);
-    const prob2No = normalizeProbability(p2No?.probability, 50);
+    const rawProb1 = normalizeProbability(p1Yes?.probability, 25);
+    const rawProb2 = normalizeProbability(p2Yes?.probability, 25);
+
+    const pairSum = rawProb1 + rawProb2 || 1;
+    const prob1 = Number(((rawProb1 / pairSum) * 100).toFixed(1));
+    const prob2 = Number((100 - prob1).toFixed(1));
 
     player1 = {
       id: p1Yes?.id ?? 'p1_yes',
       name: cleanContestantName(p1Yes?.name ?? 'Player 1'),
       avatarUrl: p1Yes?.imageUrl,
-      probability: prob1Yes,
+      probability: prob1,
       yesOptionId: p1Yes?.id,
       noOptionId: p1No?.id,
-      yesOddsText: formatOddsFromProbability(prob1Yes),
-      noOddsText: formatOddsFromProbability(prob1No),
-      yesPrice: p1Yes?.sharePrice ?? prob1Yes / 100,
-      noPrice: p1No?.sharePrice ?? prob1No / 100,
+      yesOddsText: formatOddsFromProbability(prob1),
+      noOddsText: formatOddsFromProbability(100 - prob1),
+      yesPrice: p1Yes?.sharePrice ?? prob1 / 100,
+      noPrice: p1No?.sharePrice ?? (100 - prob1) / 100,
     };
 
     player2 = {
       id: p2Yes?.id ?? 'p2_yes',
       name: cleanContestantName(p2Yes?.name ?? 'Player 2'),
       avatarUrl: p2Yes?.imageUrl,
-      probability: prob2Yes,
+      probability: prob2,
       yesOptionId: p2Yes?.id,
       noOptionId: p2No?.id,
-      yesOddsText: formatOddsFromProbability(prob2Yes),
-      noOddsText: formatOddsFromProbability(prob2No),
-      yesPrice: p2Yes?.sharePrice ?? prob2Yes / 100,
-      noPrice: p2No?.sharePrice ?? prob2No / 100,
+      yesOddsText: formatOddsFromProbability(prob2),
+      noOddsText: formatOddsFromProbability(100 - prob2),
+      yesPrice: p2Yes?.sharePrice ?? prob2 / 100,
+      noPrice: p2No?.sharePrice ?? (100 - prob2) / 100,
     };
   } else {
     // Fallback for 2-option 1v1

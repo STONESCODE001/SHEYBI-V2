@@ -447,9 +447,15 @@ Market Title Header (e.g. "Would Mercy Slap Ivana??")
 
 ↓
 
+Master Explanation Banner:
+- Soft dark hint box (`bg-[#141E33] border-none`) with `HelpCircle` icon in Info Blue (`#0EA5E9`): `How 1v1 Predictions Work: Pick YES if you think that candidate will win, or NO if you think they will lose.`
+
+↓
+
 1v1 Hero Matchup Blocks / Card:
-- Mobile: Player 1 Avatar & Name $\rightarrow$ Green `50% Chance` Badge $\rightarrow$ Player 1 Odds Cards $\rightarrow$ Gold **`VS`** Badge $\rightarrow$ Player 2 Avatar & Name $\rightarrow$ Gold `50% Chance` Badge $\rightarrow$ Player 2 Odds Cards.
-- Desktop: Elevated Dark Container Card (`bg-[#0F1727]`) with side-by-side Player Avatars, central **`VS`**, `RatioBar`, and player odds rows.
+- Avatar Styling: Clean, uniform avatar headshot frames (`border border-white/10`).
+- Mobile View: Player 1 Avatar & Name → Player 1 Clean Odds Buttons (`YES` & `NO`) → Micro Info Banner (`HelpCircle` + `YES = [Name] wins | NO = [Name] loses`) → Gold **`VS`** Badge → Player 2 Avatar & Name → Player 2 Clean Odds Buttons (`YES` & `NO`) → Micro Info Banner. (Mobile layout omits cluttered inline `% Chance` badges below contestant names for compact vertical space).
+- Desktop View: Hero Container Card (`bg-[var(--bg-surface)]`) with side-by-side Player Avatars, win chance percentages, central **`VS`**, `RatioBar`, clean dual-player odds rows (`YES  ₦1k → ₦3k` / `NO  ₦1k → ₦5k`), and per-player micro hint banners.
 
 ↓
 
