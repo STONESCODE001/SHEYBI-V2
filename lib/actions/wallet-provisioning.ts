@@ -8,6 +8,7 @@
 'use server';
 
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { id } from '@instantdb/admin';
 import { repository } from '@/lib/repositories';
 import { adminDb } from '@/lib/instant-admin';
 
@@ -23,7 +24,7 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
     const clerkUser = await currentUser();
     const primaryEmail = clerkUser?.emailAddresses?.[0]?.emailAddress;
 
-    // 1. Sync profile fields & clerkUserId to InstantDB $users table
+    // 1. Upsert profile fields & clerkUserId to InstantDB $users table
     try {
       let instantUser = null;
       if (primaryEmail) {
@@ -48,26 +49,28 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
         instantUser = queryRes?.$users?.[0];
       }
 
-      if (instantUser && clerkUser) {
-        const displayName =
-          clerkUser.fullName ||
-          clerkUser.firstName ||
-          clerkUser.username ||
-          (primaryEmail ? primaryEmail.split('@')[0] : 'User');
+      const displayName =
+        clerkUser?.fullName ||
+        clerkUser?.firstName ||
+        clerkUser?.username ||
+        (primaryEmail ? primaryEmail.split('@')[0] : 'User');
 
-        await adminDb.transact(
-          adminDb.tx.$users[instantUser.id].update({
-            clerkUserId: userId,
-            displayName,
-            username: clerkUser.username || (primaryEmail ? primaryEmail.split('@')[0] : undefined),
-            avatarUrl: clerkUser.imageUrl,
-            role: (clerkUser.publicMetadata?.role as string) || 'user',
-            accountStatus: 'active',
-            updatedAt: Date.now(),
-          })
-        );
-        console.log(`[User Sync] Synced profile fields & clerkUserId for InstantDB user ${instantUser.id} (${displayName})`);
-      }
+      const targetUserId = instantUser?.id || id();
+
+      await adminDb.transact([
+        adminDb.tx.$users[targetUserId].update({
+          clerkUserId: userId,
+          email: primaryEmail || undefined,
+          displayName,
+          username: clerkUser?.username || (primaryEmail ? primaryEmail.split('@')[0] : undefined),
+          avatarUrl: clerkUser?.imageUrl,
+          role: (clerkUser?.publicMetadata?.role as string) || 'user',
+          accountStatus: 'active',
+          updatedAt: Date.now(),
+          ...(instantUser ? {} : { createdAt: Date.now() }),
+        }),
+      ]);
+      console.log(`[User Sync] Successfully ${instantUser ? 'updated' : 'created'} InstantDB user ${targetUserId} (${displayName})`);
     } catch (syncErr) {
       console.warn('[User Sync] Note on profile sync:', syncErr);
     }
