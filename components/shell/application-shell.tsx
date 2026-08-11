@@ -41,10 +41,8 @@ function ApplicationShell({
   const { isSignedIn, isLoaded } = useAuth()
   const { wallet } = useWallet()
 
-  const displayBalance = isSignedIn
-    ? wallet
-      ? `₦${(wallet.availableBalance ?? 0).toLocaleString("en-NG", { minimumFractionDigits: 2 })}`
-      : "₦0.00"
+  const displayBalance = wallet
+    ? `₦${(wallet.availableBalance ?? 0).toLocaleString()}`
     : availableBalance
 
   const effectiveVariant = React.useMemo(() => {

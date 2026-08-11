@@ -31,7 +31,7 @@ export function PortfolioClient() {
   let totalInvested = 0
 
   openPositions.forEach((pos: any) => {
-    const market = Array.isArray(pos.market) ? pos.market[0] : pos.market
+    const market = pos.market
     const options = market?.options || []
     const option = options.find((o: any) => o.id === pos.optionId)
     const currentPrice = option?.sharePrice ?? pos.averageEntryPrice ?? 0.5
@@ -52,12 +52,10 @@ export function PortfolioClient() {
     const shares = pos.sharesOwned ?? 0
     if (shares <= 0) return
 
-    const market = Array.isArray(pos.market) ? pos.market[0] : pos.market
-
     try {
       const confirmSell = await dialog.confirm({
         title: "Sell Position",
-        description: `Are you sure you want to sell your ${Math.round(shares).toLocaleString()} shares in "${market?.title || "this market"}"?`
+        description: `Are you sure you want to sell your ${Math.round(shares).toLocaleString()} shares in "${pos.market?.title || "this market"}"?`
       })
 
       if (!confirmSell) return
@@ -153,7 +151,7 @@ export function PortfolioClient() {
                 </div>
               ) : (
                 openPositions.map((pos: any) => {
-                  const market = Array.isArray(pos.market) ? pos.market[0] : pos.market
+                  const market = pos.market
                   const options = market?.options || []
                   const option = options.find((o: any) => o.id === pos.optionId)
                   const optionName = option?.name ?? "Outcome"
@@ -250,7 +248,6 @@ export function PortfolioClient() {
                 </div>
               ) : (
                 closedPositions.map((pos: any) => {
-                  const market = Array.isArray(pos.market) ? pos.market[0] : pos.market
                   const pnl = pos.realizedProfitLoss ?? 0
                   const isWin = pnl >= 0
                   const posState = (pos.state || "closed").toUpperCase()
@@ -263,7 +260,7 @@ export function PortfolioClient() {
                     >
                       <div>
                         <h4 className="text-sm font-bold text-[var(--text-primary)]">
-                          {market?.title || "Market Position"}
+                          {pos.market?.title || "Market Position"}
                         </h4>
                         <span className={`text-xs font-semibold ${isWin ? "text-success" : "text-danger"}`}>
                           State: {posState} • Invested ₦{posInvested.toLocaleString()}

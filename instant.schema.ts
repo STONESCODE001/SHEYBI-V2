@@ -5,6 +5,7 @@ const schema = i.schema({
     // --- IDENTITY DOMAIN ---
     $users: i.entity({
       email: i.string().unique().indexed(),
+      clerkUserId: i.string().optional().indexed(), // Clerk user ID (e.g. user_3Hjvu...)
       emailVerified: i.boolean().optional(),
       displayName: i.string().optional(),
       username: i.string().optional(),

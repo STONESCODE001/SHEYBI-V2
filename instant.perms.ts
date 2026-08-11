@@ -5,8 +5,8 @@
 export default {
   $users: {
     allow: {
-      view: "auth.id == data.id || 'admin' in auth.ref('$user.role')",
-      update: "auth.id == data.id || 'admin' in auth.ref('$user.role')",
+      view: "auth.id == data.id || data.clerkUserId in auth.ref('$user.clerkUserId') || 'admin' in auth.ref('$user.role')",
+      update: "auth.id == data.id || data.clerkUserId in auth.ref('$user.clerkUserId') || 'admin' in auth.ref('$user.role')",
       create: "true", // Allows sign up via Clerk / Instant auth
     },
   },
@@ -40,17 +40,17 @@ export default {
 
   positions: {
     allow: {
-      view: "auth.id != null",
-      create: "auth.id != null",
-      update: "auth.id != null || 'admin' in auth.ref('$user.role')",
+      view: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      create: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId",
+      update: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
       delete: "false",
     },
   },
 
   wallets: {
     allow: {
-      view: "auth.id != null",
-      create: "auth.id != null || 'admin' in auth.ref('$user.role')",
+      view: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      create: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
       update: "'admin' in auth.ref('$user.role')", // Balances updated via server actions / adminDb
       delete: "false",
     },
@@ -58,7 +58,7 @@ export default {
 
   wallet_transactions: {
     allow: {
-      view: "auth.id != null",
+      view: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
       create: "false", // Immutable, created via server action / adminDb
       update: "false",
       delete: "false",
@@ -67,7 +67,7 @@ export default {
 
   ledger: {
     allow: {
-      view: "auth.id != null",
+      view: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
       create: "false", // Immutable double-entry ledger
       update: "false",
       delete: "false",
@@ -76,8 +76,8 @@ export default {
 
   deposits: {
     allow: {
-      view: "auth.id != null",
-      create: "auth.id != null",
+      view: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      create: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId",
       update: "'admin' in auth.ref('$user.role')",
       delete: "false",
     },
@@ -85,8 +85,8 @@ export default {
 
   withdrawal_requests: {
     allow: {
-      view: "auth.id != null",
-      create: "auth.id != null",
+      view: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      create: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId",
       update: "'admin' in auth.ref('$user.role')",
       delete: "false",
     },
@@ -104,7 +104,7 @@ export default {
   market_suggestions: {
     allow: {
       view: "true",
-      create: "auth.id == data.submittedBy",
+      create: "data.submittedBy in auth.ref('$user.clerkUserId') || auth.id == data.submittedBy",
       update: "'admin' in auth.ref('$user.role')",
       delete: "false",
     },
@@ -121,18 +121,18 @@ export default {
 
   notifications: {
     allow: {
-      view: "auth.id == data.userId",
+      view: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId",
       create: "false",
-      update: "auth.id == data.userId", // Mark as read
+      update: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId", // Mark as read
       delete: "false",
     },
   },
 
   kyc_records: {
     allow: {
-      view: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
-      create: "auth.id == data.userId",
-      update: "auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      view: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
+      create: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId",
+      update: "data.userId in auth.ref('$user.clerkUserId') || auth.id == data.userId || 'admin' in auth.ref('$user.role')",
       delete: "false",
     },
   },

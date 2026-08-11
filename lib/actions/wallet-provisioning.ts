@@ -23,9 +23,10 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
     const clerkUser = await currentUser();
     const primaryEmail = clerkUser?.emailAddresses?.[0]?.emailAddress;
 
-    // 1. Sync profile fields to InstantDB $users table if user found by email
-    if (primaryEmail) {
-      try {
+    // 1. Sync profile fields & clerkUserId to InstantDB $users table
+    try {
+      let instantUser = null;
+      if (primaryEmail) {
         const queryRes = await adminDb.query({
           $users: {
             $: {
@@ -33,30 +34,42 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
             },
           },
         });
-
-        const instantUser = queryRes?.$users?.[0];
-        if (instantUser) {
-          const displayName =
-            clerkUser.fullName ||
-            clerkUser.firstName ||
-            clerkUser.username ||
-            primaryEmail.split('@')[0];
-
-          await adminDb.transact(
-            adminDb.tx.$users[instantUser.id].update({
-              displayName,
-              username: clerkUser.username || primaryEmail.split('@')[0],
-              avatarUrl: clerkUser.imageUrl,
-              role: (clerkUser.publicMetadata?.role as string) || 'user',
-              accountStatus: 'active',
-              updatedAt: Date.now(),
-            })
-          );
-          console.log(`[User Sync] Synced profile fields for InstantDB user ${instantUser.id} (${displayName})`);
-        }
-      } catch (syncErr) {
-        console.warn('[User Sync] Note on profile sync:', syncErr);
+        instantUser = queryRes?.$users?.[0];
       }
+
+      if (!instantUser) {
+        const queryRes = await adminDb.query({
+          $users: {
+            $: {
+              where: { clerkUserId: userId },
+            },
+          },
+        });
+        instantUser = queryRes?.$users?.[0];
+      }
+
+      if (instantUser && clerkUser) {
+        const displayName =
+          clerkUser.fullName ||
+          clerkUser.firstName ||
+          clerkUser.username ||
+          (primaryEmail ? primaryEmail.split('@')[0] : 'User');
+
+        await adminDb.transact(
+          adminDb.tx.$users[instantUser.id].update({
+            clerkUserId: userId,
+            displayName,
+            username: clerkUser.username || (primaryEmail ? primaryEmail.split('@')[0] : undefined),
+            avatarUrl: clerkUser.imageUrl,
+            role: (clerkUser.publicMetadata?.role as string) || 'user',
+            accountStatus: 'active',
+            updatedAt: Date.now(),
+          })
+        );
+        console.log(`[User Sync] Synced profile fields & clerkUserId for InstantDB user ${instantUser.id} (${displayName})`);
+      }
+    } catch (syncErr) {
+      console.warn('[User Sync] Note on profile sync:', syncErr);
     }
 
     let wallet = await repository.wallets.getWalletByUserId(userId);

@@ -95,5 +95,5 @@ export const NAV_ICONS: Record<NavIconName, LucideIcon> = {
   plus: Plus,
 }
 
-export const PLACEHOLDER_BALANCE = "₦125,000.00"
+export const PLACEHOLDER_BALANCE = "₦0.00"
 export const PLACEHOLDER_USER_NAME = "Sheybi User"
