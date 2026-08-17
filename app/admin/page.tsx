@@ -3,7 +3,7 @@
 import * as React from "react"
 import { AdminLayout } from "@/components/layouts"
 import { SectionHeader } from "@/components/parent"
-import { Store, Lightbulb, Wallet, Tags, ScrollText, ShieldCheck } from "lucide-react"
+import { Store, Lightbulb, Wallet, Tags, ScrollText, ShieldCheck, Megaphone } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from "@clerk/nextjs"
 
@@ -16,6 +16,7 @@ import {
   useAdminCategories,
   useAdminLedger,
   useAdminKycRecords,
+  useAdminPromoters,
 } from "@/lib/hooks/use-admin-data"
 
 // Import Server Actions
@@ -42,9 +43,11 @@ import { AdminWithdrawalsTab, type WithdrawalItem } from "@/components/admin/adm
 import { AdminCategoriesTab, type CategoryItem } from "@/components/admin/admin-categories-tab"
 import { AdminAuditLogsTab, type AuditLogRecord } from "@/components/admin/admin-audit-logs-tab"
 import { AdminKycTab } from "@/components/admin/admin-kyc-tab"
+import { AdminPromotersTab } from "@/components/admin/admin-promoters-tab"
 
 // Import Admin Dialogs
 import { CreateMarketDialog } from "@/components/admin/create-market-dialog"
+import { CreatePromoterDialog } from "@/components/admin/create-promoter-dialog"
 import { ResolveMarketDialog } from "@/components/dialog/features/market/resolve-market-dialog"
 import { PauseMarketDialog } from "@/components/dialog/features/market/pause-market-dialog"
 import { ManageOptionsDialog } from "@/components/admin/manage-options-dialog"
@@ -61,11 +64,12 @@ export default function AdminDashboardPage() {
 
   // Active Workspace Tab Selection State:
   const [activeTab, setActiveTab] = React.useState<
-    "markets" | "suggestions" | "withdrawals" | "categories" | "audit" | "kyc"
+    "markets" | "suggestions" | "withdrawals" | "categories" | "audit" | "kyc" | "promoters"
   >("markets")
 
   // Modal Dialog Visibility & Active Item States:
   const [isCreateMarketOpen, setIsCreateMarketOpen] = React.useState(false)
+  const [isCreatePromoterOpen, setIsCreatePromoterOpen] = React.useState(false)
   const [createMarketPreFill, setCreateMarketPreFill] = React.useState<any>(null)
 
   const [isResolveMarketOpen, setIsResolveMarketOpen] = React.useState(false)
@@ -92,6 +96,7 @@ export default function AdminDashboardPage() {
   const { categories: dbCategories } = useAdminCategories()
   const { ledgerEntries } = useAdminLedger()
   const { kycRecords: dbKycRecords } = useAdminKycRecords()
+  const { promoters: dbPromoters } = useAdminPromoters()
 
   const pendingKycCount = React.useMemo(() => {
     return dbKycRecords.filter((r: any) => r.verificationStatus === "pending").length
@@ -208,17 +213,18 @@ export default function AdminDashboardPage() {
       (sum: number, w: any) => sum + (w.feeAmount || w.fee || 0),
       0
     )
-    // 2. Sum WITHDRAWAL_FEE, TRADE_FEE, or PLATFORM_FEE from ledger entries
+    // 2. Sum WITHDRAWAL_FEE, TRADING_FEE, TRADE_FEE, or PLATFORM_FEE from ledger entries
     const ledgerFees = (ledgerEntries || [])
       .filter(
         (e: any) =>
           e.eventType === "WITHDRAWAL_FEE" ||
+          e.eventType === "TRADING_FEE" ||
           e.eventType === "TRADE_FEE" ||
           e.eventType === "PLATFORM_FEE"
       )
       .reduce((sum: number, e: any) => sum + Math.abs(e.amount || 0), 0)
 
-    return Math.max(withdrawalFees, ledgerFees)
+    return Math.max(withdrawalFees + ledgerFees, withdrawalFees, ledgerFees)
   }, [dbWithdrawals, ledgerEntries])
 
   // --------------------------------------------------------------------------
@@ -504,6 +510,17 @@ export default function AdminDashboardPage() {
           >
             <ShieldCheck className="h-4 w-4" /> KYC Requests ({pendingKycCount})
           </button>
+
+          <button
+            onClick={() => setActiveTab("promoters")}
+            className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all shrink-0 ${
+              activeTab === "promoters"
+                ? "border-primary text-primary"
+                : "border-transparent text-text-muted hover:text-text-primary"
+            }`}
+          >
+            <Megaphone className="h-4 w-4" /> Promoters ({dbPromoters.length})
+          </button>
         </div>
 
         {/* Tab Workspace Content */}
@@ -556,6 +573,13 @@ export default function AdminDashboardPage() {
           {activeTab === "audit" && <AdminAuditLogsTab logs={auditLogs} />}
 
           {activeTab === "kyc" && <AdminKycTab records={dbKycRecords as any} />}
+
+          {activeTab === "promoters" && (
+            <AdminPromotersTab
+              promoters={dbPromoters as any}
+              onOpenCreateDialog={() => setIsCreatePromoterOpen(true)}
+            />
+          )}
         </div>
       </div>
 
@@ -610,6 +634,11 @@ export default function AdminDashboardPage() {
         onClose={() => setIsFinancialWipeOpen(false)}
         status="idle"
         setStatus={() => {}}
+      />
+
+      <CreatePromoterDialog
+        isOpen={isCreatePromoterOpen}
+        onClose={() => setIsCreatePromoterOpen(false)}
       />
     </AdminLayout>
   )

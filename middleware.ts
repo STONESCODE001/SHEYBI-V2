@@ -14,6 +14,36 @@ const isAdminRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, sessionClaims } = await auth()
+  const { pathname, searchParams } = req.nextUrl
+
+  // Intercept promoter referral links (/f/[promoter] or ?ref=[promoter])
+  let promoterSlug: string | null = null
+
+  if (pathname.startsWith("/f/")) {
+    const raw = pathname.split("/f/")[1]?.split("/")[0]
+    if (raw) {
+      promoterSlug = raw.toLowerCase().replace(/[^a-z0-9_-]/g, "")
+    }
+  } else if (searchParams.has("ref")) {
+    const raw = searchParams.get("ref")
+    if (raw) {
+      promoterSlug = raw.toLowerCase().replace(/[^a-z0-9_-]/g, "")
+    }
+  }
+
+  if (promoterSlug) {
+    const res = pathname.startsWith("/f/")
+      ? NextResponse.rewrite(new URL("/", req.url))
+      : NextResponse.next()
+
+    res.cookies.set("sheybi_ref", promoterSlug, {
+      maxAge: 30 * 24 * 60 * 60, // 30 days
+      path: "/",
+      sameSite: "lax",
+    })
+
+    return res
+  }
 
   // Protect standard user routes
   if (isProtectedRoute(req)) {

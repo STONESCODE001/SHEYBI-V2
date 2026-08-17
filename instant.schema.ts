@@ -12,6 +12,8 @@ const schema = i.schema({
       avatarUrl: i.string().optional(),
       accountStatus: i.string().optional().indexed(), // "active" | "suspended"
       role: i.string().optional().indexed(), // "user" | "admin" | "superadmin"
+      referredBy: i.string().optional().indexed(), // Referral promoter slug (e.g. "mrfaithman")
+      referredAt: i.number().optional(), // Timestamp ms when user registered via referral link
       createdAt: i.number().optional(),
       updatedAt: i.number().optional(),
     }),
@@ -203,6 +205,19 @@ const schema = i.schema({
       value: i.string(),
       description: i.string().optional(),
       updatedBy: i.string().optional(),
+      updatedAt: i.number(),
+    }),
+
+    // --- PROMOTER & REFERRAL DOMAIN ---
+    promoters: i.entity({
+      name: i.string(),                         // Human-readable name (e.g. "Mr Faithman")
+      slug: i.string().unique().indexed(),     // URL identifier slug (e.g. "mrfaithman")
+      status: i.string().indexed(),             // "active" | "paused"
+      notes: i.string().optional(),             // Contact info / campaign notes
+      totalSignups: i.number().indexed(),      // User registration conversion count
+      totalDepositedVolume: i.number(),        // Sum of all deposits (₦) by referred users
+      createdBy: i.string().indexed(),         // Admin Clerk userId
+      createdAt: i.number().indexed(),
       updatedAt: i.number(),
     }),
 

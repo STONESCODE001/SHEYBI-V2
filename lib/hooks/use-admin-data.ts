@@ -67,3 +67,12 @@ export function useAdminKycRecords() {
   return { isLoading, error, kycRecords: data?.kyc_records ?? [] };
 }
 
+export function useAdminPromoters() {
+  const { isLoading, error, data } = db.useQuery({
+    promoters: {
+      $: { order: { createdAt: 'desc' } },
+    },
+  });
+  return { isLoading, error, promoters: data?.promoters ?? [] };
+}
+

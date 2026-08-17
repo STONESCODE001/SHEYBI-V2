@@ -8,6 +8,7 @@
 'use server';
 
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { cookies } from 'next/headers';
 import { id } from '@instantdb/admin';
 import { repository } from '@/lib/repositories';
 import { adminDb } from '@/lib/instant-admin';
@@ -23,6 +24,15 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
 
     const clerkUser = await currentUser();
     const primaryEmail = clerkUser?.emailAddresses?.[0]?.emailAddress;
+
+    // Check referral cookie sheybi_ref
+    let refCookie: string | undefined;
+    try {
+      const cookieStore = await cookies();
+      refCookie = cookieStore.get('sheybi_ref')?.value?.toLowerCase()?.trim();
+    } catch {
+      // Cookie read fallback
+    }
 
     // 1. Upsert profile fields & clerkUserId to InstantDB $users table
     try {
@@ -57,6 +67,38 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
 
       const targetUserId = instantUser?.id || id();
 
+      // Referral attachment check
+      let referredBy = (instantUser as { referredBy?: string })?.referredBy;
+      let referredAt = (instantUser as { referredAt?: number })?.referredAt;
+
+      if (!referredBy && refCookie) {
+        try {
+          const promoterRes = await adminDb.query({
+            promoters: {
+              $: {
+                where: { slug: refCookie, status: 'active' },
+              },
+            },
+          });
+          const promoter = promoterRes?.promoters?.[0];
+          if (promoter) {
+            referredBy = promoter.slug;
+            referredAt = Date.now();
+
+            const currentSignups = promoter.totalSignups || 0;
+            await adminDb.transact([
+              adminDb.tx.promoters[promoter.id].update({
+                totalSignups: currentSignups + 1,
+                updatedAt: Date.now(),
+              }),
+            ]);
+            console.log(`[Referral Sync] User ${targetUserId} referred by ${promoter.slug}`);
+          }
+        } catch (refErr) {
+          console.warn('[Referral Sync] Error matching promoter cookie:', refErr);
+        }
+      }
+
       await adminDb.transact([
         adminDb.tx.$users[targetUserId].update({
           clerkUserId: userId,
@@ -66,6 +108,8 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
           avatarUrl: clerkUser?.imageUrl,
           role: (clerkUser?.publicMetadata?.role as string) || 'user',
           accountStatus: 'active',
+          referredBy: referredBy || undefined,
+          referredAt: referredAt || undefined,
           updatedAt: Date.now(),
           ...(instantUser ? {} : { createdAt: Date.now() }),
         }),

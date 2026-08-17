@@ -146,6 +146,15 @@ export default {
     },
   },
 
+  promoters: {
+    allow: {
+      view: "true",
+      create: "'admin' in auth.ref('$user.role')",
+      update: "'admin' in auth.ref('$user.role')",
+      delete: "'admin' in auth.ref('$user.role')",
+    },
+  },
+
   $files: {
     allow: {
       view: "true",

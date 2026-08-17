@@ -7,18 +7,21 @@ Update this document immediately after every completed implementation unit. This
 ## Current Phase: Phase 4: Core Engine & Algorithm Implementation
 
 ### Current Implementation Target
-- **Standardized 1v1 Probability Normalization** (`lib/market-adapter.ts`, `components/parent/market-details/versus-market-view.tsx`) — **Completed**
+- **Spec 21 — Influencer & Promoter Referral Tracking System** (`context/feature-specs/21-promoter-referral-tracking.md`) — **Completed**
 
 ---
    
 # Current Goal
 
-Standardized 1v1 probability calculation using pairwise YES option normalization ($P_1 / (P_1 + P_2)$) across `lib/market-adapter.ts` and `versus-market-view.tsx`. Guarantees 100% consistent 50% vs 50% initial splits, matching progress bar widths, and identical odds across feed cards and detail views.
+Influencer & Promoter Referral Tracking System completed 100%. Supports short links (`/f/[promoter]`), 30-day `sheybi_ref` cookies, InstantDB `promoters` and `$users.referredBy` schema, Clerk signup conversion sync, Admin Promoters Tab & `CreatePromoterDialog`, 1-click **Copy Link**, and server actions with audit logging. Verified with zero TypeScript errors and successful production build pass (`npm run build`).
 
 ---
 
 # Completed
 
+* **Spec 21 — Influencer & Promoter Referral Tracking System** (`context/feature-specs/21-promoter-referral-tracking.md`, `middleware.ts`, `instant.schema.ts`, `instant.perms.ts`, `lib/actions/promoter-actions.ts`, `lib/actions/wallet-provisioning.ts`, `components/admin/admin-promoters-tab.tsx`, `components/admin/create-promoter-dialog.tsx`, `app/admin/page.tsx`) — Completed 100%. (1) Next.js Middleware interception for `/f/[promoter]` short links and `?ref=` query parameters with 30-day `sheybi_ref` cookie setting and `NextResponse.rewrite('/')` so Vercel client analytics logs page hits; (2) InstantDB `$users` entity extension with `referredBy` and `referredAt` fields and `promoters` entity definition (`name`, `slug`, `status`, `notes`, `totalSignups`, `totalDepositedVolume`, `createdBy`); (3) Remote schema and permissions push to InstantDB Cloud (`npx instant-cli push schema` / `perms`); (4) Clerk signup conversion sync in `ensureUserWalletAction()` attaching `referredBy` to InstantDB `$users` records and incrementing `totalSignups` on `promoters`; (5) Server Actions (`createPromoterAction`, `togglePromoterStatusAction`, `deletePromoterAction`) with audit logging; (6) Admin Control Center Promoters tab with KPI stat cards, promoter table, 1-click **Copy Link** button (`sheybi.app/f/[slug]`), and `CreatePromoterDialog`. Verified with zero TypeScript errors (`npx tsc --noEmit`) and successful production build pass (`npm run build`).
+
+* **Platform Revenue Ledger Filter Fix (`app/admin/page.tsx`)** — Completed 100%. Added `TRADING_FEE` to the ledger event filter in `app/admin/page.tsx` so trade fees (e.g. 2.5% fee entries) are included in the **Platform Revenue** KPI card alongside withdrawal fees.
 * **InstantDB `$users` Auto-Creation Fix** (`lib/actions/wallet-provisioning.ts`) — Completed 100%. Updated `ensureUserWalletAction()` to upsert `$users` entity using `id()` from `@instantdb/admin` if an existing `$users` record is not found by email or `clerkUserId`. Guarantees 100% of brand new Clerk sign-ups are automatically inserted into InstantDB `$users` table.
 * **InstantDB & Clerk User ID Sync, Permission Rules, and Real-time Trades/Wallet Fix** (`instant.schema.ts`, `instant.perms.ts`, `lib/actions/wallet-provisioning.ts`, `components/shell/constants.ts`) — Completed 100%. (1) Added indexed `clerkUserId` attribute to `$users` entity in `instant.schema.ts`; (2) Updated `instant.perms.ts` CEL permission rules for `positions`, `wallets`, `wallet_transactions`, `ledger`, `deposits`, `withdrawal_requests`, `market_suggestions`, `notifications`, and `kyc_records` to validate `data.userId in auth.ref('$user.clerkUserId')`; (3) Updated `ensureUserWalletAction()` in `lib/actions/wallet-provisioning.ts` to sync `clerkUserId: userId` onto InstantDB `$users` entity during authentication; (4) Updated `PLACEHOLDER_BALANCE` to `₦0.00` in `components/shell/constants.ts`; (5) Pushed updated schema (`npx instant-cli push schema`) and security permissions (`npx instant-cli push perms`) to InstantDB Cloud.
 * **Standardized 1v1 Probability Normalization** (`lib/market-adapter.ts`, `components/parent/market-details/versus-market-view.tsx`) — Completed 100%. (1) Updated `adaptMarketToCardProps` and `adaptToVersusMarketData` in `lib/market-adapter.ts` to calculate contestant probabilities relative to their pair sum ($P_{\text{P1 YES}} / (P_{\text{P1 YES}} + P_{\text{P2 YES}})$); (2) Ensured un-traded markets consistently render **50% vs 50%** badges, **50% Green / 50% Yellow** ratio bars, and **₦1k → ₦2k** odds; (3) Updated `versus-market-view.tsx` to read adapter normalized probabilities directly without forcing a `100 - p1Prob` override.
@@ -101,17 +104,12 @@ Standardized 1v1 probability calculation using pairwise YES option normalization
 
 - None.
 
-
 # Next Up
 
 Implementation will continue in the following order:
 
 1. **Cycle E: Real-time Notification Feed & Platform Activity Ticker** (`useNotificationFeed`, header bell dropdown, live trade activity stream)
-2. **Cycle F: Market Discovery, Search & Category Filters** (`/markets` search bar, status tabs, category pills)
-3. **Phase 10: Production Deployment & Domain Setup**
-4. **Future Roadmap: Paystack Automated Transfers API** (Deferred until live Paystack corporate business account verification is complete; manual admin approval active)
-
-Each feature will receive its own specification document before implementation begins.
+2. **Phase 10: Production Deployment & Domain Setup**
 
 ---
 
