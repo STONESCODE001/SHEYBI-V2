@@ -39,7 +39,7 @@ function FooterRegion({ className }: FooterRegionProps) {
         </div>
 
         {/* Middle row: Financial risk disclaimer text */}
-        <p className="max-w-2xl text-xs leading-relaxed text-[var(--text-secondary)]">
+        <p className="max-w-lg text-xs leading-relaxed text-[var(--text-secondary)]">
           Prediction markets involve financial risk—only trade with funds you can afford to lose. Sheybi does not provide investment or financial advice. All market outcomes are resolved transparently using publicly verifiable sources. Participation is restricted to individuals 18 years and older and may be limited in some jurisdictions. Please review our Terms of Service, Privacy Policy, and Prohibition Policy before using the platform.
         </p>
 

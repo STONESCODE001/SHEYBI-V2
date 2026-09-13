@@ -130,9 +130,9 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
         </h1>
 
         {/* Master 1v1 Prediction Explanation Banner */}
-        <div className="p-3.5 rounded-2xl bg-[var(--surface-subtle)] border border-[var(--border-default)] flex items-start gap-2.5 shadow-sm text-xs sm:text-sm text-[var(--text-primary)]">
-          <HelpCircle className="size-4 text-[var(--primary)] shrink-0 mt-0.5" />
-          <p className="leading-relaxed max-w-2xl">
+        <div className="p-3.5 rounded-2xl bg-[#141E30] border border-[#1E2A3F] flex items-start gap-2.5 shadow-sm text-xs sm:text-sm text-slate-200">
+          <HelpCircle className="size-4 text-[#3B82F6] shrink-0 mt-0.5" />
+          <p className="leading-relaxed max-w-lg">
             <strong className="text-amber-400 font-bold">How 1v1 Predictions Work:</strong> Pick <span className="text-[#30D878] font-bold">YES</span> if you think that candidate will win, or <span className="text-[#FFC91F] font-bold">NO</span> if you think they will lose.
           </p>
         </div>
@@ -271,7 +271,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
                   )}
                 </div>
                 <h2 className="text-xl font-extrabold text-[var(--text-primary)]">{player1.name}</h2>
-                <span className="text-sm font-extrabold text-[var(--accent-green)]">
+                <span className="text-sm font-extrabold text-[var(--accent-green)] font-mono">
                   {p1Prob}% Chance
                 </span>
               </div>
@@ -299,7 +299,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
                   )}
                 </div>
                 <h2 className="text-xl font-extrabold text-[var(--text-primary)]">{player2.name}</h2>
-                <span className="text-sm font-extrabold text-[var(--accent-yellow)]">
+                <span className="text-sm font-extrabold text-[var(--accent-yellow)] font-mono">
                   {p2Prob}% Chance
                 </span>
               </div>
@@ -390,7 +390,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
           <h2 className="text-base sm:text-lg font-bold text-[var(--text-primary)]">
             Market Rules
           </h2>
-          <p className={cn("text-sm leading-relaxed", hasRules ? "text-[var(--text-muted)]" : "text-amber-400 font-medium")}>
+          <p className={cn("text-sm leading-relaxed", hasRules ? "text-[var(--text-secondary)]" : "text-amber-400 font-medium")}>
             {marketRules}
           </p>
         </div>
@@ -403,7 +403,7 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
 
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 sm:p-5 divide-y divide-[var(--border-default)]/50">
             {historyItems.length === 0 ? (
-              <div className="text-center py-4 text-xs sm:text-sm text-[var(--text-muted)] font-medium">
+              <div className="text-center py-4 text-xs sm:text-sm text-[var(--text-secondary)] font-medium">
                 No trades placed on this matchup yet. Be the first to trade!
               </div>
             ) : (
@@ -413,13 +413,13 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
                   className="flex justify-between items-center py-3 first:pt-0 last:pb-0 text-sm font-semibold"
                 >
                   <div className="text-[var(--text-primary)]">
-                    Trade {item.shares}{" "}
+                    Trade <span className="font-mono">{item.shares}</span>{" "}
                     <span className={cn(item.outcome === "yes" ? "text-[var(--market-yes)] font-bold" : "text-[var(--accent-yellow)] font-bold")}>
                       {item.outcome.toUpperCase()}
                     </span>{" "}
                     Shares {item.playerName && `from ${item.playerName}`}
                   </div>
-                  <div className="text-xs text-[var(--text-muted)] font-normal">
+                  <div className="text-xs text-[var(--text-secondary)] font-normal font-mono">
                     {item.timestamp}
                   </div>
                 </div>

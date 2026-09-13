@@ -396,3 +396,8 @@
         animation: none;
     }
 }
+
+/* Clerk User Button Avatar overflow fix */
+.cl-userButtonAvatarBox {
+    overflow: visible !important;
+}
