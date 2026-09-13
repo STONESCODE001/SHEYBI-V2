@@ -157,6 +157,7 @@ export function adaptMarketToCardProps(market: any): MarketCardProps {
         avatarUrl: opt.imageUrl,
         probability: prob,
         odds: formatOddsFromProbability(prob),
+        isPaused: Boolean(opt.isPaused),
       };
     });
 

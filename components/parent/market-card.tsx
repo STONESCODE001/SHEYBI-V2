@@ -57,6 +57,8 @@ export interface ContestantOption {
   /** DB INTEGRATION NOTE: Pre-formatted odds or probability percentage */
   odds?: string
   probability?: number
+  /** Whether trading for this contestant option is paused (e.g. evicted) */
+  isPaused?: boolean
 }
 
 export interface MarketCardProps extends React.ComponentProps<"article"> {
@@ -336,7 +338,12 @@ function MarketCard({
                 {contestants.slice(0, 3).map((c, i) => (
                   <div
                     key={c.id || i}
-                    className="flex items-center justify-between rounded-xl bg-[#0D1424] p-2 sm:p-2.5 transition-colors group-hover/market-card:bg-[#121B30]"
+                    className={cn(
+                      "flex items-center justify-between rounded-xl p-2 sm:p-2.5 transition-colors",
+                      c.isPaused
+                        ? "bg-red-950/40 border border-red-500/50"
+                        : "bg-[#0D1424] group-hover/market-card:bg-[#121B30]"
+                    )}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       {/* Contestant Avatar */}
@@ -350,22 +357,35 @@ function MarketCard({
                           className="object-cover object-top"
                         />
                       </div>
-                      <span className="text-xs sm:text-sm font-semibold text-slate-200 truncate">
-                        {c.name}
-                      </span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="text-xs sm:text-sm font-semibold text-slate-200 truncate">
+                          {c.name}
+                        </span>
+                        {c.isPaused && (
+                          <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40 shrink-0">
+                            OUT
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    {/* Odds Button inside Row Housing Container */}
-                    <div className="rounded-lg border border-white/5 bg-[#080D19] p-1 shrink-0">
-                      <OddsButton
-                        label="Yes"
-                        odds={
-                          c.odds ||
-                          formatOddsFromProbability(c.probability || 25)
-                        }
-                        variant="yes"
-                        className="min-h-[30px] py-0.5 px-2 text-xs"
-                      />
-                    </div>
+                    {/* Odds Button or OUT Badge inside Row Housing Container */}
+                    {c.isPaused ? (
+                      <div className="rounded-lg bg-red-500/20 border border-red-500/50 px-2.5 py-1 text-red-400 font-extrabold text-xs uppercase tracking-wider shrink-0 shadow-xs">
+                        OUT
+                      </div>
+                    ) : (
+                      <div className="rounded-lg border border-white/5 bg-[#080D19] p-1 shrink-0">
+                        <OddsButton
+                          label="Yes"
+                          odds={
+                            c.odds ||
+                            formatOddsFromProbability(c.probability || 25)
+                          }
+                          variant="yes"
+                          className="min-h-[30px] py-0.5 px-2 text-xs"
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

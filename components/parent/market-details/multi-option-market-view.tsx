@@ -130,7 +130,12 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
           {visibleCandidates.map((candidate) => (
             <div
               key={candidate.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-default)] gap-3 transition-all hover:border-[var(--border-hover)]"
+              className={cn(
+                "flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-2xl gap-3 transition-all",
+                candidate.isPaused
+                  ? "bg-red-950/40 border border-red-500/60 shadow-sm hover:border-red-500"
+                  : "bg-[var(--bg-base)] border border-[var(--border-default)] hover:border-[var(--border-hover)]"
+              )}
             >
               {/* Left Side: Avatar + Name + Volume Metric */}
               <div className="flex items-center gap-3">
@@ -151,8 +156,8 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
                   <h3 className="text-base sm:text-lg font-bold text-[var(--text-primary)] leading-tight flex items-center gap-2">
                     {candidate.name}
                     {candidate.isPaused && (
-                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                        Paused
+                      <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-md bg-red-500/20 text-red-400 border border-red-500/40">
+                        OUT
                       </span>
                     )}
                   </h3>
@@ -162,11 +167,11 @@ export function MultiOptionMarketView({ market }: MultiOptionMarketViewProps): R
                 </div>
               </div>
 
-              {/* Right Side: Dual Outcome Odds Pair OR Paused Indicator */}
+              {/* Right Side: Dual Outcome Odds Pair OR OUT Indicator */}
               {candidate.isPaused ? (
                 <div className="flex items-center justify-center sm:justify-end w-full sm:w-auto sm:min-w-[280px]">
-                  <div className="inline-flex items-center justify-center h-11 sm:h-12 w-full sm:w-auto px-8 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-xs">
-                    TRADING PAUSED
+                  <div className="inline-flex items-center justify-center h-11 sm:h-12 w-full sm:w-auto px-8 rounded-xl bg-red-500/20 border border-red-500/60 text-red-400 font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-xs">
+                    OUT
                   </div>
                 </div>
               ) : (
