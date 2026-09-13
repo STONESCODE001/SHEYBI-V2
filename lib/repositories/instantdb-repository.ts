@@ -181,12 +181,25 @@ class InstantDbMarketRepository implements IMarketRepository {
 
     if (marketData.categorySlug) {
       try {
-        const catRes = await adminDb.query({
-          categories: {
-            $: { where: { slug: marketData.categorySlug } },
-          },
+        const catRes = await adminDb.query({ categories: {} });
+        const allCats = catRes.categories || [];
+        const slugInput = marketData.categorySlug.toLowerCase();
+
+        const matchedCategory = allCats.find((c: any) => {
+          const cSlug = (c.slug || '').toLowerCase();
+          const cId = (c.id || '').toLowerCase();
+          const cName = (c.name || '').toLowerCase();
+          if (slugInput === cSlug || slugInput === cId || slugInput === cName) return true;
+          if (slugInput === 'hoh' || slugInput === 'head-of-house') return cSlug === 'hoh' || cSlug === 'head-of-house';
+          if (slugInput === 'evictions' || slugInput === 'weekly-eviction' || slugInput === 'eviction') {
+            return cSlug === 'evictions' || cSlug === 'weekly-eviction' || cSlug === 'eviction';
+          }
+          if (slugInput === 'bbnaija' || slugInput === 'finale-winner' || slugInput === 'finale') {
+            return cSlug === 'bbnaija' || cSlug === 'finale-winner' || cSlug === 'finale';
+          }
+          return false;
         });
-        const matchedCategory = catRes.categories?.[0];
+
         if (matchedCategory) {
           marketTx = marketTx.link({ category: matchedCategory.id });
         }

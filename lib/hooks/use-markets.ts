@@ -42,7 +42,21 @@ export function useMarkets(options: UseMarketsOptions = {}) {
 
   // Filter by Category Slug
   if (categorySlug && categorySlug !== 'all' && categorySlug !== 'trending') {
-    markets = markets.filter((m) => m.category?.slug === categorySlug);
+    const targetSlug = categorySlug.toLowerCase();
+    markets = markets.filter((m) => {
+      const catSlug = m.category?.slug?.toLowerCase() || '';
+      const catName = m.category?.name?.toLowerCase() || '';
+      if (targetSlug === 'hoh' || targetSlug === 'head-of-house') {
+        return catSlug === 'hoh' || catSlug === 'head-of-house' || catName.includes('house') || catName.includes('hoh');
+      }
+      if (targetSlug === 'evictions' || targetSlug === 'weekly-eviction' || targetSlug === 'eviction') {
+        return catSlug === 'evictions' || catSlug === 'weekly-eviction' || catSlug === 'eviction' || catName.includes('eviction');
+      }
+      if (targetSlug === 'bbnaija' || targetSlug === 'finale-winner' || targetSlug === 'finale') {
+        return catSlug === 'bbnaija' || catSlug === 'finale-winner' || catName.includes('bbnaija') || catName.includes('finale');
+      }
+      return catSlug === targetSlug || catName.includes(targetSlug);
+    });
   }
 
   // Filter & Sort for Trending Category

@@ -47,11 +47,22 @@ function MarketFeed({
     let filtered = markets
     if (activeCategory && activeCategory !== "trending" && activeCategory !== "all") {
       filtered = markets.filter((m) => {
-        const cat = m.categoryLabel?.toLowerCase() || ""
+        if (!m.categorySlug && !m.categoryLabel) return true
+        const slug = m.categorySlug?.toLowerCase() || ""
+        const catLabel = m.categoryLabel?.toLowerCase() || ""
         const selected = activeCategory.toLowerCase()
-        if (selected === "hoh") return cat.includes("hoh") || cat.includes("bbnaija")
-        if (selected === "weekly") return cat.includes("weekly") || cat.includes("eviction") || cat.includes("bbnaija")
-        return cat.includes(selected)
+
+        // Normalize slug aliases & label matching
+        if (selected === "hoh" || selected === "head-of-house") {
+          return slug === "hoh" || slug === "head-of-house" || catLabel.includes("house") || catLabel.includes("hoh")
+        }
+        if (selected === "evictions" || selected === "weekly-eviction" || selected === "eviction") {
+          return slug === "evictions" || slug === "weekly-eviction" || slug === "eviction" || catLabel.includes("eviction")
+        }
+        if (selected === "bbnaija" || selected === "finale-winner" || selected === "finale") {
+          return slug === "bbnaija" || slug === "finale-winner" || catLabel.includes("bbnaija") || catLabel.includes("finale")
+        }
+        return slug === selected || catLabel.includes(selected)
       })
     }
 

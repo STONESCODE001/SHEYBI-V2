@@ -172,6 +172,7 @@ export function adaptMarketToCardProps(market: any): MarketCardProps {
     title: market.title,
     variant,
     categoryLabel: market.category?.name || 'Entertainment',
+    categorySlug: market.category?.slug,
     volume: `₦${(market.tradingVolume || 0).toLocaleString()}`,
     yesProbability,
     noProbability,

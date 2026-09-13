@@ -106,6 +106,10 @@ export interface MarketCardProps extends React.ComponentProps<"article"> {
    */
   readonly categoryLabel?: string
   /**
+   * DB INTEGRATION NOTE: Category slug e.g. "bbnaija", "hoh", "evictions"
+   */
+  readonly categorySlug?: string
+  /**
    * DB INTEGRATION NOTE: Likes / Reaction count string e.g. "1.2k" or number
    */
   readonly likesCount?: number | string
