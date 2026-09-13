@@ -448,7 +448,7 @@ Market Title Header (e.g. "Would Mercy Slap Ivana??")
 ↓
 
 Master Explanation Banner:
-- Soft dark hint box (`bg-[#141E33] border-none`) with `HelpCircle` icon in Info Blue (`#0EA5E9`): `How 1v1 Predictions Work: Pick YES if you think that candidate will win, or NO if you think they will lose.`
+- Soft surface card (`bg-[var(--surface-subtle)] border border-[var(--border-default)]`) with `HelpCircle` icon in Primary Indigo (`text-[var(--primary)]`): `How 1v1 Predictions Work: Pick YES if you think that candidate will win, or NO if you think they will lose.`
 
 ↓
 

@@ -68,7 +68,7 @@ export function UserProfileRegion({
             elements: {
               userButtonBox: "flex flex-row-reverse justify-between w-full items-center gap-2",
               userButtonOuterIdentifier: "text-sm font-semibold text-[var(--text-primary)] truncate max-w-[120px]",
-              avatarBox: "size-7 rounded-full",
+              avatarBox: "size-7 rounded-full overflow-visible",
             },
           }}
         />

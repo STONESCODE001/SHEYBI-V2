@@ -35,7 +35,7 @@ function ShellLogo({
         />
       </div>
       {!compact && showTagline && (
-        <span className="text-[9px] font-bold tracking-[0.2em] uppercase text-[var(--text-muted)]">
+        <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-[var(--text-secondary)]">
           PREDICT. PLAY. WIN.
         </span>
       )}

@@ -130,9 +130,9 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
         </h1>
 
         {/* Master 1v1 Prediction Explanation Banner */}
-        <div className="p-3.5 rounded-2xl bg-[#141E33] flex items-start gap-2.5 shadow-sm text-xs sm:text-sm text-slate-200">
-          <HelpCircle className="size-4 text-[#0EA5E9] shrink-0 mt-0.5" />
-          <p className="leading-relaxed">
+        <div className="p-3.5 rounded-2xl bg-[var(--surface-subtle)] border border-[var(--border-default)] flex items-start gap-2.5 shadow-sm text-xs sm:text-sm text-[var(--text-primary)]">
+          <HelpCircle className="size-4 text-[var(--primary)] shrink-0 mt-0.5" />
+          <p className="leading-relaxed max-w-2xl">
             <strong className="text-amber-400 font-bold">How 1v1 Predictions Work:</strong> Pick <span className="text-[#30D878] font-bold">YES</span> if you think that candidate will win, or <span className="text-[#FFC91F] font-bold">NO</span> if you think they will lose.
           </p>
         </div>
@@ -184,8 +184,8 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
                   />
                 </button>
               </div>
-              <div className="flex items-center justify-center gap-1 text-[11px] font-medium text-slate-400 text-center px-1">
-                <HelpCircle className="size-3 text-[#0EA5E9] shrink-0" />
+              <div className="flex items-center justify-center gap-1 text-[11px] font-medium text-[var(--text-secondary)] text-center px-1">
+                <HelpCircle className="size-3 text-[var(--primary)] shrink-0" />
                 <span><span className="text-[#30D878] font-bold">YES</span> = {player1.name} wins | <span className="text-[#FFC91F] font-bold">NO</span> = {player1.name} loses</span>
               </div>
             </div>
@@ -243,8 +243,8 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
                   />
                 </button>
               </div>
-              <div className="flex items-center justify-center gap-1 text-[11px] font-medium text-slate-400 text-center px-1">
-                <HelpCircle className="size-3 text-[#0EA5E9] shrink-0" />
+              <div className="flex items-center justify-center gap-1 text-[11px] font-medium text-[var(--text-secondary)] text-center px-1">
+                <HelpCircle className="size-3 text-[var(--primary)] shrink-0" />
                 <span><span className="text-[#30D878] font-bold">YES</span> = {player2.name} wins | <span className="text-[#FFC91F] font-bold">NO</span> = {player2.name} loses</span>
               </div>
             </div>
@@ -343,8 +343,8 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
                   />
                 </button>
               </div>
-              <div className="flex items-center justify-center gap-1 text-xs font-medium text-slate-400 text-center px-1">
-                <HelpCircle className="size-3.5 text-[#0EA5E9] shrink-0" />
+              <div className="flex items-center justify-center gap-1 text-xs font-medium text-[var(--text-secondary)] text-center px-1">
+                <HelpCircle className="size-3.5 text-[var(--primary)] shrink-0" />
                 <span><span className="text-[#30D878] font-bold">YES</span> = {player1.name} wins | <span className="text-[#FFC91F] font-bold">NO</span> = {player1.name} loses</span>
               </div>
             </div>
@@ -377,8 +377,8 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
                   />
                 </button>
               </div>
-              <div className="flex items-center justify-center gap-1 text-xs font-medium text-slate-400 text-center px-1">
-                <HelpCircle className="size-3.5 text-[#0EA5E9] shrink-0" />
+              <div className="flex items-center justify-center gap-1 text-xs font-medium text-[var(--text-secondary)] text-center px-1">
+                <HelpCircle className="size-3.5 text-[var(--primary)] shrink-0" />
                 <span><span className="text-[#30D878] font-bold">YES</span> = {player2.name} wins | <span className="text-[#FFC91F] font-bold">NO</span> = {player2.name} loses</span>
               </div>
             </div>
