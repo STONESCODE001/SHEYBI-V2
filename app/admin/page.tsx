@@ -27,6 +27,7 @@ import {
   unpauseMarketAction,
   toggleOptionPauseAction,
   toggleMarketFeaturedAction,
+  publishMarketAction,
 } from "@/lib/actions/market-actions"
 import { rejectWithdrawalAction } from "@/lib/actions/wallet-actions"
 import {
@@ -338,6 +339,16 @@ export default function AdminDashboardPage() {
     toast.success(`Market ${newIsFeatured ? 'starred as Featured' : 'unstarred from Featured'}!`)
   }
 
+  /** Triggered when admin clicks "Go Live" on a draft market */
+  const handlePublishMarket = async (market: AdminMarketItem) => {
+    const result = await publishMarketAction(market.id)
+    if (!result.success) {
+      toast.error(result.error || 'Failed to publish market live.')
+      return
+    }
+    toast.success(`Market "${market.title}" is now live!`)
+  }
+
   /** Triggered when admin accepts a market suggestion */
   const handleAcceptSuggestion = (suggestion: MarketSuggestionItem) => {
     setCreateMarketPreFill({
@@ -545,6 +556,7 @@ export default function AdminDashboardPage() {
                 setIsOptionsOpen(true)
               }}
               onToggleFeatured={handleToggleMarketFeatured}
+              onPublishMarket={handlePublishMarket}
             />
           )}
 

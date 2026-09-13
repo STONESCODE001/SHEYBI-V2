@@ -288,6 +288,7 @@ export interface LedgerEntry extends LedgerEntryData {
 export type AuditActionType =
   | 'CREATE_MARKET'
   | 'OPEN_MARKET'
+  | 'PUBLISH_MARKET'
   | 'PAUSE_MARKET'
   | 'UNPAUSE_MARKET'
   | 'CLOSE_MARKET'

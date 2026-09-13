@@ -723,4 +723,54 @@ export async function toggleMarketFeaturedAction(
   }
 }
 
+/**
+ * Publish a draft market live — transitions state from 'draft' to 'open'.
+ */
+export async function publishMarketAction(
+  marketId: string
+): Promise<ActionResponse> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: 'Authentication required.' };
+
+    const market = await repository.markets.getMarketById(marketId);
+    if (!market) return { success: false, error: 'Market not found.' };
+
+    if (market.state !== 'draft') {
+      return { success: false, error: `Cannot publish market in state '${market.state}'. Only draft markets can be published live.` };
+    }
+
+    const now = Date.now();
+    await repository.markets.updateMarket(marketId, {
+      state: 'open',
+      updatedAt: now,
+    });
+
+    await repository.markets.addMarketActivity(marketId, {
+      activityType: 'opened',
+      description: 'Market published live by admin.',
+      relatedUserId: userId,
+      createdAt: now,
+    });
+
+    await repository.auditLogs.createAuditLog({
+      adminUserId: userId,
+      actionType: 'PUBLISH_MARKET',
+      targetEntityId: marketId,
+      details: {
+        title: market.title,
+        previousState: 'draft',
+        newState: 'open',
+      },
+      createdAt: now,
+    });
+
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    return { success: false, error: message };
+  }
+}
+
+
 

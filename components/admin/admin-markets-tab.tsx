@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Plus, Search, Trophy, Edit, AlertCircle, CheckCircle2, Users, Star } from "lucide-react"
+import { Plus, Search, Trophy, Edit, AlertCircle, CheckCircle2, Users, Star, Play } from "lucide-react"
 
 /**
  * Explanatory Interface: AdminMarketItem
@@ -30,6 +30,7 @@ export interface AdminMarketsTabProps {
   onOpenPauseDialog?: (market: AdminMarketItem) => void
   onOpenOptionsDialog?: (market: AdminMarketItem) => void
   onToggleFeatured?: (market: AdminMarketItem) => void
+  onPublishMarket?: (market: AdminMarketItem) => void
 }
 
 /**
@@ -45,6 +46,7 @@ export function AdminMarketsTab({
   onOpenPauseDialog,
   onOpenOptionsDialog,
   onToggleFeatured,
+  onPublishMarket,
 }: AdminMarketsTabProps) {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState<string>("ALL")
@@ -189,6 +191,15 @@ export function AdminMarketsTab({
                               <Users className="h-3.5 w-3.5 text-primary" /> Options
                             </button>
                           )}
+                          {market.status === "Draft" && onPublishMarket && (
+                            <button
+                              type="button"
+                              onClick={() => onPublishMarket(market)}
+                              className="inline-flex items-center gap-1 rounded-xl bg-success/10 text-success border border-success/30 px-3 py-1.5 text-xs font-bold hover:bg-success/20 transition-all shadow-xs"
+                            >
+                              <Play className="h-3.5 w-3.5 fill-current" /> Go Live
+                            </button>
+                          )}
                           {(market.status === "Open" || market.status === "Paused") && (
                             <button
                               type="button"
@@ -202,13 +213,15 @@ export function AdminMarketsTab({
                               {market.status === "Paused" ? "Unpause" : "Pause"}
                             </button>
                           )}
-                          <button
-                            type="button"
-                            onClick={() => onOpenResolveDialog(market)}
-                            className="inline-flex items-center gap-1 rounded-xl bg-primary/10 text-primary border border-primary/30 px-3 py-1.5 text-xs font-bold hover:bg-primary/20 transition-all shadow-xs"
-                          >
-                            <Trophy className="h-3.5 w-3.5" /> Resolve
-                          </button>
+                          {market.status !== "Draft" && (
+                            <button
+                              type="button"
+                              onClick={() => onOpenResolveDialog(market)}
+                              className="inline-flex items-center gap-1 rounded-xl bg-primary/10 text-primary border border-primary/30 px-3 py-1.5 text-xs font-bold hover:bg-primary/20 transition-all shadow-xs"
+                            >
+                              <Trophy className="h-3.5 w-3.5" /> Resolve
+                            </button>
+                          )}
                         </div>
                       )}
                     </td>
