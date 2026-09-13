@@ -24,6 +24,8 @@ export function CreatePromoterDialog({
   const [name, setName] = useState("")
   const [slug, setSlug] = useState("")
   const [notes, setNotes] = useState("")
+  const [signupBonusAmount, setSignupBonusAmount] = useState("300")
+  const [maxBonusSignups, setMaxBonusSignups] = useState("100")
   const [isCustomSlug, setIsCustomSlug] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -65,6 +67,8 @@ export function CreatePromoterDialog({
         name: name.trim(),
         slug: slug.trim() || undefined,
         notes: notes.trim() || undefined,
+        signupBonusAmount: signupBonusAmount ? Math.max(0, Number(signupBonusAmount)) : 0,
+        maxBonusSignups: maxBonusSignups ? Math.max(0, Number(maxBonusSignups)) : 0,
       })
 
       if (!res.success) {
@@ -76,6 +80,8 @@ export function CreatePromoterDialog({
       setName("")
       setSlug("")
       setNotes("")
+      setSignupBonusAmount("300")
+      setMaxBonusSignups("100")
       setIsCustomSlug(false)
       onClose()
       onSuccess?.()
@@ -145,6 +151,41 @@ export function CreatePromoterDialog({
               placeholder="e.g. mrfaithman"
               className="w-full px-3 py-2 bg-bg-base border border-border rounded-xl text-sm font-mono font-medium text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary"
             />
+          </div>
+        </div>
+
+        {/* Bonus Campaign Config */}
+        <div className="grid grid-cols-2 gap-3 p-3 bg-bg-surface-secondary/50 border border-border rounded-xl">
+          <div>
+            <label className="block text-xs font-bold text-text-primary mb-1">
+              Signup Bonus (₦) <span className="text-text-muted text-[10px]">(Playable credit)</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="50"
+              value={signupBonusAmount}
+              onChange={(e) => setSignupBonusAmount(e.target.value)}
+              placeholder="e.g. 300"
+              className="w-full px-3 py-1.5 bg-bg-base border border-border rounded-xl text-xs font-bold text-text-primary focus:outline-none focus:border-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-text-primary mb-1">
+              Bonus Signups Cap <span className="text-text-muted text-[10px]">(First N users)</span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={maxBonusSignups}
+              onChange={(e) => setMaxBonusSignups(e.target.value)}
+              placeholder="e.g. 100"
+              className="w-full px-3 py-1.5 bg-bg-base border border-border rounded-xl text-xs font-bold text-text-primary focus:outline-none focus:border-primary"
+            />
+          </div>
+          <div className="col-span-2 text-[11px] text-text-muted italic">
+            * First {maxBonusSignups || 0} users who sign up via this link receive ₦{Number(signupBonusAmount || 0).toLocaleString()} non-withdrawable playable bonus balance.
           </div>
         </div>
 

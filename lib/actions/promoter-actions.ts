@@ -42,6 +42,8 @@ export interface CreatePromoterInput {
   name: string;
   slug?: string;
   notes?: string;
+  signupBonusAmount?: number;
+  maxBonusSignups?: number;
 }
 
 export interface CreatePromoterResult {
@@ -65,6 +67,9 @@ export async function createPromoterAction(input: CreatePromoterInput): Promise<
     if (!name) {
       return { success: false, error: 'Promoter name is required.' };
     }
+
+    const signupBonusAmount = Math.max(0, Number(input.signupBonusAmount) || 0);
+    const maxBonusSignups = Math.max(0, Number(input.maxBonusSignups) || 0);
 
     // Slug generation & normalization
     let rawSlug = input.slug?.trim() || name;
@@ -103,6 +108,9 @@ export async function createPromoterAction(input: CreatePromoterInput): Promise<
         notes: input.notes?.trim() || undefined,
         totalSignups: 0,
         totalDepositedVolume: 0,
+        signupBonusAmount: signupBonusAmount > 0 ? signupBonusAmount : undefined,
+        maxBonusSignups: maxBonusSignups > 0 ? maxBonusSignups : undefined,
+        bonusSignupsCount: 0,
         createdBy: userId,
         createdAt: now,
         updatedAt: now,
@@ -115,6 +123,8 @@ export async function createPromoterAction(input: CreatePromoterInput): Promise<
           name,
           slug,
           notes: input.notes,
+          signupBonusAmount,
+          maxBonusSignups,
         },
         createdAt: now,
       }),

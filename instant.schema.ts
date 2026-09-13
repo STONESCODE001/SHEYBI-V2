@@ -14,6 +14,8 @@ const schema = i.schema({
       role: i.string().optional().indexed(), // "user" | "admin" | "superadmin"
       referredBy: i.string().optional().indexed(), // Referral promoter slug (e.g. "mrfaithman")
       referredAt: i.number().optional(), // Timestamp ms when user registered via referral link
+      signupBonusAmount: i.number().optional(), // Bonus ₦ received upon referral signup
+      signupBonusClaimed: i.boolean().optional(), // Claimed bonus status flag
       createdAt: i.number().optional(),
       updatedAt: i.number().optional(),
     }),
@@ -84,6 +86,7 @@ const schema = i.schema({
       userId: i.string().unique().indexed(),
       availableBalance: i.number(),
       lockedBalance: i.number(),
+      bonusBalance: i.number().optional(), // Non-withdrawable playable bonus balance
       lifetimeDeposits: i.number(),
       lifetimeWithdrawals: i.number(),
       lifetimeProfit: i.number(),
@@ -216,6 +219,9 @@ const schema = i.schema({
       notes: i.string().optional(),             // Contact info / campaign notes
       totalSignups: i.number().indexed(),      // User registration conversion count
       totalDepositedVolume: i.number(),        // Sum of all deposits (₦) by referred users
+      signupBonusAmount: i.number().optional(), // Bonus ₦ awarded per signup (e.g. 300)
+      maxBonusSignups: i.number().optional(),   // Maximum bonus signup count limit (e.g. 100)
+      bonusSignupsCount: i.number().optional(), // Counter tracking claimed bonuses so far
       createdBy: i.string().indexed(),         // Admin Clerk userId
       createdAt: i.number().indexed(),
       updatedAt: i.number(),

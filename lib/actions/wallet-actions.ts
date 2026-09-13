@@ -227,7 +227,17 @@ export async function requestWithdrawalAction(
     if (!wallet) {
       return { success: false, error: 'Wallet not found.' };
     }
-    if (wallet.availableBalance < amount) {
+
+    const bonusBalance = (wallet as any).bonusBalance || 0;
+    const maxWithdrawable = Math.max(0, wallet.availableBalance - bonusBalance);
+
+    if (amount > maxWithdrawable) {
+      if (bonusBalance > 0 && wallet.availableBalance >= amount) {
+        return {
+          success: false,
+          error: `Cannot withdraw playable bonus funds. Max withdrawable: ₦${maxWithdrawable.toLocaleString()}. Playable bonus funds (₦${bonusBalance.toLocaleString()}) can only be spent on prediction markets.`,
+        };
+      }
       return {
         success: false,
         error: `Insufficient available balance. Available: ₦${wallet.availableBalance.toLocaleString()}, Requested: ₦${amount.toLocaleString()}`,

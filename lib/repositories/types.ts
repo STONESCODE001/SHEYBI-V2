@@ -171,6 +171,7 @@ export interface Wallet {
   userId: string;
   availableBalance: number; // Funds ready for trading or withdrawal
   lockedBalance: number;    // Funds committed to open positions
+  bonusBalance?: number;    // Non-withdrawable playable bonus balance
   createdAt: number;
   updatedAt: number;
 }

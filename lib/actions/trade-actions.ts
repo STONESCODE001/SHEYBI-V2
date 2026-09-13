@@ -29,6 +29,7 @@ import {
 } from '@/lib/prediction-engine/lmsr';
 import { repository } from '@/lib/repositories';
 import type { OptionBatchUpdate } from '@/lib/repositories';
+import { adminDb } from '@/lib/instant-admin';
 
 // ============================================================================
 // RESPONSE TYPES
@@ -212,6 +213,23 @@ export async function buyPositionAction(
       availableBalanceDelta: -tradeAmount,
       lockedBalanceDelta: +tradeAmount,
     });
+
+    // Deduct consumed playable bonus balance if user holds active bonus funds
+    const currentBonusBalance = (wallet as any).bonusBalance || 0;
+    if (currentBonusBalance > 0) {
+      const bonusDeduction = Math.min(currentBonusBalance, tradeAmount);
+      const newBonusBalance = Math.max(0, currentBonusBalance - bonusDeduction);
+      try {
+        await adminDb.transact([
+          adminDb.tx.wallets[wallet.id].update({
+            bonusBalance: newBonusBalance,
+            updatedAt: now,
+          }),
+        ]);
+      } catch (bonusErr) {
+        console.warn('[Trade Actions] Note updating bonusBalance:', bonusErr);
+      }
+    }
 
     // 13. Create or update position
     if (existingPosition && existingPosition.optionId === optionId) {

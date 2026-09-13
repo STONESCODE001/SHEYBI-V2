@@ -7,18 +7,19 @@ Update this document immediately after every completed implementation unit. This
 ## Current Phase: Phase 4: Core Engine & Algorithm Implementation
 
 ### Current Implementation Target
-- **Spec 21 — Influencer & Promoter Referral Tracking System** (`context/feature-specs/21-promoter-referral-tracking.md`) — **Completed**
+- **Spec 22 — Capped Promoter Signup Bonus & Non-Withdrawable Playable Balance** (`context/feature-specs/22-promoter-signup-bonus.md`) — **Completed**
 
 ---
    
 # Current Goal
 
-Influencer & Promoter Referral Tracking System completed 100%. Supports short links (`/f/[promoter]`), 30-day `sheybi_ref` cookies, InstantDB `promoters` and `$users.referredBy` schema, Clerk signup conversion sync, Admin Promoters Tab & `CreatePromoterDialog`, 1-click **Copy Link**, and server actions with audit logging. Verified with zero TypeScript errors and successful production build pass (`npm run build`).
+Capped Promoter Signup Bonus & Non-Withdrawable Playable Balance completed 100%. Configurable signup bonus amount (e.g. ₦300) and max bonus claim limit (e.g. first 100 signups) on promoter links, InstantDB schema extensions (`promoters.signupBonusAmount`, `maxBonusSignups`, `bonusSignupsCount`, `wallets.bonusBalance`), automatic onboarding bonus crediting in `ensureUserWalletAction()`, strict withdrawal blocking in `requestWithdrawalAction()` (`maxWithdrawable = availableBalance - bonusBalance`), trading bonus play-through consumption in `buyPositionAction()`, and Admin workspace UI controls in `CreatePromoterDialog` and `AdminPromotersTab`. Verified with zero TypeScript errors (`npx tsc --noEmit`) and successful production build pass (`npm run build`).
 
 ---
 
 # Completed
 
+* **Spec 22 — Capped Promoter Signup Bonus & Non-Withdrawable Playable Balance** (`context/feature-specs/22-promoter-signup-bonus.md`, `instant.schema.ts`, `lib/actions/promoter-actions.ts`, `lib/actions/wallet-provisioning.ts`, `lib/actions/wallet-actions.ts`, `lib/actions/trade-actions.ts`, `components/admin/create-promoter-dialog.tsx`, `components/admin/admin-promoters-tab.tsx`) — Completed 100%. (1) InstantDB schema extended with `signupBonusAmount`, `maxBonusSignups`, `bonusSignupsCount` on `promoters`, `signupBonusAmount`, `signupBonusClaimed` on `$users`, and `bonusBalance` on `wallets`, pushed to InstantDB Cloud (`npx instant-cli push schema --yes`); (2) `createPromoterAction()` accepts and sanitizes `signupBonusAmount` and `maxBonusSignups`; (3) `ensureUserWalletAction()` evaluates promoter bonus eligibility upon referral onboarding, updates user and promoter records, credits `availableBalance` and `bonusBalance`, and inserts transaction (`Deposit`) and ledger (`REFERRAL_BONUS`) entries; (4) `requestWithdrawalAction()` enforces `maxWithdrawable = availableBalance - bonusBalance`, blocking direct withdrawal of playable bonus balance; (5) `buyPositionAction()` deducts trade amounts from `bonusBalance` so trading consumes non-withdrawable funds first; (6) `CreatePromoterDialog` form inputs for Signup Bonus and Bonus Signups Cap; (7) `AdminPromotersTab` renders **Signup Bonus** column displaying `₦300 (12/100 claimed)` or `None`. Verified with zero TypeScript errors (`npx tsc --noEmit`) and clean production build pass (`npm run build`).
 * **Spec 21 — Influencer & Promoter Referral Tracking System** (`context/feature-specs/21-promoter-referral-tracking.md`, `middleware.ts`, `instant.schema.ts`, `instant.perms.ts`, `lib/actions/promoter-actions.ts`, `lib/actions/wallet-provisioning.ts`, `components/admin/admin-promoters-tab.tsx`, `components/admin/create-promoter-dialog.tsx`, `app/admin/page.tsx`) — Completed 100%. (1) Next.js Middleware interception for `/f/[promoter]` short links and `?ref=` query parameters with 30-day `sheybi_ref` cookie setting and `NextResponse.rewrite('/')` so Vercel client analytics logs page hits; (2) InstantDB `$users` entity extension with `referredBy` and `referredAt` fields and `promoters` entity definition (`name`, `slug`, `status`, `notes`, `totalSignups`, `totalDepositedVolume`, `createdBy`); (3) Remote schema and permissions push to InstantDB Cloud (`npx instant-cli push schema` / `perms`); (4) Clerk signup conversion sync in `ensureUserWalletAction()` attaching `referredBy` to InstantDB `$users` records and incrementing `totalSignups` on `promoters`; (5) Server Actions (`createPromoterAction`, `togglePromoterStatusAction`, `deletePromoterAction`) with audit logging; (6) Admin Control Center Promoters tab with KPI stat cards, promoter table, 1-click **Copy Link** button (`sheybi.app/f/[slug]`), and `CreatePromoterDialog`. Verified with zero TypeScript errors (`npx tsc --noEmit`) and successful production build pass (`npm run build`).
 
 * **Platform Revenue Ledger Filter Fix (`app/admin/page.tsx`)** — Completed 100%. Added `TRADING_FEE` to the ledger event filter in `app/admin/page.tsx` so trade fees (e.g. 2.5% fee entries) are included in the **Platform Revenue** KPI card alongside withdrawal fees.
@@ -164,7 +165,11 @@ Current project status:
 
 # Change Log
 
-Make sure you update this section after every meaningful implementation unit.
+* **2026-08-17**
+  * **Feature Completed:** Spec 22 — Capped Promoter Signup Bonus & Non-Withdrawable Playable Balance (`22-promoter-signup-bonus.md`).
+  * **Files Modified/Created:** `context/feature-specs/22-promoter-signup-bonus.md` [NEW], `instant.schema.ts`, `lib/actions/promoter-actions.ts`, `lib/actions/wallet-provisioning.ts`, `lib/actions/wallet-actions.ts`, `lib/actions/trade-actions.ts`, `lib/repositories/types.ts`, `components/admin/create-promoter-dialog.tsx`, `components/admin/admin-promoters-tab.tsx`, `context/progress-tracker.md`.
+  * **Decisions:** Signup bonus (₦300 for first 100 signups) is credited as non-withdrawable `bonusBalance`; `requestWithdrawalAction()` enforces `maxWithdrawable = availableBalance - bonusBalance`; `buyPositionAction()` deducts trade amounts from `bonusBalance` so trading consumes playable bonus credits first; InstantDB schema pushed to cloud (`npx instant-cli push schema --yes`).
+  * **Verification:** Zero TypeScript errors (`npx tsc --noEmit`) and successful production build (`npm run build`).
 
 * **2026-07-20**
   * **Feature Completed:** Design System Foundation (`01-design-system.md`).

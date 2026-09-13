@@ -13,6 +13,9 @@ export interface PromoterItem {
   notes?: string
   totalSignups: number
   totalDepositedVolume: number
+  signupBonusAmount?: number
+  maxBonusSignups?: number
+  bonusSignupsCount?: number
   createdAt: number
 }
 
@@ -172,6 +175,7 @@ export function AdminPromotersTab({
                 <th className="px-4 py-3 font-semibold">Promoter</th>
                 <th className="px-4 py-3 font-semibold">Short Link</th>
                 <th className="px-4 py-3 font-semibold">Status</th>
+                <th className="px-4 py-3 font-semibold">Signup Bonus</th>
                 <th className="px-4 py-3 font-semibold text-center">Sign-ups</th>
                 <th className="px-4 py-3 font-semibold">Referred Deposits</th>
                 <th className="px-4 py-3 font-semibold text-right">Actions</th>
@@ -230,6 +234,20 @@ export function AdminPromotersTab({
                         >
                           {isPaused ? "Paused" : "Active"}
                         </span>
+                      </td>
+                      <td className="px-4 py-3 font-medium text-xs">
+                        {item.signupBonusAmount && item.signupBonusAmount > 0 ? (
+                          <div className="flex flex-col">
+                            <span className="font-bold text-accent-yellow">
+                              ₦{item.signupBonusAmount.toLocaleString()} Bonus
+                            </span>
+                            <span className="text-[10px] text-text-muted">
+                              {item.bonusSignupsCount || 0} / {item.maxBonusSignups || "∞"} claimed
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-text-muted">None</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-center font-bold text-text-primary">
                         {item.totalSignups || 0}
