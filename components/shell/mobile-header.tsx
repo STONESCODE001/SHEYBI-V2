@@ -30,7 +30,7 @@ function MobileHeader({
           className
         )}
       >
-        <ShellLogo showTagline />
+        <ShellLogo />
 
         <div className="flex items-center gap-2">
           <Link
@@ -68,7 +68,7 @@ function MobileHeader({
         className
       )}
     >
-      <ShellLogo showTagline />
+      <ShellLogo />
 
       <div className="flex items-center gap-1.5">
         <GlobalSearchRegion mode="trigger" />

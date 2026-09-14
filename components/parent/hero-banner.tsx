@@ -59,8 +59,8 @@ function HeroBanner({
             </h1>
           ) : (
             <h1 className="flex flex-col font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[80px] tracking-tight leading-[1.02]">
-              <span className="text-white">Turn Your</span>
-              <span className="text-[#2563EB]">Opinion Into</span>
+              <span className="text-[#2563EB]">Turn Your</span>
+              <span className="text-[#2563EB]">Opinions Into</span>
               <span className="text-[#2563EB]">
                 Profit<span className="text-[#FFC700]">.</span>
               </span>
