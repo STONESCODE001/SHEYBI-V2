@@ -20,7 +20,7 @@ function FooterRegion({ className }: FooterRegionProps) {
       <div className="mx-auto flex max-w-[1200px] flex-col gap-6">
         {/* Top row: Logo + Quick Navigation Links */}
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-          <ShellLogo showTagline />
+          <ShellLogo />
 
           <nav aria-label="Footer Navigation" className="flex flex-col gap-2 sm:flex-row sm:gap-6">
             <Link

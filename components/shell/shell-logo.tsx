@@ -11,7 +11,7 @@ interface ShellLogoProps {
 function ShellLogo({
   className,
   compact = false,
-  showTagline = true,
+  showTagline = false,
 }: ShellLogoProps) {
   return (
     <Link
