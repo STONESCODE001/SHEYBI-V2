@@ -27,9 +27,9 @@ function WalletChip({
       aria-live="polite"
       className={cn(
         "inline-flex h-9 items-center justify-center rounded-xl px-3.5 cursor-pointer outline-none transition-colors duration-200",
-        "bg-[var(--accent-yellow)] hover:bg-[var(--accent-yellow-hover)] shadow-sm",
+        "bg-[#0F1727] border border-white/10 hover:border-white/20 shadow-xs",
         "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]",
-        "text-sm font-bold text-[var(--text-inverse)] tracking-tight",
+        "text-sm font-bold font-mono text-[#FFC91F] tracking-tight",
         className
       )}
     >

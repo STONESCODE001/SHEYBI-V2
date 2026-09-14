@@ -100,7 +100,7 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
         <div>
           <Link
             href="/markets"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#FFC91F] hover:underline transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-400 hover:text-white transition-colors"
           >
             <ArrowLeft className="size-4 stroke-[2.5]" />
             Back
@@ -201,7 +201,7 @@ export function BinaryMarketView({ market }: BinaryMarketViewProps): React.React
         <div className="pt-2 pb-4 text-center">
           <Link
             href="/markets"
-            className="inline-flex items-center justify-center w-full px-8 py-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] hover:bg-[var(--bg-hover)] hover:border-[var(--accent-yellow)]/50 font-extrabold text-sm text-[var(--text-primary)] transition-all shadow-md active:scale-[0.99]"
+            className="inline-flex items-center justify-center w-full px-8 py-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] hover:bg-[var(--bg-hover)] hover:border-white/20 font-extrabold text-sm text-[var(--text-primary)] transition-all shadow-md active:scale-[0.99]"
           >
             see more ...
           </Link>

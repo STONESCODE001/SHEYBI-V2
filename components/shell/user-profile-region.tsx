@@ -41,7 +41,7 @@ export function UserProfileRegion({
           href="/auth/sign-up"
           className={cn(
             "flex h-11 w-full items-center justify-center rounded-xl font-semibold text-sm",
-            "bg-[var(--accent-yellow)] text-[var(--text-inverse)] hover:bg-[var(--accent-yellow-hover)]",
+            "bg-indigo-600 text-white hover:bg-indigo-500 font-bold shadow-xs",
             "outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
           )}
         >

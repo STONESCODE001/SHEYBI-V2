@@ -68,7 +68,7 @@ function PrimaryNavigationRegion({
                   }}
                   className={cn(
                     "flex h-11 w-full items-center justify-center rounded-xl cursor-pointer",
-                    "border border-[var(--accent-yellow)] bg-[var(--bg-base)] text-[var(--accent-yellow)]",
+                    "border border-white/10 bg-[var(--bg-base)] text-slate-300 hover:text-white hover:border-white/20",
                     "outline-none transition-colors duration-200 hover:bg-[var(--bg-hover)]",
                     "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]"
                   )}
@@ -91,7 +91,7 @@ function PrimaryNavigationRegion({
                   "outline-none transition-colors duration-200",
                   "focus-visible:ring-2 focus-visible:ring-[var(--border-active)]",
                   active
-                    ? "bg-[var(--accent-yellow)] font-bold text-[var(--text-inverse)] shadow-sm"
+                    ? "bg-[#162032] text-white border-l-4 border-l-[#FFC91F] font-bold shadow-sm"
                     : "bg-[var(--bg-base)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                 )}
               >

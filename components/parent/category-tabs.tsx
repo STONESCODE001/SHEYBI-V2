@@ -86,12 +86,12 @@ function CategoryTabs({
               className={cn(
                 "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-150 select-none cursor-pointer whitespace-nowrap outline-none",
                 isActive
-                  ? "bg-[#FFC700] text-black shadow-sm"
+                  ? "bg-[#162032] text-white border border-white/20 shadow-xs"
                   : "bg-transparent text-slate-300 hover:text-white hover:bg-white/5"
               )}
             >
               {category.icon ? (
-                <span className={cn("inline-flex items-center", isActive ? "text-black" : "text-slate-400")}>
+                <span className={cn("inline-flex items-center", isActive ? "text-amber-400" : "text-slate-400")}>
                   {category.icon}
                 </span>
               ) : null}

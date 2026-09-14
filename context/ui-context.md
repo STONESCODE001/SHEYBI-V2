@@ -673,3 +673,5 @@ The UI must always satisfy the following rules:
 9. No component may introduce undocumented colors, spacing, typography or animation.
 
 10. Every UI decision must reinforce clarity, trust and speed.
+
+11. No emoji characters (e.g. 🎁, 🔥, 🚀) inside production UI text, titles, badges, or buttons. Use Lucide stroke icons or brand image assets instead.

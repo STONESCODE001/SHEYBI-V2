@@ -284,7 +284,7 @@ function MarketCard({
               {/* Full-width Accent Yellow Matchup CTA Button */}
               <div className="w-full pt-0.5">
                 <div className="flex items-center justify-center gap-2 rounded-xl bg-[#FFC91F] hover:bg-[#FFD54F] border border-[#FFC91F] group-hover/market-card:bg-[#FFD54F] p-2.5 text-center text-xs sm:text-sm font-black text-[#0B101D] transition-all shadow-md active:scale-[0.99]">
-                  <span>Predict Matchup</span>
+                  <span>Predict Now</span>
                   <span className="text-base leading-none">→</span>
                 </div>
               </div>
