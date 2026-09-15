@@ -675,3 +675,5 @@ The UI must always satisfy the following rules:
 10. Every UI decision must reinforce clarity, trust and speed.
 
 11. No emoji characters (e.g. 🎁, 🔥, 🚀) inside production UI text, titles, badges, or buttons. Use Lucide stroke icons or brand image assets instead.
+
+12. Clean Navigation State: Active sidebar navigation buttons must use clean elevated surface fills (e.g. bg-[#1E2A44]) without left side accent borders or asymmetrical border stripes.

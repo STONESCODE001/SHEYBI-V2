@@ -208,40 +208,52 @@ function HeroBanner({
         </Link>
       </div>
 
-      {/* DESKTOP ONLY: Stacked Typography + Mascot */}
-      <div className="hidden md:flex flex-row items-center justify-between gap-8">
-        {/* Left: Stacked Headline */}
-        <div suppressHydrationWarning className="flex flex-col items-start text-left select-none max-w-2xl">
-          {headline ? (
-            <h1 className="font-black text-5xl lg:text-6xl tracking-tight text-white leading-tight">
-              {headline}
-            </h1>
-          ) : (
-            <h1 className="flex flex-col font-black text-5xl lg:text-7xl xl:text-[80px] tracking-tight leading-[1.02]">
-              <span className="text-[#2563EB]">Turn Your</span>
-              <span className="text-[#2563EB]">Opinions Into</span>
-              <span className="text-[#2563EB]">
-                Profit<span className="text-[#FFC700]">.</span>
-              </span>
-            </h1>
-          )}
+      {/* DESKTOP ONLY: 3-Column Banner Grid (Approach A) */}
+      <div className="hidden md:grid md:grid-cols-3 gap-4 lg:gap-5 w-full">
+        {slides.map((slide) => (
+          <Link
+            key={slide.id}
+            href={slide.ctaHref || "/auth/sign-up"}
+            className={cn(
+              "relative w-full p-5 flex flex-col justify-between min-h-[145px] rounded-2xl border border-[var(--border-default)] shadow-xl bg-gradient-to-br transition-all duration-300 hover:scale-[1.02] cursor-pointer overflow-hidden select-none",
+              slide.bgGradient || "from-[#1E1B4B] via-[#312E81] to-[#0F1727]"
+            )}
+          >
+            {/* Custom graphic background if available */}
+            {slide.imageUrl && (
+              <img
+                src={slide.imageUrl}
+                alt="Banner Background"
+                className="absolute inset-0 w-full h-full object-cover opacity-90"
+              />
+            )}
 
-          {description && (
-            <p className="mt-3 text-lg text-gray-300 max-w-xl text-left">
-              {description}
-            </p>
-          )}
-        </div>
+            {/* Bottom Right Floating Graphic (Gift Box / Clock / Mascot) */}
+            {!slide.imageUrl && (
+              <div
+                className={cn(
+                  "absolute bottom-0 right-0 z-0 pointer-events-none opacity-95 flex items-end justify-end",
+                  slide.id === "bonus"
+                    ? "w-36 lg:w-44 max-h-[145px]"
+                    : "w-32 lg:w-36 max-h-[130px]"
+                )}
+              >
+                <img
+                  src={slide.graphicUrl || mascotUrl}
+                  alt="Slide Graphic"
+                  className="w-full h-auto object-contain drop-shadow-2xl translate-x-1 translate-y-1"
+                />
+              </div>
+            )}
 
-        {/* Right: Mascot Image */}
-        <div className="relative w-64 md:w-[320px] lg:w-[380px] xl:w-[420px] shrink-0 justify-end items-center">
-          <img
-            suppressHydrationWarning
-            src={mascotUrl}
-            alt="Sheybi Mascot"
-            className="w-full h-auto object-contain max-h-[360px] lg:max-h-[400px] drop-shadow-2xl pointer-events-none select-none"
-          />
-        </div>
+            {/* Slide Text Content */}
+            <div className="relative z-10 my-auto max-w-[65%]">
+              <h2 className="text-lg lg:text-xl font-black text-white leading-snug tracking-tight">
+                {slide.title}
+              </h2>
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   )
