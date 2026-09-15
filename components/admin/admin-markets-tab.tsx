@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Plus, Search, Trophy, Edit, AlertCircle, CheckCircle2, Users, Star, Play } from "lucide-react"
+import { Plus, Search, Trophy, Edit, AlertCircle, CheckCircle2, Users, Star, Play, Mail } from "lucide-react"
 
 /**
  * Explanatory Interface: AdminMarketItem
@@ -31,6 +31,7 @@ export interface AdminMarketsTabProps {
   onOpenOptionsDialog?: (market: AdminMarketItem) => void
   onToggleFeatured?: (market: AdminMarketItem) => void
   onPublishMarket?: (market: AdminMarketItem) => void
+  onBroadcastEmail?: (market: AdminMarketItem) => void
 }
 
 /**
@@ -47,6 +48,7 @@ export function AdminMarketsTab({
   onOpenOptionsDialog,
   onToggleFeatured,
   onPublishMarket,
+  onBroadcastEmail,
 }: AdminMarketsTabProps) {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState<string>("ALL")
@@ -211,6 +213,16 @@ export function AdminMarketsTab({
                               }`}
                             >
                               {market.status === "Paused" ? "Unpause" : "Pause"}
+                            </button>
+                          )}
+                          {onBroadcastEmail && market.status !== "Draft" && (
+                            <button
+                              type="button"
+                              onClick={() => onBroadcastEmail(market)}
+                              title="Send Email Alert to All Users"
+                              className="inline-flex items-center gap-1 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-2.5 py-1.5 text-xs font-bold hover:bg-indigo-500/20 transition-all shadow-xs"
+                            >
+                              <Mail className="h-3.5 w-3.5" /> Send Alert
                             </button>
                           )}
                           {market.status !== "Draft" && (

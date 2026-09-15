@@ -35,6 +35,7 @@ import {
   approveWithdrawalAction,
   createCategoryAction,
 } from "@/lib/actions/admin-actions"
+import { broadcastMarketEmailAction } from "@/lib/actions/email-actions"
 
 // Import Admin Sub-components
 import { AdminSummaryCards } from "@/components/admin/admin-summary-cards"
@@ -349,6 +350,20 @@ export default function AdminDashboardPage() {
     toast.success(`Market "${market.title}" is now live!`)
   }
 
+  /** Triggered when admin clicks "Send Alert" on a live market */
+  const handleBroadcastMarketEmail = async (market: AdminMarketItem) => {
+    try {
+      const result = await broadcastMarketEmailAction(market.title, market.id)
+      if (!result.success) {
+        toast.error(result.error || "Failed to broadcast email alert.")
+        return
+      }
+      toast.success(`Email alert broadcasted to ${result.count || 0} registered users!`)
+    } catch (err: any) {
+      toast.error(err.message || "Failed to broadcast email alert.")
+    }
+  }
+
   /** Triggered when admin accepts a market suggestion */
   const handleAcceptSuggestion = (suggestion: MarketSuggestionItem) => {
     setCreateMarketPreFill({
@@ -557,6 +572,7 @@ export default function AdminDashboardPage() {
               }}
               onToggleFeatured={handleToggleMarketFeatured}
               onPublishMarket={handlePublishMarket}
+              onBroadcastEmail={handleBroadcastMarketEmail}
             />
           )}
 
