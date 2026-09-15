@@ -106,7 +106,7 @@ function HeroBanner({
     setCurrentSlideIndex((prev) => (prev - 1 + slides.length) % slides.length)
   }, [slides.length])
 
-  // Touch swipe support for mobile
+  // Touch swipe support
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX)
   }
@@ -126,134 +126,105 @@ function HeroBanner({
     return <HeroBannerSkeleton className={className} />
   }
 
-  const currentSlide = slides[currentSlideIndex] || DEFAULT_SLIDES[0]
+  // Calculate slide offset percentage (Card width 75% + gap ~3%)
+  const offsetPercentage = currentSlideIndex * 78
 
   return (
     <section
       data-slot="hero-banner"
       role="banner"
       suppressHydrationWarning
-      className={cn("w-full py-2 sm:py-4 md:py-6", className)}
+      className={cn("w-full py-2 sm:py-4 md:py-6 overflow-hidden", className)}
       {...props}
     >
-      {/* MOBILE ONLY: Auto-Sliding Graphic Banner Carousel */}
+      {/* Asymmetric Partial Peek Auto-Sliding Carousel Track */}
       <div
-        className="block md:hidden relative w-full overflow-hidden rounded-2xl border border-[var(--border-default)] shadow-xl select-none"
+        className="relative w-full overflow-hidden select-none"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <Link
-          href={currentSlide.ctaHref || "/auth/sign-up"}
-          className={cn(
-            "relative w-full p-5 flex flex-col justify-between min-h-[145px] bg-gradient-to-br transition-all duration-500 ease-in-out cursor-pointer overflow-hidden",
-            currentSlide.bgGradient || "from-[#1E1B4B] via-[#312E81] to-[#0F1727]"
-          )}
+        {/* Moving Slider Track */}
+        <div
+          className="flex gap-3 sm:gap-4 transition-transform duration-500 ease-out w-full"
+          style={{ transform: `translateX(-${offsetPercentage}%)` }}
         >
-          {/* Custom graphic image background if available */}
-          {currentSlide.imageUrl && (
-            <img
-              src={currentSlide.imageUrl}
-              alt="Slide Banner Background"
-              className="absolute inset-0 w-full h-full object-cover opacity-90"
-            />
-          )}
+          {slides.map((slide, idx) => {
+            const isActive = idx === currentSlideIndex
 
-          {/* Bottom Right Floating Graphic (Gift Box / Clock / Mascot) - Flush at bottom-0 right-0 with 0 margin */}
-          {!currentSlide.imageUrl && (
-            <div
-              className={cn(
-                "absolute bottom-0 right-0 z-0 pointer-events-none opacity-95 flex items-end justify-end",
-                currentSlide.id === "bonus"
-                  ? "w-44 sm:w-52 max-h-[160px]"
-                  : "w-36 sm:w-44 max-h-[140px]"
-              )}
-            >
-              <img
-                src={currentSlide.graphicUrl || mascotUrl}
-                alt="Slide Graphic"
-                className="w-full h-auto object-contain drop-shadow-2xl translate-x-1 translate-y-1"
-              />
-            </div>
-          )}
-
-          {/* Slide Text Content (Clean, Punchy Title Only) */}
-          <div className="relative z-10 my-auto max-w-[62%] sm:max-w-[65%]">
-            <h2 className="text-xl sm:text-2xl font-black text-white leading-snug tracking-tight">
-              {currentSlide.title}
-            </h2>
-          </div>
-
-          {/* Bottom Row: Pagination Indicators */}
-          <div className="relative z-10 flex items-center justify-between gap-3 pt-2">
-            <div className="flex items-center gap-1.5">
-              {slides.map((slide, idx) => (
-                <button
-                  key={slide.id}
-                  onClick={(e) => {
+            return (
+              <Link
+                key={slide.id}
+                href={slide.ctaHref || "/auth/sign-up"}
+                onClick={(e) => {
+                  // If clicking a peeking card that is not yet active, make it active instead of navigating immediately
+                  if (!isActive) {
                     e.preventDefault()
-                    e.stopPropagation()
                     setCurrentSlideIndex(idx)
-                  }}
-                  className={cn(
-                    "h-1.5 rounded-full transition-all duration-300",
-                    idx === currentSlideIndex
-                      ? "w-6 bg-[#FFC91F]"
-                      : "w-1.5 bg-white/30 hover:bg-white/50"
-                  )}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </Link>
-      </div>
-
-      {/* DESKTOP ONLY: 3-Column Banner Grid (Approach A) */}
-      <div className="hidden md:grid md:grid-cols-3 gap-4 lg:gap-5 w-full">
-        {slides.map((slide) => (
-          <Link
-            key={slide.id}
-            href={slide.ctaHref || "/auth/sign-up"}
-            className={cn(
-              "relative w-full p-5 flex flex-col justify-between min-h-[145px] rounded-2xl border border-[var(--border-default)] shadow-xl bg-gradient-to-br transition-all duration-300 hover:scale-[1.02] cursor-pointer overflow-hidden select-none",
-              slide.bgGradient || "from-[#1E1B4B] via-[#312E81] to-[#0F1727]"
-            )}
-          >
-            {/* Custom graphic background if available */}
-            {slide.imageUrl && (
-              <img
-                src={slide.imageUrl}
-                alt="Banner Background"
-                className="absolute inset-0 w-full h-full object-cover opacity-90"
-              />
-            )}
-
-            {/* Bottom Right Floating Graphic (Gift Box / Clock / Mascot) */}
-            {!slide.imageUrl && (
-              <div
+                  }
+                }}
                 className={cn(
-                  "absolute bottom-0 right-0 z-0 pointer-events-none opacity-95 flex items-end justify-end",
-                  slide.id === "bonus"
-                    ? "w-36 lg:w-44 max-h-[145px]"
-                    : "w-32 lg:w-36 max-h-[130px]"
+                  "relative w-[78%] sm:w-[70%] md:w-[62%] lg:w-[58%] shrink-0 p-5 sm:p-6 flex flex-col justify-between min-h-[145px] sm:min-h-[160px]",
+                  "rounded-2xl border border-[var(--border-default)] shadow-xl bg-gradient-to-br transition-all duration-300 overflow-hidden cursor-pointer",
+                  slide.bgGradient || "from-[#1E1B4B] via-[#312E81] to-[#0F1727]",
+                  isActive
+                    ? "opacity-100 scale-100 shadow-2xl z-10"
+                    : "opacity-75 scale-[0.98] hover:opacity-100 z-0"
                 )}
               >
-                <img
-                  src={slide.graphicUrl || mascotUrl}
-                  alt="Slide Graphic"
-                  className="w-full h-auto object-contain drop-shadow-2xl translate-x-1 translate-y-1"
-                />
-              </div>
-            )}
+                {/* Custom graphic background if available */}
+                {slide.imageUrl && (
+                  <img
+                    src={slide.imageUrl}
+                    alt="Slide Banner Background"
+                    className="absolute inset-0 w-full h-full object-cover opacity-90"
+                  />
+                )}
 
-            {/* Slide Text Content */}
-            <div className="relative z-10 my-auto max-w-[65%]">
-              <h2 className="text-lg lg:text-xl font-black text-white leading-snug tracking-tight">
-                {slide.title}
-              </h2>
-            </div>
-          </Link>
-        ))}
+                {/* Bottom Right Floating Graphic (Gift Box / Clock / Mascot) - Flush at bottom-0 right-0 with 0 margin */}
+                {!slide.imageUrl && (
+                  <div
+                    className={cn(
+                      "absolute bottom-0 right-0 z-0 pointer-events-none opacity-95 flex items-end justify-end",
+                      slide.id === "bonus"
+                        ? "w-40 sm:w-48 md:w-56 max-h-[160px]"
+                        : "w-32 sm:w-40 md:w-44 max-h-[140px]"
+                    )}
+                  >
+                    <img
+                      src={slide.graphicUrl || mascotUrl}
+                      alt="Slide Graphic"
+                      className="w-full h-auto object-contain drop-shadow-2xl translate-x-1 translate-y-1"
+                    />
+                  </div>
+                )}
+
+                {/* Slide Text Content */}
+                <div className="relative z-10 my-auto max-w-[65%] sm:max-w-[68%]">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-snug tracking-tight">
+                    {slide.title}
+                  </h2>
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+
+        {/* Bottom Pagination Dot Indicators */}
+        <div className="flex items-center gap-1.5 pt-3">
+          {slides.map((slide, idx) => (
+            <button
+              key={slide.id}
+              onClick={() => setCurrentSlideIndex(idx)}
+              className={cn(
+                "h-1.5 rounded-full transition-all duration-300",
+                idx === currentSlideIndex
+                  ? "w-6 bg-[#FFC91F]"
+                  : "w-1.5 bg-white/30 hover:bg-white/50"
+              )}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   )
