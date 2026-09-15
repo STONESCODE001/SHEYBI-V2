@@ -126,8 +126,11 @@ function HeroBanner({
     return <HeroBannerSkeleton className={className} />
   }
 
+  // Extended slides array to create seamless circular peek looping (no blank space at track end)
+  const extendedSlides = React.useMemo(() => [...slides, ...slides], [slides])
+
   // Calculate dynamic slider offset for smooth track sliding:
-  // Active card takes ~72% width + 12px gap = ~75% step shift per index
+  // Active card takes ~74% width + gap = ~75% step shift per index
   const offsetPercentage = currentSlideIndex * 75
 
   return (
@@ -149,21 +152,21 @@ function HeroBanner({
           className="flex gap-3 sm:gap-4 transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) w-full items-center"
           style={{ transform: `translateX(-${offsetPercentage}%)` }}
         >
-          {slides.map((slide, idx) => {
+          {extendedSlides.map((slide, idx) => {
             const isActive = idx === currentSlideIndex
 
             return (
               <Link
-                key={slide.id}
+                key={`${slide.id}-${idx}`}
                 href={slide.ctaHref || "/auth/sign-up"}
                 onClick={(e) => {
                   if (!isActive) {
                     e.preventDefault()
-                    setCurrentSlideIndex(idx)
+                    setCurrentSlideIndex(idx % slides.length)
                   }
                 }}
                 className={cn(
-                  "relative shrink-0 flex flex-col justify-between overflow-hidden cursor-pointer rounded-2xl border transition-all duration-500 ease-out h-[140px] sm:h-[145px]",
+                  "relative shrink-0 flex flex-col justify-between overflow-hidden cursor-pointer rounded-2xl border transition-all duration-500 ease-out h-[140px] sm:h-[145px] bg-gradient-to-br",
                   slide.bgGradient || "from-[#1E1B4B] via-[#312E81] to-[#0F1727]",
                   isActive
                     ? "w-[74%] sm:w-[68%] md:w-[64%] lg:w-[60%] p-5 sm:p-6 opacity-100 border-[var(--border-default)] shadow-2xl z-10"
@@ -186,21 +189,21 @@ function HeroBanner({
                 {!slide.imageUrl && (
                   <div
                     className={cn(
-                      "absolute bottom-0 right-0 z-0 pointer-events-none flex items-end justify-end transition-all duration-500",
+                      "absolute bottom-0 right-0 z-0 pointer-events-none flex items-end justify-end transition-all duration-500 max-h-[120px] sm:max-h-[130px] overflow-hidden",
                       isActive ? "opacity-95" : "opacity-40 scale-75",
                       slide.id === "bonus"
                         ? isActive
-                          ? "w-40 sm:w-48 md:w-56 max-h-[160px]"
-                          : "w-24 sm:w-32 max-h-[110px]"
+                          ? "w-28 sm:w-36 md:w-40 h-full"
+                          : "w-16 sm:w-20 h-full"
                         : isActive
-                        ? "w-32 sm:w-40 md:w-44 max-h-[140px]"
-                        : "w-20 sm:w-28 max-h-[90px]"
+                        ? "w-24 sm:w-32 md:w-36 h-full"
+                        : "w-14 sm:w-16 h-full"
                     )}
                   >
                     <img
                       src={slide.graphicUrl || mascotUrl}
                       alt="Slide Graphic"
-                      className="w-full h-auto object-contain drop-shadow-2xl translate-x-1 translate-y-1"
+                      className="w-full h-full object-contain object-bottom drop-shadow-2xl translate-x-1 translate-y-1"
                     />
                   </div>
                 )}
@@ -238,7 +241,7 @@ function HeroBanner({
               onClick={() => setCurrentSlideIndex(idx)}
               className={cn(
                 "h-1.5 rounded-full transition-all duration-300",
-                idx === currentSlideIndex
+                idx === currentSlideIndex % slides.length
                   ? "w-6 bg-[#FFC91F]"
                   : "w-1.5 bg-white/30 hover:bg-white/50"
               )}
