@@ -89,7 +89,7 @@ function HeroBanner({
   const [currentSlideIndex, setCurrentSlideIndex] = React.useState(0)
   const [touchStartX, setTouchStartX] = React.useState<number | null>(null)
 
-  // Auto-slide every 4.5 seconds
+  // Auto-slide / rotate every 4.5 seconds
   React.useEffect(() => {
     if (!slides || slides.length <= 1) return
     const timer = setInterval(() => {
@@ -126,9 +126,6 @@ function HeroBanner({
     return <HeroBannerSkeleton className={className} />
   }
 
-  // Calculate slide offset percentage (Card width 75% + gap ~3%)
-  const offsetPercentage = currentSlideIndex * 78
-
   return (
     <section
       data-slot="hero-banner"
@@ -137,17 +134,14 @@ function HeroBanner({
       className={cn("w-full py-2 sm:py-4 md:py-6 overflow-hidden", className)}
       {...props}
     >
-      {/* Asymmetric Partial Peek Auto-Sliding Carousel Track */}
+      {/* Dynamic Expand & Shrink Accordion Banner Layout */}
       <div
-        className="relative w-full overflow-hidden select-none"
+        className="relative w-full select-none"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Moving Slider Track */}
-        <div
-          className="flex gap-3 sm:gap-4 transition-transform duration-500 ease-out w-full"
-          style={{ transform: `translateX(-${offsetPercentage}%)` }}
-        >
+        {/* Accordion Row Container */}
+        <div className="flex w-full gap-3 sm:gap-4 items-stretch min-h-[145px] sm:min-h-[160px]">
           {slides.map((slide, idx) => {
             const isActive = idx === currentSlideIndex
 
@@ -156,19 +150,21 @@ function HeroBanner({
                 key={slide.id}
                 href={slide.ctaHref || "/auth/sign-up"}
                 onClick={(e) => {
-                  // If clicking a peeking card that is not yet active, make it active instead of navigating immediately
+                  // If clicking a shrunk card, expand it instead of immediate navigation
                   if (!isActive) {
                     e.preventDefault()
                     setCurrentSlideIndex(idx)
                   }
                 }}
                 className={cn(
-                  "relative w-[78%] sm:w-[70%] md:w-[62%] lg:w-[58%] shrink-0 p-5 sm:p-6 flex flex-col justify-between min-h-[145px] sm:min-h-[160px]",
-                  "rounded-2xl border border-[var(--border-default)] shadow-xl bg-gradient-to-br transition-all duration-300 overflow-hidden cursor-pointer",
+                  "relative p-4 sm:p-6 flex flex-col justify-between rounded-2xl border border-[var(--border-default)] overflow-hidden cursor-pointer",
+                  "transition-all duration-500 ease-in-out bg-gradient-to-br",
                   slide.bgGradient || "from-[#1E1B4B] via-[#312E81] to-[#0F1727]",
+                  // Active expanded card: flex-[4] (~75% width), full opacity, scale-100
+                  // Inactive shrunk card: flex-[1] (~22% width), dimmed, scale-95
                   isActive
-                    ? "opacity-100 scale-100 shadow-2xl z-10"
-                    : "opacity-75 scale-[0.98] hover:opacity-100 z-0"
+                    ? "flex-[4] sm:flex-[3.5] opacity-100 scale-100 shadow-2xl z-10"
+                    : "flex-[1] opacity-65 scale-[0.96] hover:opacity-90 shadow-md z-0"
                 )}
               >
                 {/* Custom graphic background if available */}
@@ -176,18 +172,20 @@ function HeroBanner({
                   <img
                     src={slide.imageUrl}
                     alt="Slide Banner Background"
-                    className="absolute inset-0 w-full h-full object-cover opacity-90"
+                    className="absolute inset-0 w-full h-full object-cover opacity-90 transition-opacity duration-300"
                   />
                 )}
 
-                {/* Bottom Right Floating Graphic (Gift Box / Clock / Mascot) - Flush at bottom-0 right-0 with 0 margin */}
+                {/* Floating Graphic Image (Enlarged on Active, Compact on Shrunk) */}
                 {!slide.imageUrl && (
                   <div
                     className={cn(
-                      "absolute bottom-0 right-0 z-0 pointer-events-none opacity-95 flex items-end justify-end",
-                      slide.id === "bonus"
-                        ? "w-40 sm:w-48 md:w-56 max-h-[160px]"
-                        : "w-32 sm:w-40 md:w-44 max-h-[140px]"
+                      "absolute bottom-0 right-0 z-0 pointer-events-none opacity-95 flex items-end justify-end transition-all duration-500",
+                      isActive
+                        ? slide.id === "bonus"
+                          ? "w-40 sm:w-48 md:w-56 max-h-[160px]"
+                          : "w-32 sm:w-40 md:w-44 max-h-[140px]"
+                        : "w-16 sm:w-20 max-h-[90px] opacity-70"
                     )}
                   >
                     <img
@@ -198,19 +196,35 @@ function HeroBanner({
                   </div>
                 )}
 
-                {/* Slide Text Content */}
-                <div className="relative z-10 my-auto max-w-[65%] sm:max-w-[68%]">
+                {/* Slide Text Content — Only visible when card is expanded */}
+                <div
+                  className={cn(
+                    "relative z-10 my-auto transition-all duration-300",
+                    isActive
+                      ? "opacity-100 translate-x-0 max-w-[65%] sm:max-w-[68%]"
+                      : "opacity-0 pointer-events-none -translate-x-4 max-w-0"
+                  )}
+                >
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-snug tracking-tight">
                     {slide.title}
                   </h2>
                 </div>
+
+                {/* Shrunk Card Compact Title Teaser (Visible only when shrunk) */}
+                {!isActive && (
+                  <div className="relative z-10 my-auto flex items-center justify-center text-center">
+                    <span className="text-xs sm:text-sm font-black text-white/80 uppercase tracking-widest rotate-90 sm:rotate-0 truncate">
+                      {slide.id}
+                    </span>
+                  </div>
+                )}
               </Link>
             )
           })}
         </div>
 
         {/* Bottom Pagination Dot Indicators */}
-        <div className="flex items-center gap-1.5 pt-3">
+        <div className="flex items-center justify-center sm:justify-start gap-1.5 pt-3">
           {slides.map((slide, idx) => (
             <button
               key={slide.id}

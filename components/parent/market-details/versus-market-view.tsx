@@ -141,17 +141,17 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
         <div className="md:hidden space-y-6">
           {/* Player 1 Block */}
           <div className="flex flex-col items-center space-y-3">
-            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10">
+            <div className="relative size-24 sm:size-28 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10">
               {player1.avatarUrl ? (
                 <Image
                   src={player1.avatarUrl}
                   alt={player1.name}
                   fill
-                  sizes="(max-width: 768px) 160px, 160px"
+                  sizes="(max-width: 768px) 112px, 112px"
                   className="object-cover object-top"
                 />
               ) : (
-                <User className="size-16 text-[var(--accent-green)]" />
+                <User className="size-12 text-[var(--accent-green)]" />
               )}
             </div>
 
@@ -200,17 +200,17 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
 
           {/* Player 2 Block */}
           <div className="flex flex-col items-center space-y-3">
-            <div className="relative size-36 sm:size-40 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10">
+            <div className="relative size-24 sm:size-28 overflow-hidden rounded-2xl bg-[var(--bg-surface)] flex items-center justify-center shadow-lg border border-white/10">
               {player2.avatarUrl ? (
                 <Image
                   src={player2.avatarUrl}
                   alt={player2.name}
                   fill
-                  sizes="(max-width: 768px) 160px, 160px"
+                  sizes="(max-width: 768px) 112px, 112px"
                   className="object-cover object-top"
                 />
               ) : (
-                <User className="size-16 text-[var(--accent-yellow)]" />
+                <User className="size-12 text-[var(--accent-yellow)]" />
               )}
             </div>
 
@@ -257,17 +257,17 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
             <div className="grid grid-cols-3 items-center text-center">
               {/* Player 1 Avatar & Name */}
               <div className="flex flex-col items-center space-y-2.5">
-                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10">
+                <div className="relative size-28 md:size-32 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10">
                   {player1.avatarUrl ? (
                     <Image
                       src={player1.avatarUrl}
                       alt={player1.name}
                       fill
-                      sizes="(max-width: 768px) 160px, 160px"
+                      sizes="(max-width: 768px) 128px, 128px"
                       className="object-cover object-top"
                     />
                   ) : (
-                    <User className="size-16 text-[var(--accent-green)]" />
+                    <User className="size-14 text-[var(--accent-green)]" />
                   )}
                 </div>
                 <h2 className="text-xl font-extrabold text-[var(--text-primary)]">{player1.name}</h2>
@@ -285,17 +285,17 @@ export function VersusMarketView({ market }: VersusMarketViewProps): React.React
 
               {/* Player 2 Avatar & Name */}
               <div className="flex flex-col items-center space-y-2.5">
-                <div className="relative size-36 md:size-40 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10">
+                <div className="relative size-28 md:size-32 overflow-hidden rounded-2xl bg-[var(--bg-base)] flex items-center justify-center shadow-lg border border-white/10">
                   {player2.avatarUrl ? (
                     <Image
                       src={player2.avatarUrl}
                       alt={player2.name}
                       fill
-                      sizes="(max-width: 768px) 160px, 160px"
+                      sizes="(max-width: 768px) 128px, 128px"
                       className="object-cover object-top"
                     />
                   ) : (
-                    <User className="size-16 text-[var(--accent-yellow)]" />
+                    <User className="size-14 text-[var(--accent-yellow)]" />
                   )}
                 </div>
                 <h2 className="text-xl font-extrabold text-[var(--text-primary)]">{player2.name}</h2>

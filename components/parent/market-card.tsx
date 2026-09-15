@@ -225,13 +225,13 @@ function MarketCard({
               <div className="flex items-center justify-center gap-4 sm:gap-6 py-1">
                 {/* Left Contestant Block */}
                 <div className="flex flex-col items-center gap-1.5 min-w-0">
-                  <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl overflow-hidden shadow-md border border-white/10">
+                  <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-2xl overflow-hidden shadow-md border border-white/10">
                     <Image
                       src={contestants[0]?.avatarUrl || defaultTestImg}
                       alt={contestants[0]?.name || "Contestant 1"}
                       fill
                       unoptimized
-                      sizes="(max-width: 768px) 96px, 96px"
+                      sizes="(max-width: 768px) 80px, 80px"
                       className="object-cover object-top"
                     />
                   </div>
@@ -247,13 +247,13 @@ function MarketCard({
 
                 {/* Right Contestant Block */}
                 <div className="flex flex-col items-center gap-1.5 min-w-0">
-                  <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl overflow-hidden shadow-md border border-white/10">
+                  <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-2xl overflow-hidden shadow-md border border-white/10">
                     <Image
                       src={contestants[1]?.avatarUrl || defaultTestImg}
                       alt={contestants[1]?.name || "Contestant 2"}
                       fill
                       unoptimized
-                      sizes="(max-width: 768px) 96px, 96px"
+                      sizes="(max-width: 768px) 80px, 80px"
                       className="object-cover object-top"
                     />
                   </div>
