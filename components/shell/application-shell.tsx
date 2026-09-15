@@ -76,7 +76,7 @@ function ApplicationShell({
       <div
         className={cn(
           "relative flex min-w-0 flex-1 flex-col overflow-hidden",
-          "lg:pl-[260px]"
+          "lg:pl-[220px]"
         )}
       >
         {/* Tablet sidebar toggle (md–lg only) */}

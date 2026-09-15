@@ -41,7 +41,7 @@ function DesktopSidebar({
       <aside
         data-slot="desktop-sidebar"
         className={cn(
-          "fixed inset-y-0 left-0 z-[30] hidden w-[260px] flex-col p-3.5 md:p-4",
+          "fixed inset-y-0 left-0 z-[30] hidden w-[220px] flex-col p-3.5 md:p-4",
           "bg-[var(--bg-base)]",
           "transition-transform duration-300 ease-in-out",
           // Desktop: always visible and static in flow via sibling spacer

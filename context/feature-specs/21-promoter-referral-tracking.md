@@ -13,7 +13,7 @@ This specification defines the functional, architectural, data, and user interfa
 
 ### Core Objectives:
 1. **Short, Clean Referral Links**: Enable clean, memorable promoter links using the short format `sheybi.app/f/[promoter]` (e.g. `sheybi.app/f/mrfaithman`) as well as URL parameter fallbacks (`sheybi.app/?ref=mrfaithman`).
-2. **Next.js Middleware Interception & Rewrite**: Intercept requests to `/f/[promoter]`, save a 30-day `HTTP-only` cookie (`sheybi_ref`), and execute a `NextResponse.rewrite('/')` so Vercel client-side analytics logs the exact path `/f/mrfaithman` while rendering the home page cleanly without redirect delays.
+2. **Next.js Proxy Interception & Rewrite**: Intercept requests to `/f/[promoter]`, save a 30-day `HTTP-only` cookie (`sheybi_ref`), and execute a `NextResponse.rewrite('/')` so Vercel client-side analytics logs the exact path `/f/mrfaithman` while rendering the home page cleanly without redirect delays.
 3. **Automatic User Conversion Sync**: Automatically associate brand-new user sign-ups with their referrer in InstantDB (`$users.referredBy`, `$users.referredAt`) upon first login via `ensureUserWalletAction()`.
 4. **Full Conversion Metrics**: Track both front-of-funnel clicks (via path analytics) and deep business conversions: Total Registered Users, Active Bettors, and Total Deposited Volume (₦) per promoter.
 5. **Multi-Promoter Admin Workspace**: Provide a dedicated **"Promoters"** tab inside the existing Admin Control Center (`/admin`) to create unlimited promoter links, copy share links with 1 click, toggle status (`active` / `paused`), and monitor live referral metrics.
@@ -29,10 +29,10 @@ This specification defines the functional, architectural, data, and user interfa
    sheybi.app/f/mrfaithman
           │
           ▼
-   Next.js Middleware (middleware.ts)
-   ├── Sets HTTP Cookie: sheybi_ref = "mrfaithman" (30 days)
-   └── NextResponse.rewrite('/')  ──► Browser Renders Homepage
-                                  └── Vercel Analytics logs "/f/mrfaithman"
+    Next.js Proxy (proxy.ts)
+    ├── Sets HTTP Cookie: sheybi_ref = "mrfaithman" (30 days)
+    └── NextResponse.rewrite('/')  ──► Browser Renders Homepage
+                                   └── Vercel Analytics logs "/f/mrfaithman"
           │
           ▼
    [User Clicks "Sign Up" & Creates Clerk Account]
@@ -48,7 +48,7 @@ This specification defines the functional, architectural, data, and user interfa
    └── Real-time visibility into Clicks, Signups, and Total Referred Deposit Volume (₦)
 ```
 
-### 2.1 Middleware Interception (`middleware.ts`)
+### 2.1 Proxy Interception (`proxy.ts`)
 - Path pattern: `/f/:promoter`
 - Extract `:promoter` (normalized to lowercase, alphanumeric & dashes only).
 - Set `sheybi_ref` HTTP cookie: `maxAge: 30 * 24 * 60 * 60` (30 days), `path: '/'`, `sameSite: 'lax'`.

@@ -100,35 +100,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ---
 
-### 3.3 Middleware & Route Protection (`middleware.ts`)
+### 3.3 Proxy & Route Protection (`proxy.ts`)
 
-Create `middleware.ts` in the project root using `clerkMiddleware()` and `createRouteMatcher()`:
+Create `proxy.ts` in the project root using `clerkMiddleware()` and pathname prefix matching:
 
 ```typescript
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
+import { clerkMiddleware } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
-const isProtectedRoute = createRouteMatcher([
-  "/portfolio(.*)",
-  "/wallet(.*)",
-  "/profile(.*)",
-  "/settings(.*)",
-])
-
-const isAdminRoute = createRouteMatcher([
-  "/admin(.*)",
-])
+const PROTECTED_PREFIXES = ["/portfolio", "/wallet", "/profile", "/settings"]
+const ADMIN_PREFIXES = ["/admin"]
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, sessionClaims } = await auth()
+  const { pathname } = req.nextUrl
 
   // Protect standard user routes
-  if (isProtectedRoute(req)) {
+  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  if (isProtected) {
     await auth.protect()
   }
 
   // Protect admin section
-  if (isAdminRoute(req)) {
+  const isAdmin = ADMIN_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  if (isAdmin) {
     await auth.protect()
     
     // Admin Role check (Approach 1: Metadata Check)

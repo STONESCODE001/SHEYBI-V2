@@ -320,7 +320,7 @@ Financial confirmation dialogs require explicit confirmation.
 
 Desktop Navigation
 
-Primary Navigation: Left Sidebar (260px fixed width, elevated dark surface `#0F1727`)
+Primary Navigation: Left Sidebar (220px fixed width, elevated dark surface `#0F1727`)
 
 Contains:
 

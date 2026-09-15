@@ -1,16 +1,8 @@
-import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server"
+import { clerkMiddleware, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
-const isProtectedRoute = createRouteMatcher([
-  "/portfolio(.*)",
-  "/wallet(.*)",
-  "/profile(.*)",
-  "/settings(.*)",
-])
-
-const isAdminRoute = createRouteMatcher([
-  "/admin(.*)",
-])
+const PROTECTED_PREFIXES = ["/portfolio", "/wallet", "/profile", "/settings"]
+const ADMIN_PREFIXES = ["/admin"]
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, sessionClaims } = await auth()
@@ -46,18 +38,21 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // Protect standard user routes
-  if (isProtectedRoute(req)) {
+  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  if (isProtected) {
     await auth.protect()
   }
 
   // Protect admin section
-  if (isAdminRoute(req)) {
+  const isAdmin = ADMIN_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  if (isAdmin) {
     await auth.protect()
-    
+
     // Check session claims metadata role first
-    let role = (sessionClaims?.metadata as { role?: string })?.role ||
-               (sessionClaims?.publicMetadata as { role?: string })?.role ||
-               (sessionClaims?.public_metadata as { role?: string })?.role
+    let role =
+      (sessionClaims?.metadata as { role?: string })?.role ||
+      (sessionClaims?.publicMetadata as { role?: string })?.role ||
+      (sessionClaims?.public_metadata as { role?: string })?.role
 
     // Fallback: Query live Clerk user publicMetadata if not in session claims
     if (role !== "admin" && userId) {
@@ -66,7 +61,7 @@ export default clerkMiddleware(async (auth, req) => {
         const user = await client.users.getUser(userId)
         role = (user.publicMetadata as { role?: string })?.role
       } catch (err) {
-        console.error("[Middleware] Error fetching Clerk user metadata:", err)
+        console.error("[Proxy] Error fetching Clerk user metadata:", err)
       }
     }
 
