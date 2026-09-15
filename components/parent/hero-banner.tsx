@@ -145,14 +145,14 @@ function HeroBanner({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Track Container: Holds Main Card (74%) + Peeking Card (24%) */}
+        {/* Track Container: Full-Width on Mobile, 2-Slot Reel on Desktop */}
         <div className="flex gap-3 sm:gap-4 w-full items-center h-[140px] sm:h-[145px]">
-          {/* Slot 1: Main Active Banner (~74% Mobile / ~64% Desktop) */}
+          {/* Slot 1: Full-Width Mobile Banner (100% w-full) / Main Desktop Banner (md:w-[64%]) */}
           <Link
             key={mainSlide.id}
             href={mainSlide.ctaHref || "/auth/sign-up"}
             className={cn(
-              "relative shrink-0 flex flex-col justify-between overflow-hidden cursor-pointer rounded-2xl border transition-all duration-500 ease-out h-full bg-gradient-to-br p-5 sm:p-6 opacity-100 border-[var(--border-default)] shadow-2xl z-10 w-[74%] sm:w-[68%] md:w-[64%] lg:w-[60%]",
+              "relative shrink-0 flex flex-col justify-between overflow-hidden cursor-pointer rounded-2xl border transition-all duration-500 ease-out h-full bg-gradient-to-br p-5 sm:p-6 opacity-100 border-[var(--border-default)] shadow-2xl z-10 w-full md:w-[64%] lg:w-[60%]",
               mainSlide.bgGradient || "from-[#1E1B4B] via-[#312E81] to-[#0F1727]"
             )}
           >
@@ -171,7 +171,7 @@ function HeroBanner({
                 className={cn(
                   "absolute bottom-0 right-0 z-0 pointer-events-none flex items-end justify-end transition-all duration-500 max-h-[120px] sm:max-h-[130px] overflow-hidden opacity-95",
                   mainSlide.id === "bonus"
-                    ? "w-28 sm:w-36 md:w-40 h-full"
+                    ? "w-32 sm:w-36 md:w-40 h-full"
                     : "w-24 sm:w-32 md:w-36 h-full"
                 )}
               >
@@ -191,7 +191,7 @@ function HeroBanner({
             </div>
           </Link>
 
-          {/* Slot 2: Peek Next Banner (~24% Mobile / ~32% Desktop — Queued seamlessly behind Main) */}
+          {/* Slot 2: Peek Next Banner (Desktop Only: hidden on mobile, visible on md: screens) */}
           <Link
             key={peekSlide.id}
             href={peekSlide.ctaHref || "/auth/sign-up"}
@@ -200,7 +200,7 @@ function HeroBanner({
               setCurrentSlideIndex(peekSlideIndex)
             }}
             className={cn(
-              "relative flex-1 flex flex-col justify-between overflow-hidden cursor-pointer rounded-2xl border transition-all duration-500 ease-out h-full bg-gradient-to-br p-3 sm:p-4 opacity-60 hover:opacity-85 border-white/10 shadow-md z-0",
+              "hidden md:flex relative flex-1 flex-col justify-between overflow-hidden cursor-pointer rounded-2xl border transition-all duration-500 ease-out h-full bg-gradient-to-br p-3 sm:p-4 opacity-60 hover:opacity-85 border-white/10 shadow-md z-0",
               peekSlide.bgGradient || "from-[#1E1B4B] via-[#312E81] to-[#0F1727]"
             )}
           >
