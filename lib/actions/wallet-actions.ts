@@ -421,3 +421,111 @@ export async function rejectWithdrawalAction(
     return { success: false, error: message };
   }
 }
+
+// ============================================================================
+// CLAIM PROMO BONUS ACTION (Existing & New Users)
+// ============================================================================
+
+/**
+ * Redeem the ₦300 Playable Bonus for existing or newly registered users
+ * triggered via email link (e.g. utm_source=loops or claim_bonus=true).
+ */
+export async function claimUserPromoBonusAction(): Promise<{
+  success: boolean;
+  alreadyClaimed?: boolean;
+  amount?: number;
+  error?: string;
+}> {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: 'Authentication required. Please sign in.' };
+    }
+
+    // 1. Fetch InstantDB $users record for this user
+    const userQuery = await adminDb.query({
+      $users: {
+        $: {
+          where: { clerkUserId: userId },
+        },
+      },
+    });
+
+    const instantUser = userQuery?.$users?.[0];
+    const signupBonusClaimed = (instantUser as { signupBonusClaimed?: boolean })?.signupBonusClaimed;
+
+    if (signupBonusClaimed) {
+      return {
+        success: false,
+        alreadyClaimed: true,
+        amount: (instantUser as { signupBonusAmount?: number })?.signupBonusAmount || 300,
+        error: 'Your ₦300 bonus is already active in your wallet!',
+      };
+    }
+
+    const bonusAmount = 300;
+    const targetUserId = instantUser?.id || (await import('@instantdb/admin')).id();
+
+    // 2. Fetch or create wallet
+    let wallet = await repository.wallets.getWalletByUserId(userId);
+    if (!wallet) {
+      await repository.wallets.createWallet(userId);
+      wallet = await repository.wallets.getWalletByUserId(userId);
+    }
+    if (!wallet) {
+      return { success: false, error: 'Failed to access wallet.' };
+    }
+
+    const now = Date.now();
+    const currentAvailable = wallet.availableBalance || 0;
+    const currentBonus = wallet.bonusBalance || 0;
+    const txId = (await import('@instantdb/admin')).id();
+    const ledgerId = (await import('@instantdb/admin')).id();
+    const promoRef = `PROMO-CLAIM-${targetUserId.slice(0, 8)}`;
+
+    // 3. Transact updates in InstantDB
+    await adminDb.transact([
+      adminDb.tx.$users[targetUserId].update({
+        signupBonusAmount: bonusAmount,
+        signupBonusClaimed: true,
+        updatedAt: now,
+      }),
+      adminDb.tx.wallets[wallet.id].update({
+        availableBalance: currentAvailable + bonusAmount,
+        bonusBalance: currentBonus + bonusAmount,
+        updatedAt: now,
+      }),
+      adminDb.tx.wallet_transactions[txId].update({
+        userId,
+        transactionType: 'Deposit',
+        amount: bonusAmount,
+        status: 'Completed',
+        reference: promoRef,
+        createdAt: now,
+      }),
+      adminDb.tx.ledger[ledgerId].update({
+        userId,
+        eventType: 'REFERRAL_BONUS',
+        amount: bonusAmount,
+        sourceAccountId: 'PLATFORM_PROMO_RESERVE',
+        destinationAccountId: wallet.id,
+        description: `Promo bonus claim (₦${bonusAmount.toLocaleString()}) - Non-withdrawable`,
+        idempotencyKey: `loops_promo_claim_${targetUserId}`,
+        balanceAfter: currentAvailable + bonusAmount,
+        createdAt: now,
+      }),
+    ]);
+
+    console.log(`[Promo Claim] Successfully credited ₦${bonusAmount} bonus to user ${userId} (${targetUserId})`);
+
+    return {
+      success: true,
+      amount: bonusAmount,
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to redeem bonus.';
+    console.error('[Promo Claim] Error in claimUserPromoBonusAction:', message);
+    return { success: false, error: message };
+  }
+}
+

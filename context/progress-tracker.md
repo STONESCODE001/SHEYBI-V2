@@ -19,6 +19,8 @@ Capped Promoter Signup Bonus & Non-Withdrawable Playable Balance completed 100%.
 
 # Completed
 
+* **Existing User Email Link Bonus Claim Flow** (`lib/actions/wallet-actions.ts`, `components/auth/instant-clerk-bridge.tsx`) — Completed 100%. (1) Created `claimUserPromoBonusAction()` server action in `lib/actions/wallet-actions.ts` to authenticate users, check `$users.signupBonusClaimed`, and credit **₦300 Playable Bonus** to InstantDB wallet (`availableBalance += 300`, `bonusBalance += 300`) with ledger & transaction entries (`REFERRAL_BONUS`); (2) Updated `instant-clerk-bridge.tsx` to detect `claim_bonus=true`, `utm_source=loops`, or `utm_campaign` link parameters on page load, fire `claimUserPromoBonusAction()`, clean URL search parameters, and display Sonner toast notifications conforming strictly to **UI Rule #11** (Lucide stroke `<Gift />` icon, zero raw emojis). Verified with zero TypeScript errors (`npx tsc --noEmit`).
+
 * **Hero Banner Redesign, Graphic Carousels, Sidebar Reduction & UI Rules** (`components/parent/hero-banner.tsx`, `components/shell/desktop-sidebar.tsx`, `components/shell/application-shell.tsx`, `components/shell/primary-navigation.tsx`, `components/shell/mobile-header.tsx`, `components/shell/shell-logo.tsx`, `components/shell/footer-region.tsx`, `context/ui-context.md`, `context/design-system.md`) — Completed 100%. 
   1. **Homepage Hero Tagline Update**: Updated desktop headline copy to `"Turn Your Opinions Into Profit."`.
   2. **Navbar/Sidebar Tagline Removal**: Removed the `PREDICT. PLAY. WIN.` subtitle text across header, desktop navigation sidebar, mobile header, and footer region (`shell-logo.tsx`, `mobile-header.tsx`, `footer-region.tsx`).
