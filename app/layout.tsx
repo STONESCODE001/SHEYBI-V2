@@ -52,8 +52,8 @@ export default function RootLayout({
             theme: dark,
           }}
         >
-          <InstantClerkBridge />
           <DialogProvider>
+            <InstantClerkBridge />
             <TooltipProvider>{children}</TooltipProvider>
           </DialogProvider>
         </ClerkProvider>

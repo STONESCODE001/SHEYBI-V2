@@ -15,7 +15,7 @@ import { adminDb } from '@/lib/instant-admin';
 
 import { processDepositAction } from '@/lib/actions/wallet-actions';
 
-export async function ensureUserWalletAction(): Promise<{ success: boolean; walletId?: string; error?: string }> {
+export async function ensureUserWalletAction(): Promise<{ success: boolean; walletId?: string; bonusAwarded?: number; error?: string }> {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -116,6 +116,15 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
         }
       }
 
+      // Standard signup bonus fallback: Every new signup gets ₦300 playable bonus if not already claimed
+      if (!signupBonusClaimed && awardedBonusAmount === 0) {
+        const DEFAULT_SIGNUP_BONUS = 300;
+        awardedBonusAmount = DEFAULT_SIGNUP_BONUS;
+        signupBonusAmount = DEFAULT_SIGNUP_BONUS;
+        signupBonusClaimed = true;
+        console.log(`[Signup Bonus] Standard ₦${DEFAULT_SIGNUP_BONUS} bonus assigned to new user ${targetUserId}`);
+      }
+
       await adminDb.transact([
         adminDb.tx.$users[targetUserId].update({
           clerkUserId: userId,
@@ -187,7 +196,7 @@ export async function ensureUserWalletAction(): Promise<{ success: boolean; wall
       }
     }
 
-    return { success: true, walletId: wallet?.id };
+    return { success: true, walletId: wallet?.id, bonusAwarded: awardedBonusAmount };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to provision wallet';
     console.error('[Wallet] ensureUserWalletAction error:', message);

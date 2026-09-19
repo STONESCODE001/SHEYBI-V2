@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import { db } from "@/lib/instant";
 import { ensureUserWalletAction } from "@/lib/actions/wallet-provisioning";
 import { claimUserPromoBonusAction } from "@/lib/actions/wallet-actions";
+import { useDialog } from "@/components/dialog";
 import { toast } from "sonner";
 import { Gift } from "lucide-react";
 
@@ -18,6 +19,7 @@ const CLERK_CLIENT_NAME = process.env.NEXT_PUBLIC_INSTANT_CLERK_CLIENT_NAME || "
  */
 export function InstantClerkBridge() {
   const { isSignedIn, getToken } = useAuth();
+  const dialog = useDialog();
   const isSyncingRef = useRef(false);
   const isPromoClaimedRef = useRef(false);
 
@@ -54,6 +56,9 @@ export function InstantClerkBridge() {
         const res = await ensureUserWalletAction();
         if (res.success) {
           console.log("[User & Wallet] Profile & Wallet synced successfully.");
+          if (res.bonusAwarded && res.bonusAwarded > 0) {
+            dialog.open("wallet/bonus-credited", { amount: res.bonusAwarded });
+          }
         }
 
         // 3. Check for email link bonus claim trigger (utm_source=loops or claim_bonus=true)
@@ -69,10 +74,7 @@ export function InstantClerkBridge() {
             const claimRes = await claimUserPromoBonusAction();
 
             if (claimRes.success) {
-              toast.success("₦300 Bonus Claimed! Playable funds added to your wallet.", {
-                description: "You can start predicting on Big Brother Naija markets right away.",
-                icon: <Gift className="h-4 w-4 text-[#FFC91F]" />,
-              });
+              dialog.open("wallet/bonus-credited", { amount: claimRes.amount || 300 });
             } else if (claimRes.alreadyClaimed) {
               toast.info("Your ₦300 bonus is already active in your wallet!", {
                 icon: <Gift className="h-4 w-4 text-[#FFC91F]" />,

@@ -24,6 +24,7 @@ import { NotificationsDialog } from "./features/notifications/notifications-dial
 import { WalletDetailsDialog } from "./features/wallet/wallet-details-dialog"
 import { DepositDialog } from "./features/wallet/deposit-dialog"
 import { WithdrawDialog } from "./features/wallet/withdraw-dialog"
+import { BonusCreditedDialog } from "./features/wallet/bonus-credited-dialog"
 import { TradeConfirmDialog } from "./features/market/trade-confirm-dialog"
 import { TradeDialog } from "./features/market/trade-dialog"
 import { ShareDialog } from "./features/market/share-dialog"
@@ -70,6 +71,7 @@ export function registerDialogs() {
   DialogRegistry.register("wallet/details", WalletDetailsDialog as any)
   DialogRegistry.register("wallet/deposit", DepositDialog as any)
   DialogRegistry.register("wallet/withdraw", WithdrawDialog as any)
+  DialogRegistry.register("wallet/bonus-credited", BonusCreditedDialog as any)
   DialogRegistry.register("trade/confirm", TradeConfirmDialog as any)
   DialogRegistry.register("trade/dialog", TradeDialog as any)
   DialogRegistry.register("trade/panel", TradeDialog as any)
